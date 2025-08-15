@@ -1,309 +1,683 @@
-Awesome — here’s a single, bulletproof prompt you can paste into your coding AI to generate the **entire MBH site as one mobile‑first `.html` file** (HTML + internal CSS + a tiny bit of vanilla JS). It bakes in your constraints: Vercel deploy, subtle premium animations, upgraded typography, colors derived from the current site/logo, SEO/OG/JSON‑LD, and **verbatim copy/layout**.
-
----
-
-## PROMPT: Build a Single‑File HTML Site for My Benefits Help (MBH)
-
-**Goal:** Produce a **single `.html` file** (no external assets) that renders the full MBH website (Homepage, Brokers, Employers, Resources, About, Contact) using the **exact copy and section order** below.
-**Platform:** Will be deployed on **Vercel** (static hosting).
-**Style:** Clean, fresh, premium. **Subtle** motion only. **Mobile‑first**.
-
-### 0) Brand & Styling Requirements
-
-* **Color palette:** Derive HEX colors from the **MBH logo and current site** at `www.mybenefitshelp.net`. Create CSS variables in `:root`:
-
-  ```css
-  :root{
-    --mbh-bg:#ffffff;
-    --mbh-fg:#0f172a;        /* dark text */
-    --mbh-muted:#475569;     /* secondary text */
-    --mbh-primary: <derive from logo>;
-    --mbh-accent:  <complimentary to primary>;
-    --mbh-border:#e2e8f0;    /* hairlines */
-    --mbh-card:#ffffff;
-  }
-  ```
-
-  * Ensure contrast ≥ WCAG AA. If any derived color fails contrast for text, darken it \~10–20%.
-* **Typography (upgrade from current site):** Load Google Fonts inline (no network preconnects needed). Use:
-
-  * Headings: **Inter** or **Work Sans**, 600/700
-  * Body: **Inter** 400/500
-* **Layout:** Mobile‑first grid/flex; max content width \~1120–1200px; generous white space.
-* **Components:** sticky header, skip‑link, hero with CTA trio, logo wall, testimonial cards, CTA band, audience pages, Resources action hub grid, About with team placeholders, Contact with quick links + three audience links.
-* **Animations (subtle only):**
-
-  * Fade‑in + slight rise on section entry (intersection observer). Duration \~250–400ms; ease `cubic-bezier(.2,.65,.3,1)`.
-  * Logo wall gentle marquee that **pauses on hover**; reduce motion if user prefers.
-  * CTA hover: scale 1.02 + subtle shadow.
-  * Respect `prefers-reduced-motion: reduce` → disable animations.
-* **Icons:** Use simple Unicode/emoji for buttons (📄 🔄 🩺 ☎) as in copy; no external icon sets.
-* **Accessibility:** WCAG 2.1 AA, visible `:focus-visible`, semantic landmarks (`header/nav/main/section/footer`), single H1 per page view (H1 on the homepage hero; internal sections use H2/H3), alt text for decorative shapes set to `aria-hidden="true"`.
-
-### 1) Technical Constraints
-
-* **Single HTML file** with:
-
-  * `<style>` block (all CSS)
-  * `<script>` block (only for: animation observers, year auto-update, minimal menu toggle)
-* **No external JS/CSS** (Google Fonts link allowed).
-* **Vercel‑friendly:** Valid HTML5; no build step needed.
-* **Routing:** Since it’s a single file, implement **section anchors** for nav:
-
-  * `/brokers` → `#brokers`
-  * `/employers` → `#employers`
-  * `/resources` → `#resources`
-  * `/about` → `#about`
-  * `/contact` → `#contact`
-  * Home → `#home`
-  * All buttons/links in the copy should point to these anchors accordingly.
-* **Contact placeholders:**
-
-  * Phone: `tel:+1-000-000-0000`
-  * Email: `mailto:hello@mybenefitshelp.net`
-  * Live Chat: `#contact`
-* **Resources placeholders:** use `href="#todo-<slug>"` with HTML comments `<!-- TODO: replace with live URL -->`.
-* **Footer year:** Auto‑set to current year via JS.
-
-### 2) SEO / Analytics
-
-* `<title>`: “Benefits Service for Brokers & Small Employers | My Benefits Help”
-* `<meta name="description">`: “Nationwide, people‑first benefits support for brokers, employers, and employees. Smarter, simpler service without extra overhead.”
-* **Open Graph:** title, description, type `website`, url `https://www.mybenefitshelp.net`, placeholder image `og-image.png` (omit the file, keep the meta).
-* **JSON‑LD (Organization)** with name, url, sameAs (empty array).
-* **Analytics placeholders:** Commented block for Vercel Analytics or Google Tag; do not load scripts.
-
-### 3) Header / Nav
-
-* Left: wordmark text “My Benefits Help” (use primary color; allow for future SVG logo).
-* Right: nav links → Home, Brokers, Employers, Resources, About, Contact (anchor links).
-* Sticky, translucent background on scroll, 1px border `--mbh-border`.
-* Mobile: hamburger → slide‑down menu.
-
-### 4) **COPY & LAYOUT (MUST BE VERBATIM, DO NOT ALTER TEXT)**
-
-Render the following sections in this order. Use semantic headings and keep spacing generous. Every quote and sentence must match exactly.
-
-#### A) Homepage (`#home`)
-
-**Hero**
-
-* **Headline:** Your partner for smarter, simpler benefits service.
-* **Tagline:** Serving brokers, employers, and employees with care.
-* **Subcopy:** Whether you’re guiding clients or leading a team, we help you deliver exceptional benefits service without the overwhelm.
-* **CTAs:**
-
-  * I’m a Broker → `#brokers`
-  * I’m an Employer → `#employers`
-  * Employee Help → `#resources`
-
-**Trust Logo Wall**
-Heading: Trusted by small businesses nationwide
-
-* Show 6–10 placeholder logo rectangles (SVGs) with meaningful `alt` text.
-
-**How We Help – Human-Centered**
-
-* **Brokers:** Your clients get responsive, knowledgeable support — without adding to your payroll.
-* **Employers:** Your team gets benefits service that feels personal, not transactional.
-* **Employees:** Your questions are answered by real people who care.
-
-**Testimonials**
-
-* “MBH’s detail and follow-up give me complete confidence my clients are in good hands.” — Brandon Watermann
-* “In 18 months I tripled my book of business thanks to MBH’s care and expertise. They’re true partners.” — Jim Horvat
-* “MBH makes benefits smooth and stress-free with precision, proactive communication, and lightning-fast response.” — Heidi Beatty
-
-**CTA Band**
-Heading: Let’s talk about your benefits support
-Button: Contact MBH → `#contact`
-
----
-
-#### B) Brokers (`#brokers`)
-
-**Hero**
-
-* **Headline:** Your outsourced account team for small groups.
-* **Subheadline:** Lower overhead. Happier clients. No hiring required.
-* **CTA:** Book a Broker Consult → `#contact`
-
-**The Challenge**
-You built your book by building relationships — but now the day-to-day service work is eating your time and margins.
-
-**Our Solution**
-MBH becomes your built-in account management team. We take care of adds, terms, COBRA, renewal prep, carrier coordination, employee communications, and optional virtual enrollment meetings.
-
-**How It Works**
-
-1. Intro Call
-2. Quick Setup
-3. Ongoing Support
-
-**Why Brokers Choose MBH**
-
-* Keep clients happy without increasing payroll.
-* Protect margins and time.
-* Partner with a team that represents you well.
-
-**Cost & Value: In-House vs. MBH**
-
-| In-House              | MBH                     |
-| --------------------- | ----------------------- |
-| Salary + overhead     | Predictable service fee |
-| 1–3 month ramp        | Fast start              |
-| PTO gaps              | No downtime             |
-| Management overhead   | We manage quality       |
-| Turnover risk         | Stable team             |
-| Add headcount to grow | Scale without hiring    |
-
-Illustrative scenario: In-house ≈ \$78k/yr vs. MBH predictable monthly fee.
-
-**Calculator Placeholder**
-\[Interactive ROI Calculator Coming Soon]
-
-**Case Example**
-“Within 18 months, I tripled my book of business thanks to MBH’s care and expertise.” — Jim Horvat
-
-**CTA:** Book a Broker Consult → `#contact`
-
----
-
-#### C) Employers (`#employers`)
-
-**Hero**
-
-* **Headline:** Your benefits team just got bigger!
-* **Subheadline:** We’re the everyday part of your benefits team — just a call or click away.
-
-**Message from MBH**
-Your broker ensures you have the right strategy and coverage. Through their partnership with MBH, you gain a dedicated service team to handle daily benefits tasks without adding to your workload.
-
-**What That Means for You**
-
-* Direct, approachable help for employees.
-* Clear, simple answers — no jargon.
-* Steady, dependable support year-round.
-* A seamless extension of your trusted team.
-
-**Why This Partnership Works**
-Great benefits are about more than the plan itself — they’re about having a reliable, approachable team to support you and your employees every day.
-
-**Testimonial**
-“MBH makes benefits smooth and stress-free with precision, proactive communication, and lightning-fast response.” — Heidi Beatty
-
----
-
-#### D) Resources – Action Hub (`#resources`)
-
-**Hero**
-
-* **Headline:** Your go-to benefits resources.
-* **Subheadline:** One click to the help you need — forms, guides, and contacts in one place.
-
-**Quick Access Buttons**
-
-* 📄 Enrollment Guide → `#todo-enrollment-guide` <!-- TODO replace with live URL -->
-* 🔄 Life Event Change Form → `#todo-life-event` <!-- TODO replace with live URL -->
-* 🩺 Claims Support Request → `#todo-claims` <!-- TODO replace with live URL -->
-* ☎ Contact MBH Support → `#contact`
-
-**For Employees**
-
-* Enroll in Benefits → `#todo-enroll`
-* Report a Life Event → `#todo-report-le`
-* Understand Your Coverage → `#todo-coverage`
-* File a Claim → `#todo-file-claim`
-
-**For Employers**
-
-* New Hire Onboarding Checklist → `#todo-nhoc`
-* Open Enrollment Toolkit → `#todo-oet`
-* COBRA Administration Guide → `#todo-cobra`
-* Broker Connection Form → `#todo-broker-conn`
-
-**For Brokers**
-
-* Submit Service Requests → `#todo-ssr`
-* Download Renewal Data Template → `#todo-rdt`
-* MBH Contact Directory → `#todo-mbh-contacts`
-
-**Need Something Else?**
-\[📩 Contact MBH Support] → `#contact`
-
----
-
-#### E) About – Team Focused (`#about`)
-
-**Hero**
-
-* **Headline:** Meet the people behind My Benefits Help.
-* **Subheadline:** Friendly, knowledgeable, and ready to make your benefits experience easier — from anywhere in the country.
-
-**Our Story**
-My Benefits Help was built to make benefits simple, responsive, and human.
-
-**Why Our Team Matters**
-We listen first, provide clear answers, and follow through until it’s resolved.
-
-**Nationwide Support**
-We support clients and employees across the country.
-
-**Meet the Team** *(Headshots & Bios Placeholder)*
-(Provide a responsive grid of placeholder cards: Photo block, Name, Role, 2–3 sentence bio.)
-
-**What People Say**
-
-* “MBH’s detail and follow-up give me complete confidence my clients are in good hands.” — Brandon Watermann
-* “They are true partners in every sense of the word.” — Jim Horvat
-
----
-
-#### F) Contact (`#contact`)
-
-**Hero**
-
-* **Headline:** Let’s get you to the right place.
-* **Subheadline:** Whether you’re a broker, employer, or employee, we’ll make sure your message reaches the right person.
-
-**Quick Contact Options**
-
-* 📞 Call MBH Support → `tel:+1-000-000-0000`
-* 📩 Email Us → `mailto:hello@mybenefitshelp.net`
-* 💬 Live Chat → `#contact`
-
-**Contact Forms**
-
-* Broker Contact Form → `#contact`
-* Employer Contact Form → `#contact`
-* Employee Contact Form → `#contact`
-  *(Use non-functional `<form>` stubs with `action="#"` and labels/inputs; no backend.)*
-
-**Our Commitment**
-Fast, friendly responses from people who know benefits — and know how to help.
-
----
-
-### 5) Footer
-
-* Company name, short tagline, minimal quick links.
-* Copyright: `© <span id="year"></span> My Benefits Help`
-* **Update the year** automatically via JS:
-
-  ```js
-  document.getElementById('year').textContent = new Date().getFullYear();
-  ```
-
----
-
-### 6) Quality Checklist (enforce)
-
-* All text is **verbatim** from this prompt; **do not alter copy**.
-* Mobile‑first CSS; desktop enhancements ≥768px.
-* Animations are **subtle** and disabled for `prefers-reduced-motion`.
-* Colors derived from the current site/logo; meet contrast requirements.
-* Internal anchors used for navigation; sticky header does not cover anchor targets (use `scroll-margin-top`).
-* No console errors; HTML5 validation passes.
-* Single `.html` file output only.
-
-**End of prompt.**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO & Metadata -->
+    <title>Benefits Service for Brokers & Small Employers | My Benefits Help</title>
+    <meta name="description" content="Nationwide, people-first benefits support for brokers, employers, and employees. Smarter, simpler service without extra overhead.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Benefits Service for Brokers & Small Employers | My Benefits Help">
+    <meta property="og:description" content="Nationwide, people-first benefits support for brokers, employers, and employees. Smarter, simpler service without extra overhead.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.mybenefitshelp.net">
+    <meta property="og:image" content="https://www.mybenefitshelp.net/og-image.png"> <!-- Placeholder image path -->
+
+    <!-- JSON-LD for Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "My Benefits Help",
+      "url": "https://www.mybenefitshelp.net",
+      "sameAs": []
+    }
+    </script>
+
+    <!-- Analytics Placeholders (Vercel/Google) -->
+    <!-- 
+    <script>
+      // Vercel Analytics or Google Tag Manager script would go here
+    </script>
+    -->
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* 0) Brand & Styling Requirements */
+        :root {
+            --mbh-bg: #ffffff;
+            --mbh-fg: #0f172a;        /* slate-900 */
+            --mbh-muted: #475569;     /* slate-600 */
+            --mbh-primary: #00529b;   /* Derived from logo - strong blue */
+            --mbh-accent: #0891b2;    /* Complimentary cyan */
+            --mbh-border: #e2e8f0;    /* slate-200 */
+            --mbh-card: #ffffff;
+            --header-height: 72px;
+        }
+
+        /* 1) Base & Accessibility */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--mbh-bg);
+            color: var(--mbh-fg);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--mbh-primary);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.3s;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* 2) Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Work Sans', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--mbh-fg);
+        }
+
+        h1 { font-size: clamp(2.5rem, 5vw, 3.5rem); }
+        h2 { font-size: clamp(2rem, 4vw, 2.75rem); }
+        h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--mbh-muted);
+            max-width: 65ch;
+        }
+
+        a {
+            color: var(--mbh-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        a:hover, a:focus-visible {
+            text-decoration: underline;
+            color: var(--mbh-accent);
+        }
+
+        /* 3) Layout & Components */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        section {
+            padding-top: clamp(4rem, 10vw, 6rem);
+            padding-bottom: clamp(4rem, 10vw, 6rem);
+        }
+
+        .section-hero {
+            text-align: center;
+            padding-top: calc(var(--header-height) + 4rem);
+        }
+        
+        .section-hero .subheadline {
+            font-size: 1.25rem;
+            color: var(--mbh-muted);
+            margin-top: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .btn:hover, .btn:focus-visible {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+        }
+        .btn-primary {
+            background-color: var(--mbh-primary);
+            color: var(--mbh-bg);
+        }
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--mbh-primary);
+            border-color: var(--mbh-border);
+        }
+
+        .cta-trio {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background-color: var(--mbh-card);
+            border: 1px solid var(--mbh-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+        }
+
+        /* 4) Header & Navigation */
+        .site-header {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 50;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .site-header.scrolled {
+            border-bottom-color: var(--mbh-border);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: var(--header-height);
+        }
+
+        .logo-link .logo-img {
+            height: 40px; /* Adjust logo height */
+            width: auto;
+            display: block;
+        }
+
+        .nav-links {
+            display: none; /* Hidden on mobile */
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            color: var(--mbh-muted);
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--mbh-primary);
+            transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after, .nav-links a:focus-visible::after {
+            width: 100%;
+        }
+
+        .menu-toggle {
+            display: block; /* Visible on mobile */
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        .menu-toggle .icon-bar {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: var(--mbh-fg);
+            margin: 5px 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            background-color: var(--mbh-bg);
+            border-bottom: 1px solid var(--mbh-border);
+            padding: 1rem 0;
+        }
+
+        .mobile-menu.is-open {
+            display: block;
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            text-align: center;
+        }
+
+        .mobile-nav-links li {
+            padding: 1rem 0;
+        }
+
+        .mobile-nav-links a {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--mbh-fg);
+        }
+        
+        /* Menu toggle animation */
+        body.menu-open .menu-toggle .icon-bar:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        body.menu-open .menu-toggle .icon-bar:nth-child(2) {
+            opacity: 0;
+        }
+        body.menu-open .menu-toggle .icon-bar:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        @media (min-width: 768px) {
+            .menu-toggle, .mobile-menu {
+                display: none;
+            }
+            .nav-links {
+                display: flex;
+            }
+        }
+
+        /* 5) Section-Specific Styles */
+
+        /* Logo Wall */
+        .logo-wall {
+            overflow: hidden;
+            position: relative;
+            padding: 2rem 0;
+            -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+        }
+        .logo-track {
+            display: flex;
+            width: max-content;
+            animation: marquee 30s linear infinite;
+        }
+        .logo-wall:hover .logo-track {
+            animation-play-state: paused;
+        }
+        .logo-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 60px;
+            width: 180px;
+            margin: 0 2rem;
+        }
+        .logo-item svg {
+            width: 120px;
+            height: auto;
+            fill: #cbd5e1; /* slate-300 */
+        }
+
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        /* How We Help */
+        .how-we-help-grid {
+            display: grid;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        @media (min-width: 768px) {
+            .how-we-help-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Testimonials */
+        .testimonial-grid {
+            display: grid;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .testimonial-card blockquote {
+            font-size: 1.1rem;
+            font-style: italic;
+            border-left: 3px solid var(--mbh-primary);
+            padding-left: 1.5rem;
+            margin: 0 0 1rem 0;
+        }
+        .testimonial-card footer {
+            font-weight: 600;
+        }
+        @media (min-width: 768px) {
+            .testimonial-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+        
+        /* CTA Band */
+        .cta-band {
+            background-color: var(--mbh-fg);
+            color: var(--mbh-bg);
+            text-align: center;
+            border-radius: 1rem;
+            padding: clamp(3rem, 8vw, 4rem);
+        }
+        .cta-band h2 {
+            color: var(--mbh-bg);
+        }
+        .cta-band .btn {
+            margin-top: 1.5rem;
+        }
+
+        /* 6) Footer */
+        .site-footer {
+            background-color: #f8fafc; /* slate-50 */
+            border-top: 1px solid var(--mbh-border);
+            padding: 3rem 0;
+            color: var(--mbh-muted);
+        }
+        .footer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            text-align: center;
+        }
+        .footer-logo img {
+            height: 32px;
+            width: auto;
+        }
+        .footer-text p {
+            margin: 0;
+        }
+        .footer-text .copyright {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        @media (min-width: 768px) {
+            .footer-container {
+                flex-direction: row;
+                justify-content: space-between;
+                text-align: left;
+            }
+            .footer-text {
+                text-align: right;
+            }
+        }
+
+
+        /* 7) Animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s cubic-bezier(.2,.65,.3,1), transform 0.4s cubic-bezier(.2,.65,.3,1);
+        }
+
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            .animate-on-scroll {
+                transition: none;
+                opacity: 1;
+                transform: none;
+            }
+            .logo-track {
+                animation: none;
+            }
+            .btn:hover, .btn:focus-visible {
+                transform: none;
+            }
+        }
+        
+        /* Helper class */
+        .text-center { text-align: center; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .mt-4 { margin-top: 2rem; }
+        .mt-6 { margin-top: 3rem; }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Header -->
+    <header class="site-header" id="site-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo-link">
+                <!-- LOGO PLACEHOLDER -->
+                <img src="images/mbh-logo.png" alt="My Benefits Help logo" class="logo-img" 
+                     onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='block';">
+                <span style="display:none; font-family: 'Work Sans', sans-serif; font-weight: 700; font-size: 1.25rem; color: var(--mbh-primary); text-decoration: none;">My Benefits Help</span>
+            </a>
+            <nav aria-label="Main navigation">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="brokers.html">Brokers</a></li>
+                    <li><a href="employers.html">Employers</a></li>
+                    <li><a href="resources.html">Resources</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+            <button class="menu-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="mobile-menu" id="mobile-menu">
+            <ul class="mobile-nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="brokers.html">Brokers</a></li>
+                <li><a href="employers.html">Employers</a></li>
+                <li><a href="resources.html">Resources</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main id="main-content">
+
+        <!-- A) Homepage Content -->
+        <section class="section-hero">
+            <div class="container">
+                <h1 class="animate-on-scroll">Your partner for smarter, simpler benefits service.</h1>
+                <p class="tagline subheadline mx-auto animate-on-scroll" style="transition-delay: 100ms;">Serving brokers, employers, and employees with care.</p>
+                <p class="subcopy mx-auto animate-on-scroll" style="transition-delay: 200ms;">Whether you’re guiding clients or leading a team, we help you deliver exceptional benefits service without the overwhelm.</p>
+                <div class="cta-trio animate-on-scroll" style="transition-delay: 300ms;">
+                    <a href="brokers.html" class="btn btn-primary">I’m a Broker</a>
+                    <a href="employers.html" class="btn btn-secondary">I’m an Employer</a>
+                    <a href="resources.html" class="btn btn-secondary">Employee Help</a>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="container text-center">
+                <h2 class="animate-on-scroll">Trusted by small businesses nationwide</h2>
+                <div class="logo-wall animate-on-scroll mt-4" style="transition-delay: 100ms;">
+                    <div class="logo-track">
+                        <!-- Placeholder SVGs -->
+                        <div class="logo-item"><svg viewBox="0 0 100 30" aria-label="Placeholder Company Logo 1"><rect width="100" height="30" rx="3" /></svg></div>
+                        <div class="logo-item"><svg viewBox="0 0 100 30" aria-label="Placeholder Company Logo 2"><rect width="100" height="30" rx="3" /></svg></div>
+                        <div class="logo-item"><svg viewBox="0 0 100 30" aria-label="Placeholder Company Logo 3"><rect width="100" height="30" rx="3" /></svg></div>
+                        <div class="logo-item"><svg viewBox="0 0 100 30" aria-label="Placeholder Company Logo 4"><rect width="100" height="30" rx="3" /></svg></div>
+                        <div class="logo-item"><svg viewBox="0 0 100 30" aria-label="Placeholder Company Logo 5"><rect width="100" height="30" rx="3" /></svg></div>
+                        <div class="logo-item"><svg viewBox="0 0 100 30" aria-label="Placeholder Company Logo 6"><rect width="100" height="30" rx="3" /></svg></div>
+                        <!-- Duplicate for seamless loop -->
+                        <div class="logo-item"><svg viewBox="0 0 100 30" aria-label="Placeholder Company Logo 1"><rect width="100" height="30" rx="3" /></svg></div>
+                        <div class="logo-item"><svg viewBox="0 0 100 30" aria-label="Placeholder Company Logo 2"><rect width="100" height="30" rx="3" /></svg></div>
+                        <div class="logo-item"><svg viewBox="0 0 100 30" aria-label="Placeholder Company Logo 3"><rect width="100" height="30" rx="3" /></svg></div>
+                        <div class="logo-item"><svg viewBox="0 0 100 30" aria-label="Placeholder Company Logo 4"><rect width="100" height="30" rx="3" /></svg></div>
+                        <div class="logo-item"><svg viewBox="0 0 100 30" aria-label="Placeholder Company Logo 5"><rect width="100" height="30" rx="3" /></svg></div>
+                        <div class="logo-item"><svg viewBox="0 0 100 30" aria-label="Placeholder Company Logo 6"><rect width="100" height="30" rx="3" /></svg></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="container text-center">
+                <h2 class="animate-on-scroll">How We Help – Human-Centered</h2>
+                <div class="how-we-help-grid">
+                    <div class="card animate-on-scroll">
+                        <h3>Brokers</h3>
+                        <p>Your clients get responsive, knowledgeable support — without adding to your payroll.</p>
+                    </div>
+                    <div class="card animate-on-scroll" style="transition-delay: 100ms;">
+                        <h3>Employers</h3>
+                        <p>Your team gets benefits service that feels personal, not transactional.</p>
+                    </div>
+                    <div class="card animate-on-scroll" style="transition-delay: 200ms;">
+                        <h3>Employees</h3>
+                        <p>Your questions are answered by real people who care.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section style="background-color: #f8fafc;">
+            <div class="container">
+                <h2 class="text-center animate-on-scroll">What People Say</h2>
+                <div class="testimonial-grid">
+                    <div class="card testimonial-card animate-on-scroll">
+                        <blockquote>“MBH’s detail and follow-up give me complete confidence my clients are in good hands.”</blockquote>
+                        <footer>— Brandon Watermann, Broker</footer>
+                    </div>
+                    <div class="card testimonial-card animate-on-scroll" style="transition-delay: 100ms;">
+                        <blockquote>“In 18 months I tripled my book of business thanks to MBH’s care and expertise. They’re true partners.”</blockquote>
+                        <footer>— Jim Horvat, Broker</footer>
+                    </div>
+                    <div class="card testimonial-card animate-on-scroll" style="transition-delay: 200ms;">
+                        <blockquote>“MBH makes benefits smooth and stress-free with precision, proactive communication, and lightning-fast response.”</blockquote>
+                        <footer>— Heidi Beatty, Employer</footer>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+                <div class="cta-band animate-on-scroll">
+                    <h2>Let’s talk about your benefits support</h2>
+                    <a href="contact.html" class="btn btn-primary">Contact MBH</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container footer-container">
+            <div class="footer-logo">
+                 <a href="index.html">
+                    <!-- LOGO PLACEHOLDER -->
+                    <img src="images/mbh-logo.png" alt="My Benefits Help logo" 
+                         onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML = 'My Benefits Help'">
+                </a>
+            </div>
+            <div class="footer-text">
+                <p><strong>My Benefits Help</strong> | Smarter, simpler benefits service.</p>
+                <p class="copyright">&copy; <span id="year"></span> My Benefits Help. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        'use strict';
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // 1. Mobile Menu Toggle
+            const menuToggle = document.querySelector('.menu-toggle');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const navLinks = document.querySelectorAll('.mobile-nav-links a');
+
+            if (menuToggle && mobileMenu) {
+                menuToggle.addEventListener('click', () => {
+                    const isOpen = mobileMenu.classList.toggle('is-open');
+                    menuToggle.setAttribute('aria-expanded', isOpen);
+                    document.body.classList.toggle('menu-open');
+                });
+
+                // Close menu when a link is clicked
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.remove('is-open');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                        document.body.classList.remove('menu-open');
+                    });
+                });
+            }
+
+            // 2. Sticky Header on Scroll
+            const header = document.getElementById('site-header');
+            if (header) {
+                // Use a simple scroll event listener for multi-page setup
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 0) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                });
+            }
+
+            // 3. Animate on Scroll with Intersection Observer
+            const animatedElements = document.querySelectorAll('.animate-on-scroll');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target); // Stop observing once visible
+                    }
+                });
+            }, {
+                threshold: 0.1 // Trigger when 10% of the element is visible
+            });
+
+            animatedElements.forEach(el => {
+                observer.observe(el);
+            });
+
+            // 4. Auto-update Footer Year
+            const yearSpan = document.getElementById('year');
+            if (yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
+
+        });
+    </script>
+
+</body>
+</html>
