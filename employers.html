@@ -299,14 +299,41 @@
         }
 
         /* 5) Section-Specific Styles */
-        .grid-layout {
-            display: grid;
-            gap: 2rem;
-            margin-top: 3rem;
+        .two-column-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
         }
-        @media (min-width: 768px) {
-            .grid-layout {
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+        .two-column-list li {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--mbh-border);
+        }
+        .two-column-list li:last-child {
+            border-bottom: none;
+        }
+
+        @media (min-width: 640px) {
+            .two-column-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0 2rem;
+            }
+            .two-column-list li {
+                border-bottom: none;
+                padding: 1rem;
+            }
+            .two-column-list li:nth-child(odd) {
+                border-right: 1px solid var(--mbh-border);
+            }
+            .two-column-list li:nth-child(1),
+            .two-column-list li:nth-child(2) {
+                padding-top: 0;
+                border-bottom: 1px solid var(--mbh-border);
+            }
+             .two-column-list li:nth-child(3),
+            .two-column-list li:nth-child(4) {
+                padding-bottom: 0;
             }
         }
         
@@ -452,11 +479,13 @@
         <section style="background-color: #f8fafc;">
             <div class="container text-center">
                 <h2 class="animate-on-scroll">What That Means for You</h2>
-                <div class="grid-layout">
-                    <div class="card animate-on-scroll"><p>Direct, approachable help for employees.</p></div>
-                    <div class="card animate-on-scroll" style="transition-delay: 100ms;"><p>Clear, simple answers — no jargon.</p></div>
-                    <div class="card animate-on-scroll" style="transition-delay: 200ms;"><p>Steady, dependable support year-round.</p></div>
-                    <div class="card animate-on-scroll" style="transition-delay: 300ms;"><p>A seamless extension of your trusted team.</p></div>
+                <div class="card mt-6 animate-on-scroll" style="max-width: 900px; margin-left: auto; margin-right: auto; text-align: left;">
+                    <ul class="two-column-list">
+                        <li><p>Direct, approachable help for employees.</p></li>
+                        <li><p>Clear, simple answers — no jargon.</p></li>
+                        <li><p>Steady, dependable support year-round.</p></li>
+                        <li><p>A seamless extension of your trusted team.</p></li>
+                    </ul>
                 </div>
             </div>
         </section>
