@@ -1,0 +1,309 @@
+Awesome — here’s a single, bulletproof prompt you can paste into your coding AI to generate the **entire MBH site as one mobile‑first `.html` file** (HTML + internal CSS + a tiny bit of vanilla JS). It bakes in your constraints: Vercel deploy, subtle premium animations, upgraded typography, colors derived from the current site/logo, SEO/OG/JSON‑LD, and **verbatim copy/layout**.
+
+---
+
+## PROMPT: Build a Single‑File HTML Site for My Benefits Help (MBH)
+
+**Goal:** Produce a **single `.html` file** (no external assets) that renders the full MBH website (Homepage, Brokers, Employers, Resources, About, Contact) using the **exact copy and section order** below.
+**Platform:** Will be deployed on **Vercel** (static hosting).
+**Style:** Clean, fresh, premium. **Subtle** motion only. **Mobile‑first**.
+
+### 0) Brand & Styling Requirements
+
+* **Color palette:** Derive HEX colors from the **MBH logo and current site** at `www.mybenefitshelp.net`. Create CSS variables in `:root`:
+
+  ```css
+  :root{
+    --mbh-bg:#ffffff;
+    --mbh-fg:#0f172a;        /* dark text */
+    --mbh-muted:#475569;     /* secondary text */
+    --mbh-primary: <derive from logo>;
+    --mbh-accent:  <complimentary to primary>;
+    --mbh-border:#e2e8f0;    /* hairlines */
+    --mbh-card:#ffffff;
+  }
+  ```
+
+  * Ensure contrast ≥ WCAG AA. If any derived color fails contrast for text, darken it \~10–20%.
+* **Typography (upgrade from current site):** Load Google Fonts inline (no network preconnects needed). Use:
+
+  * Headings: **Inter** or **Work Sans**, 600/700
+  * Body: **Inter** 400/500
+* **Layout:** Mobile‑first grid/flex; max content width \~1120–1200px; generous white space.
+* **Components:** sticky header, skip‑link, hero with CTA trio, logo wall, testimonial cards, CTA band, audience pages, Resources action hub grid, About with team placeholders, Contact with quick links + three audience links.
+* **Animations (subtle only):**
+
+  * Fade‑in + slight rise on section entry (intersection observer). Duration \~250–400ms; ease `cubic-bezier(.2,.65,.3,1)`.
+  * Logo wall gentle marquee that **pauses on hover**; reduce motion if user prefers.
+  * CTA hover: scale 1.02 + subtle shadow.
+  * Respect `prefers-reduced-motion: reduce` → disable animations.
+* **Icons:** Use simple Unicode/emoji for buttons (📄 🔄 🩺 ☎) as in copy; no external icon sets.
+* **Accessibility:** WCAG 2.1 AA, visible `:focus-visible`, semantic landmarks (`header/nav/main/section/footer`), single H1 per page view (H1 on the homepage hero; internal sections use H2/H3), alt text for decorative shapes set to `aria-hidden="true"`.
+
+### 1) Technical Constraints
+
+* **Single HTML file** with:
+
+  * `<style>` block (all CSS)
+  * `<script>` block (only for: animation observers, year auto-update, minimal menu toggle)
+* **No external JS/CSS** (Google Fonts link allowed).
+* **Vercel‑friendly:** Valid HTML5; no build step needed.
+* **Routing:** Since it’s a single file, implement **section anchors** for nav:
+
+  * `/brokers` → `#brokers`
+  * `/employers` → `#employers`
+  * `/resources` → `#resources`
+  * `/about` → `#about`
+  * `/contact` → `#contact`
+  * Home → `#home`
+  * All buttons/links in the copy should point to these anchors accordingly.
+* **Contact placeholders:**
+
+  * Phone: `tel:+1-000-000-0000`
+  * Email: `mailto:hello@mybenefitshelp.net`
+  * Live Chat: `#contact`
+* **Resources placeholders:** use `href="#todo-<slug>"` with HTML comments `<!-- TODO: replace with live URL -->`.
+* **Footer year:** Auto‑set to current year via JS.
+
+### 2) SEO / Analytics
+
+* `<title>`: “Benefits Service for Brokers & Small Employers | My Benefits Help”
+* `<meta name="description">`: “Nationwide, people‑first benefits support for brokers, employers, and employees. Smarter, simpler service without extra overhead.”
+* **Open Graph:** title, description, type `website`, url `https://www.mybenefitshelp.net`, placeholder image `og-image.png` (omit the file, keep the meta).
+* **JSON‑LD (Organization)** with name, url, sameAs (empty array).
+* **Analytics placeholders:** Commented block for Vercel Analytics or Google Tag; do not load scripts.
+
+### 3) Header / Nav
+
+* Left: wordmark text “My Benefits Help” (use primary color; allow for future SVG logo).
+* Right: nav links → Home, Brokers, Employers, Resources, About, Contact (anchor links).
+* Sticky, translucent background on scroll, 1px border `--mbh-border`.
+* Mobile: hamburger → slide‑down menu.
+
+### 4) **COPY & LAYOUT (MUST BE VERBATIM, DO NOT ALTER TEXT)**
+
+Render the following sections in this order. Use semantic headings and keep spacing generous. Every quote and sentence must match exactly.
+
+#### A) Homepage (`#home`)
+
+**Hero**
+
+* **Headline:** Your partner for smarter, simpler benefits service.
+* **Tagline:** Serving brokers, employers, and employees with care.
+* **Subcopy:** Whether you’re guiding clients or leading a team, we help you deliver exceptional benefits service without the overwhelm.
+* **CTAs:**
+
+  * I’m a Broker → `#brokers`
+  * I’m an Employer → `#employers`
+  * Employee Help → `#resources`
+
+**Trust Logo Wall**
+Heading: Trusted by small businesses nationwide
+
+* Show 6–10 placeholder logo rectangles (SVGs) with meaningful `alt` text.
+
+**How We Help – Human-Centered**
+
+* **Brokers:** Your clients get responsive, knowledgeable support — without adding to your payroll.
+* **Employers:** Your team gets benefits service that feels personal, not transactional.
+* **Employees:** Your questions are answered by real people who care.
+
+**Testimonials**
+
+* “MBH’s detail and follow-up give me complete confidence my clients are in good hands.” — Brandon Watermann
+* “In 18 months I tripled my book of business thanks to MBH’s care and expertise. They’re true partners.” — Jim Horvat
+* “MBH makes benefits smooth and stress-free with precision, proactive communication, and lightning-fast response.” — Heidi Beatty
+
+**CTA Band**
+Heading: Let’s talk about your benefits support
+Button: Contact MBH → `#contact`
+
+---
+
+#### B) Brokers (`#brokers`)
+
+**Hero**
+
+* **Headline:** Your outsourced account team for small groups.
+* **Subheadline:** Lower overhead. Happier clients. No hiring required.
+* **CTA:** Book a Broker Consult → `#contact`
+
+**The Challenge**
+You built your book by building relationships — but now the day-to-day service work is eating your time and margins.
+
+**Our Solution**
+MBH becomes your built-in account management team. We take care of adds, terms, COBRA, renewal prep, carrier coordination, employee communications, and optional virtual enrollment meetings.
+
+**How It Works**
+
+1. Intro Call
+2. Quick Setup
+3. Ongoing Support
+
+**Why Brokers Choose MBH**
+
+* Keep clients happy without increasing payroll.
+* Protect margins and time.
+* Partner with a team that represents you well.
+
+**Cost & Value: In-House vs. MBH**
+
+| In-House              | MBH                     |
+| --------------------- | ----------------------- |
+| Salary + overhead     | Predictable service fee |
+| 1–3 month ramp        | Fast start              |
+| PTO gaps              | No downtime             |
+| Management overhead   | We manage quality       |
+| Turnover risk         | Stable team             |
+| Add headcount to grow | Scale without hiring    |
+
+Illustrative scenario: In-house ≈ \$78k/yr vs. MBH predictable monthly fee.
+
+**Calculator Placeholder**
+\[Interactive ROI Calculator Coming Soon]
+
+**Case Example**
+“Within 18 months, I tripled my book of business thanks to MBH’s care and expertise.” — Jim Horvat
+
+**CTA:** Book a Broker Consult → `#contact`
+
+---
+
+#### C) Employers (`#employers`)
+
+**Hero**
+
+* **Headline:** Your benefits team just got bigger!
+* **Subheadline:** We’re the everyday part of your benefits team — just a call or click away.
+
+**Message from MBH**
+Your broker ensures you have the right strategy and coverage. Through their partnership with MBH, you gain a dedicated service team to handle daily benefits tasks without adding to your workload.
+
+**What That Means for You**
+
+* Direct, approachable help for employees.
+* Clear, simple answers — no jargon.
+* Steady, dependable support year-round.
+* A seamless extension of your trusted team.
+
+**Why This Partnership Works**
+Great benefits are about more than the plan itself — they’re about having a reliable, approachable team to support you and your employees every day.
+
+**Testimonial**
+“MBH makes benefits smooth and stress-free with precision, proactive communication, and lightning-fast response.” — Heidi Beatty
+
+---
+
+#### D) Resources – Action Hub (`#resources`)
+
+**Hero**
+
+* **Headline:** Your go-to benefits resources.
+* **Subheadline:** One click to the help you need — forms, guides, and contacts in one place.
+
+**Quick Access Buttons**
+
+* 📄 Enrollment Guide → `#todo-enrollment-guide` <!-- TODO replace with live URL -->
+* 🔄 Life Event Change Form → `#todo-life-event` <!-- TODO replace with live URL -->
+* 🩺 Claims Support Request → `#todo-claims` <!-- TODO replace with live URL -->
+* ☎ Contact MBH Support → `#contact`
+
+**For Employees**
+
+* Enroll in Benefits → `#todo-enroll`
+* Report a Life Event → `#todo-report-le`
+* Understand Your Coverage → `#todo-coverage`
+* File a Claim → `#todo-file-claim`
+
+**For Employers**
+
+* New Hire Onboarding Checklist → `#todo-nhoc`
+* Open Enrollment Toolkit → `#todo-oet`
+* COBRA Administration Guide → `#todo-cobra`
+* Broker Connection Form → `#todo-broker-conn`
+
+**For Brokers**
+
+* Submit Service Requests → `#todo-ssr`
+* Download Renewal Data Template → `#todo-rdt`
+* MBH Contact Directory → `#todo-mbh-contacts`
+
+**Need Something Else?**
+\[📩 Contact MBH Support] → `#contact`
+
+---
+
+#### E) About – Team Focused (`#about`)
+
+**Hero**
+
+* **Headline:** Meet the people behind My Benefits Help.
+* **Subheadline:** Friendly, knowledgeable, and ready to make your benefits experience easier — from anywhere in the country.
+
+**Our Story**
+My Benefits Help was built to make benefits simple, responsive, and human.
+
+**Why Our Team Matters**
+We listen first, provide clear answers, and follow through until it’s resolved.
+
+**Nationwide Support**
+We support clients and employees across the country.
+
+**Meet the Team** *(Headshots & Bios Placeholder)*
+(Provide a responsive grid of placeholder cards: Photo block, Name, Role, 2–3 sentence bio.)
+
+**What People Say**
+
+* “MBH’s detail and follow-up give me complete confidence my clients are in good hands.” — Brandon Watermann
+* “They are true partners in every sense of the word.” — Jim Horvat
+
+---
+
+#### F) Contact (`#contact`)
+
+**Hero**
+
+* **Headline:** Let’s get you to the right place.
+* **Subheadline:** Whether you’re a broker, employer, or employee, we’ll make sure your message reaches the right person.
+
+**Quick Contact Options**
+
+* 📞 Call MBH Support → `tel:+1-000-000-0000`
+* 📩 Email Us → `mailto:hello@mybenefitshelp.net`
+* 💬 Live Chat → `#contact`
+
+**Contact Forms**
+
+* Broker Contact Form → `#contact`
+* Employer Contact Form → `#contact`
+* Employee Contact Form → `#contact`
+  *(Use non-functional `<form>` stubs with `action="#"` and labels/inputs; no backend.)*
+
+**Our Commitment**
+Fast, friendly responses from people who know benefits — and know how to help.
+
+---
+
+### 5) Footer
+
+* Company name, short tagline, minimal quick links.
+* Copyright: `© <span id="year"></span> My Benefits Help`
+* **Update the year** automatically via JS:
+
+  ```js
+  document.getElementById('year').textContent = new Date().getFullYear();
+  ```
+
+---
+
+### 6) Quality Checklist (enforce)
+
+* All text is **verbatim** from this prompt; **do not alter copy**.
+* Mobile‑first CSS; desktop enhancements ≥768px.
+* Animations are **subtle** and disabled for `prefers-reduced-motion`.
+* Colors derived from the current site/logo; meet contrast requirements.
+* Internal anchors used for navigation; sticky header does not cover anchor targets (use `scroll-margin-top`).
+* No console errors; HTML5 validation passes.
+* Single `.html` file output only.
+
+**End of prompt.**
