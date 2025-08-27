@@ -337,6 +337,16 @@
             height: auto;
             fill: #cbd5e1; /* slate-300 */
         }
+        .logo-item img {
+            width: 120px;
+            height: auto;
+            object-fit: contain;
+            filter: grayscale(1) opacity(0.7);
+            transition: filter 0.3s ease;
+        }
+        .logo-wall:hover .logo-item img {
+            filter: grayscale(0) opacity(1);
+        }
 
         @keyframes marquee {
             from { transform: translateX(0); }
@@ -523,23 +533,23 @@
 
         <section>
             <div class="container text-center">
-                <h2 class="animate-on-scroll">Trusted by small businesses nationwide</h2>
+                <h2 class="animate-on-scroll">Trusted by 100+ small businesses nationwide</h2>
                 <div class="logo-wall animate-on-scroll mt-4" style="transition-delay: 100ms;">
                     <div class="logo-track">
                         <!-- Client Logos -->
-                        <div class="logo-item"><img src="Images/waterman-logo.png" alt="Waterman Insurance client logo" style="max-width: 120px; height: auto; object-fit: contain;"></div>
-                        <div class="logo-item"><img src="Images/seen-logo.png" alt="Seen client logo" style="max-width: 120px; height: auto; object-fit: contain;"></div>
-                        <div class="logo-item"><img src="Images/sniff-logo.png" alt="Sniff client logo" style="max-width: 120px; height: auto; object-fit: contain;"></div>
-                        <div class="logo-item"><img src="Images/waterman-logo.png" alt="Waterman Insurance client logo" style="max-width: 120px; height: auto; object-fit: contain;"></div>
-                        <div class="logo-item"><img src="Images/seen-logo.png" alt="Seen client logo" style="max-width: 120px; height: auto; object-fit: contain;"></div>
-                        <div class="logo-item"><img src="Images/sniff-logo.png" alt="Sniff client logo" style="max-width: 120px; height: auto; object-fit: contain;"></div>
+                        <div class="logo-item"><img src="Images/waterman-logo.png" alt="Waterman Insurance client logo" loading="lazy"></div>
+                        <div class="logo-item"><img src="Images/seen-logo.png" alt="Seen client logo" loading="lazy"></div>
+                        <div class="logo-item"><img src="Images/sniff-logo.png" alt="Sniff client logo" loading="lazy"></div>
+                        <div class="logo-item"><img src="Images/waterman-logo.png" alt="Waterman Insurance client logo" loading="lazy"></div>
+                        <div class="logo-item"><img src="Images/seen-logo.png" alt="Seen client logo" loading="lazy"></div>
+                        <div class="logo-item"><img src="Images/sniff-logo.png" alt="Sniff client logo" loading="lazy"></div>
                         <!-- Duplicate for seamless loop -->
-                        <div class="logo-item"><img src="Images/waterman-logo.png" alt="Waterman Insurance client logo" style="max-width: 120px; height: auto; object-fit: contain;"></div>
-                        <div class="logo-item"><img src="Images/seen-logo.png" alt="Seen client logo" style="max-width: 120px; height: auto; object-fit: contain;"></div>
-                        <div class="logo-item"><img src="Images/sniff-logo.png" alt="Sniff client logo" style="max-width: 120px; height: auto; object-fit: contain;"></div>
-                        <div class="logo-item"><img src="Images/waterman-logo.png" alt="Waterman Insurance client logo" style="max-width: 120px; height: auto; object-fit: contain;"></div>
-                        <div class="logo-item"><img src="Images/seen-logo.png" alt="Seen client logo" style="max-width: 120px; height: auto; object-fit: contain;"></div>
-                        <div class="logo-item"><img src="Images/sniff-logo.png" alt="Sniff client logo" style="max-width: 120px; height: auto; object-fit: contain;"></div>
+                        <div class="logo-item"><img src="Images/waterman-logo.png" alt="Waterman Insurance client logo" loading="lazy"></div>
+                        <div class="logo-item"><img src="Images/seen-logo.png" alt="Seen client logo" loading="lazy"></div>
+                        <div class="logo-item"><img src="Images/sniff-logo.png" alt="Sniff client logo" loading="lazy"></div>
+                        <div class="logo-item"><img src="Images/waterman-logo.png" alt="Waterman Insurance client logo" loading="lazy"></div>
+                        <div class="logo-item"><img src="Images/seen-logo.png" alt="Seen client logo" loading="lazy"></div>
+                        <div class="logo-item"><img src="Images/sniff-logo.png" alt="Sniff client logo" loading="lazy"></div>
                     </div>
                 </div>
             </div>
@@ -589,7 +599,7 @@
             <div class="container">
                 <div class="cta-band animate-on-scroll">
                     <h2>Let's talk about your benefits support</h2>
-                    <a href="contact.html" class="btn btn-primary">Contact MBH</a>
+                    <a href="contact.html" class="btn btn-primary">Get Started</a>
                 </div>
             </div>
         </section>
