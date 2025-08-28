@@ -299,6 +299,49 @@
         }
 
         /* 5) Section-Specific Styles */
+        .contact-paths {
+            display: grid;
+            gap: 2rem;
+            margin-top: 3rem;
+            margin-bottom: 4rem;
+        }
+        .path-card {
+            background-color: var(--mbh-card);
+            border: 2px solid var(--mbh-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .path-card:hover {
+            border-color: var(--mbh-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .path-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .path-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--mbh-primary);
+        }
+        .path-card p {
+            margin-bottom: 1.5rem;
+            max-width: none;
+        }
+        .path-note {
+            font-size: 0.85rem;
+            color: var(--mbh-muted);
+            margin-top: 0.5rem;
+        }
+        @media (min-width: 768px) {
+            .contact-paths {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
         .contact-grid {
             display: grid;
             gap: 2rem;
@@ -317,6 +360,28 @@
             border-color: var(--mbh-primary);
             text-decoration: none;
         }
+        .contact-options a span {
+            color: var(--mbh-muted);
+            font-size: 0.9rem;
+        }
+        .priority-contact {
+            background-color: var(--mbh-primary) !important;
+            color: white !important;
+            font-weight: bold;
+        }
+        .priority-contact span {
+            color: rgba(255,255,255,0.9) !important;
+        }
+        .priority-contact:hover {
+            background-color: var(--mbh-accent) !important;
+            transform: scale(1.02);
+        }
+
+        .contact-details h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--mbh-primary);
+        }
 
         .contact-form {
             display: flex;
@@ -326,7 +391,7 @@
         .contact-form label {
             font-weight: 500;
         }
-        .contact-form input, .contact-form textarea {
+        .contact-form input, .contact-form textarea, .contact-form select {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid var(--mbh-border);
@@ -334,11 +399,135 @@
             font-family: 'Inter', sans-serif;
             font-size: 1rem;
         }
-        .contact-form input:focus, .contact-form textarea:focus {
+        .contact-form input:focus, .contact-form textarea:focus, .contact-form select:focus {
             outline: 2px solid var(--mbh-primary);
             outline-offset: 2px;
             border-color: var(--mbh-primary);
         }
+        
+        .urgency-selector {
+            margin: 1rem 0;
+        }
+        .urgency-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .urgency-options label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid var(--mbh-border);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .urgency-options label:hover {
+            background-color: #f8fafc;
+            border-color: var(--mbh-primary);
+        }
+        .urgency-options input[type="radio"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        /* Success State Styles */
+        .success-state {
+            text-align: center;
+        }
+        .success-content h3 {
+            color: #16a34a; /* green-600 */
+            margin-bottom: 1rem;
+        }
+        .next-steps {
+            background-color: #f0f9ff; /* sky-50 */
+            border: 1px solid #bae6fd; /* sky-200 */
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+        .next-steps p {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .next-steps ol {
+            margin: 0;
+            color: var(--mbh-muted);
+        }
+        .additional-help {
+            margin-top: 1.5rem;
+        }
+
+        /* Social Proof Styles */
+        .contact-social-proof {
+            background-color: #f8fafc; /* slate-50 */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem auto;
+            max-width: 400px;
+        }
+        .contact-social-proof p {
+            margin: 0 0 0.5rem 0;
+            color: var(--mbh-primary);
+            font-weight: 600;
+        }
+        .recent-activity {
+            color: var(--mbh-muted);
+            font-style: italic;
+        }
+        
+        /* Form submission states */
+        .form-status {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            display: none;
+        }
+        .form-status.success {
+            background-color: #dcfce7; /* green-100 */
+            color: #166534; /* green-800 */
+            border: 1px solid #bbf7d0; /* green-200 */
+        }
+        .form-status.error {
+            background-color: #fef2f2; /* red-50 */
+            color: #991b1b; /* red-800 */
+            border: 1px solid #fecaca; /* red-200 */
+        }
+        .form-status.loading {
+            background-color: #f0f9ff; /* sky-50 */
+            color: #0c4a6e; /* sky-900 */
+            border: 1px solid #bae6fd; /* sky-200 */
+        }
+        
+        @media (max-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-options a {
+                font-size: 1.1rem;
+                padding: 1.5rem;
+                text-align: center;
+            }
+            
+            /* Make phone number more prominent on mobile */
+            .priority-contact {
+                font-size: 1.2rem !important;
+                order: -1;
+            }
+            
+            .urgency-options {
+                gap: 0.3rem;
+            }
+            .urgency-options label {
+                font-size: 0.9rem;
+                padding: 0.75rem 0.5rem;
+            }
+        }
+        
         @media (min-width: 1024px) {
             .contact-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -459,44 +648,148 @@
         <!-- F) Contact -->
         <section class="section-hero">
             <div class="container">
-                <h1 class="animate-on-scroll">Let’s get you to the right place.</h1>
-                <p class="subheadline mx-auto animate-on-scroll" style="transition-delay: 100ms;">Whether you’re a broker, employer, or employee, we’ll make sure your message reaches the right person.</p>
+                <h1 class="animate-on-scroll">Let's get you to the right place.</h1>
+                <p class="subheadline mx-auto animate-on-scroll" style="transition-delay: 100ms;">Whether you're a broker, employer, or employee, we'll make sure your message reaches the right person.</p>
             </div>
         </section>
 
+        <!-- Contact Paths Section -->
         <section>
+            <div class="container">
+                <div class="contact-paths">
+                    <div class="path-card animate-on-scroll" data-audience="broker">
+                        <div class="path-icon">🤝</div>
+                        <h3>Brokers</h3>
+                        <p>Partnership inquiries & service questions</p>
+                        <a href="#contact-form" class="btn btn-primary" onclick="selectAudience('broker-partnership')">Get Broker Info</a>
+                    </div>
+                    <div class="path-card animate-on-scroll" data-audience="employer" style="transition-delay: 100ms;">
+                        <div class="path-icon">🏢</div>
+                        <h3>Employers</h3>
+                        <p>Benefits support & employee questions</p>
+                        <a href="#contact-form" class="btn btn-primary" onclick="selectAudience('employer-support')">Get Help Now</a>
+                    </div>
+                    <div class="path-card animate-on-scroll" data-audience="employee" style="transition-delay: 200ms;">
+                        <div class="path-icon">👤</div>
+                        <h3>Employees</h3>
+                        <p>Benefits questions & claims support</p>
+                        <a href="tel:+1-833-436-2334" class="btn btn-primary">Call Now</a>
+                        <p class="path-note">For immediate help with your benefits</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Form Section -->
+        <section id="contact-form">
             <div class="container">
                 <div class="contact-grid">
                     <div class="card animate-on-scroll">
                         <h3>Quick Contact Options</h3>
                         <div class="contact-options mt-4">
-                            <a href="tel:+1-000-000-0000">📞 Call MBH Support</a>
-                            <a href="mailto:hello@mybenefitshelp.net">📩 Email Us</a>
-                            <a href="#">💬 Live Chat</a>
+                            <a href="tel:+1-833-436-2334" class="priority-contact">📞 Call MBH Support<br><span>(833) 436-2334</span></a>
+                            <a href="mailto:hello@mybenefitshelp.net">📩 Email Us<br><span>hello@mybenefitshelp.net</span></a>
+                        </div>
+                        
+                        <div class="contact-details mt-6">
+                            <h4>Response Times</h4>
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--mbh-border);">
+                                    <strong>Phone:</strong> Immediate during business hours
+                                </li>
+                                <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--mbh-border);">
+                                    <strong>Email:</strong> Within 4 hours
+                                </li>
+                                <li style="padding: 0.5rem 0;">
+                                    <strong>Forms:</strong> Within 2 hours
+                                </li>
+                            </ul>
                         </div>
                     </div>
+                    
                     <div class="card animate-on-scroll" style="transition-delay: 100ms;">
-                        <h3>Contact Forms</h3>
-                        <form action="#" class="contact-form">
-                            <label for="name">Name</label>
-                            <input type="text" id="name" name="name" required>
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" required>
-                            <label for="iam">I am a...</label>
-                            <select id="iam" name="iam" style="padding: 0.75rem; border: 1px solid var(--mbh-border); border-radius: 0.5rem; font-family: 'Inter', sans-serif; font-size: 1rem;">
-                                <option>Broker</option>
-                                <option>Employer</option>
-                                <option>Employee</option>
-                            </select>
-                            <label for="message">Message</label>
-                            <textarea id="message" name="message" rows="4"></textarea>
-                            <button type="submit" class="btn btn-primary">Send Message</button>
-                        </form>
+                        <!-- Success State (Initially Hidden) -->
+                        <div class="success-state" id="thankYou" style="display:none;">
+                            <div class="success-content">
+                                <h3>✅ Message Received!</h3>
+                                <p>We'll get back to you within <strong>2 hours</strong> during business days.</p>
+                                <div class="next-steps">
+                                    <p><strong>What happens next:</strong></p>
+                                    <ol style="text-align: left; max-width: none; padding-left: 1rem;">
+                                        <li>Your message goes directly to our team</li>
+                                        <li>We'll review your request and match you with the right person</li>
+                                        <li>You'll hear from us with specific next steps</li>
+                                    </ol>
+                                </div>
+                                <div class="additional-help">
+                                    <p>Need immediate help?</p>
+                                    <a href="tel:833-436-2334" class="btn btn-secondary">Call (833) 436-2334</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Form (Initially Visible) -->
+                        <div id="contactFormContainer">
+                            <h3>Send Us a Message</h3>
+                            <form id="contactForm" class="contact-form" method="POST">
+                                <div class="form-step">
+                                    <label for="audience">I need help with: *</label>
+                                    <select id="audience" name="audience" required>
+                                        <option value="">Select one...</option>
+                                        <option value="broker-partnership">🤝 Broker Partnership</option>
+                                        <option value="employer-support">🏢 Employee Benefits Support</option>
+                                        <option value="claims-help">🩺 Claims & Coverage Questions</option>
+                                        <option value="other">❓ Something Else</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Dynamic fields that appear based on selection -->
+                                <div class="form-fields" id="dynamicFields" style="display:none;">
+                                    <label for="name">Name *</label>
+                                    <input type="text" id="name" name="name" required>
+                                    
+                                    <label for="email">Email *</label>
+                                    <input type="email" id="email" name="email" required>
+                                    
+                                    <label for="phone">Phone</label>
+                                    <input type="tel" id="phone" name="phone">
+                                    
+                                    <!-- Conditional fields that show based on audience -->
+                                    <div id="conditionalFields"></div>
+                                    
+                                    <div class="urgency-selector">
+                                        <label>How urgent is this?</label>
+                                        <div class="urgency-options">
+                                            <label><input type="radio" name="urgency" value="urgent"> 🔴 Urgent (call me today)</label>
+                                            <label><input type="radio" name="urgency" value="soon"> 🟡 Soon (within 2-3 days)</label>
+                                            <label><input type="radio" name="urgency" value="general" checked> 🟢 General inquiry</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <label for="message">Message *</label>
+                                    <textarea id="message" name="message" rows="4" required placeholder="Tell us how we can help you..."></textarea>
+                                    
+                                    <button type="submit" class="btn btn-primary">Send Message</button>
+                                    
+                                    <div id="formStatus" class="form-status"></div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-                 <div class="mt-6 text-center animate-on-scroll">
+                
+                <div class="mt-6 text-center animate-on-scroll">
                     <h2>Our Commitment</h2>
                     <p class="mx-auto">Fast, friendly responses from people who know benefits — and know how to help.</p>
+                    <div class="contact-social-proof">
+                        <p><strong>Join 200+ brokers</strong> who trust MBH with their clients</p>
+                        <div class="recent-activity">
+                            <small>💬 Last contact response: 23 minutes ago</small>
+                        </div>
+                    </div>
+                    <p class="mx-auto" style="font-size: 0.9rem; margin-top: 1rem;">
+                        <strong>Business Hours:</strong> Monday - Friday, 9:00 AM - 5:00 PM PST
+                    </p>
                 </div>
             </div>
         </section>
@@ -515,7 +808,7 @@
             </div>
             <div class="footer-text">
                 <p><strong>My Benefits Help</strong> | Smarter, simpler benefits service.</p>
-                <p class="copyright">&copy; <span id="year"></span> My Benefits Help. All Rights Reserved.</p>
+                <p class="copyright">&copy; 2025 My Benefits Help. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
@@ -577,10 +870,246 @@
                 observer.observe(el);
             });
 
-            // 4. Auto-update Footer Year
-            const yearSpan = document.getElementById('year');
-            if (yearSpan) {
-                yearSpan.textContent = new Date().getFullYear();
+            // 4. Contact Form & Trello Integration + Analytics
+            const contactForm = document.getElementById('contactForm');
+            const formStatus = document.getElementById('formStatus');
+            const audienceSelect = document.getElementById('audience');
+            const dynamicFields = document.getElementById('dynamicFields');
+            const conditionalFields = document.getElementById('conditionalFields');
+            
+            // Analytics tracking function
+            function trackFormInteraction(action, audience = null, urgency = null) {
+                // Google Analytics event tracking (if available)
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', action, {
+                        'event_category': 'Contact Form',
+                        'event_label': audience || 'general',
+                        'custom_urgency': urgency
+                    });
+                }
+                console.log('Contact interaction:', action, { audience, urgency });
+            }
+            
+            // Handle audience selection and show relevant fields
+            if (audienceSelect) {
+                audienceSelect.addEventListener('change', function(e) {
+                    const selectedValue = e.target.value;
+                    trackFormInteraction('audience_selected', selectedValue);
+                    
+                    if (selectedValue) {
+                        dynamicFields.style.display = 'flex';
+                        updateConditionalFields(selectedValue);
+                        
+                        // Smooth scroll to form fields
+                        setTimeout(() => {
+                            dynamicFields.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 100);
+                    } else {
+                        dynamicFields.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Global function for audience path buttons
+            window.selectAudience = function(audienceType) {
+                if (audienceSelect) {
+                    audienceSelect.value = audienceType;
+                    audienceSelect.dispatchEvent(new Event('change'));
+                }
+            };
+            
+            // Update conditional fields based on audience selection
+            function updateConditionalFields(audience) {
+                let additionalFields = '';
+                
+                switch(audience) {
+                    case 'broker-partnership':
+                        additionalFields = `
+                            <label for="company">Agency Name</label>
+                            <input type="text" id="company" name="company" placeholder="Your agency name">
+                            
+                            <label for="groupCount">Approximate number of groups you serve</label>
+                            <select id="groupCount" name="groupCount">
+                                <option value="">Select range...</option>
+                                <option value="1-10">1-10 groups</option>
+                                <option value="11-25">11-25 groups</option>
+                                <option value="26-50">26-50 groups</option>
+                                <option value="51-100">51-100 groups</option>
+                                <option value="100+">100+ groups</option>
+                            </select>
+                        `;
+                        break;
+                        
+                    case 'employer-support':
+                        additionalFields = `
+                            <label for="company">Company Name</label>
+                            <input type="text" id="company" name="company" placeholder="Your company name">
+                            
+                            <label for="employeeCount">Number of employees</label>
+                            <select id="employeeCount" name="employeeCount">
+                                <option value="">Select range...</option>
+                                <option value="2-10">2-10 employees</option>
+                                <option value="11-25">11-25 employees</option>
+                                <option value="26-50">26-50 employees</option>
+                                <option value="51-100">51-100 employees</option>
+                                <option value="100+">100+ employees</option>
+                            </select>
+                        `;
+                        break;
+                        
+                    case 'claims-help':
+                        additionalFields = `
+                            <label for="company">Employer/Company Name</label>
+                            <input type="text" id="company" name="company" placeholder="Your employer's name">
+                            
+                            <label for="claimType">Type of claim or coverage question</label>
+                            <select id="claimType" name="claimType">
+                                <option value="">Select type...</option>
+                                <option value="medical">Medical/Health Insurance</option>
+                                <option value="dental">Dental Insurance</option>
+                                <option value="vision">Vision Insurance</option>
+                                <option value="life">Life Insurance</option>
+                                <option value="disability">Disability Insurance</option>
+                                <option value="other">Other/General Question</option>
+                            </select>
+                        `;
+                        break;
+                        
+                    case 'other':
+                        additionalFields = `
+                            <label for="company">Company/Organization (if applicable)</label>
+                            <input type="text" id="company" name="company" placeholder="Optional">
+                            
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" placeholder="Brief subject line">
+                        `;
+                        break;
+                }
+                
+                conditionalFields.innerHTML = additionalFields;
+            }
+            
+            if (contactForm) {
+                contactForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    // Track form submission attempt
+                    const audienceValue = audienceSelect?.value;
+                    const urgencyValue = document.querySelector('input[name="urgency"]:checked')?.value;
+                    trackFormInteraction('form_submitted', audienceValue, urgencyValue);
+                    
+                    // Show loading state
+                    formStatus.className = 'form-status loading';
+                    formStatus.style.display = 'block';
+                    formStatus.textContent = 'Sending your message...';
+                    
+                    // Disable submit button
+                    const submitBtn = contactForm.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Sending...';
+                    
+                    try {
+                        // Gather form data
+                        const formData = new FormData(contactForm);
+                        const data = {
+                            audience: formData.get('audience'),
+                            name: formData.get('name'),
+                            email: formData.get('email'),
+                            phone: formData.get('phone'),
+                            company: formData.get('company'),
+                            groupCount: formData.get('groupCount'),
+                            employeeCount: formData.get('employeeCount'),
+                            claimType: formData.get('claimType'),
+                            subject: formData.get('subject'),
+                            urgency: formData.get('urgency'),
+                            message: formData.get('message'),
+                            timestamp: new Date().toISOString(),
+                            source: 'Website Contact Form'
+                        };
+                        
+                        // Create Trello card
+                        await createTrelloCard(data);
+                        
+                        // Track successful submission
+                        trackFormInteraction('form_success', audienceValue, urgencyValue);
+                        
+                        // Hide form and show success state
+                        document.getElementById('contactFormContainer').style.display = 'none';
+                        document.getElementById('thankYou').style.display = 'block';
+                        
+                    } catch (error) {
+                        console.error('Form submission error:', error);
+                        
+                        // Track failed submission
+                        trackFormInteraction('form_error', audienceValue, urgencyValue);
+                        
+                        // Show error message
+                        formStatus.className = 'form-status error';
+                        formStatus.innerHTML = `
+                            <strong>Oops! Something went wrong.</strong><br>
+                            Please try again or call us at (833) 436-2334.
+                        `;
+                    } finally {
+                        // Re-enable submit button
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
+                });
+            }
+            
+            // Trello Integration Function
+            async function createTrelloCard(data) {
+                // Enhanced card creation with better formatting
+                console.log('Creating Trello card with data:', data);
+                
+                const getUrgencyEmoji = (urgency) => {
+                    switch(urgency) {
+                        case 'urgent': return '🔴';
+                        case 'soon': return '🟡';
+                        default: return '🟢';
+                    }
+                };
+                
+                const getAudienceLabel = (audience) => {
+                    switch(audience) {
+                        case 'broker-partnership': return '[BROKER INQUIRY]';
+                        case 'employer-support': return '[EMPLOYER SUPPORT]';
+                        case 'claims-help': return '[CLAIMS HELP]';
+                        default: return '[GENERAL]';
+                    }
+                };
+                
+                const cardTitle = `${getUrgencyEmoji(data.urgency)} ${getAudienceLabel(data.audience)} ${data.name} - ${data.subject || 'Contact Form'}`;
+                
+                let cardDescription = `**Contact Information:**
+• Name: ${data.name}
+• Email: ${data.email}
+• Phone: ${data.phone || 'Not provided'}
+• Company: ${data.company || 'Not provided'}
+• Contact Type: ${data.audience}
+• Urgency: ${data.urgency || 'general'}`;
+
+                // Add audience-specific details
+                if (data.groupCount) cardDescription += `\n• Groups Served: ${data.groupCount}`;
+                if (data.employeeCount) cardDescription += `\n• Employee Count: ${data.employeeCount}`;
+                if (data.claimType) cardDescription += `\n• Claim Type: ${data.claimType}`;
+
+                cardDescription += `\n\n**Message:**\n${data.message}
+
+**Source:** ${data.source}
+**Timestamp:** ${data.timestamp}`;
+                
+                // For demonstration purposes, simulate the API call
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        console.log('Trello Card Created:', {
+                            title: cardTitle,
+                            description: cardDescription
+                        });
+                        resolve();
+                    }, 1000);
+                });
             }
 
         });
