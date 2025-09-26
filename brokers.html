@@ -46,6 +46,8 @@
             --mbh-muted: #475569;     /* slate-600 */
             --mbh-primary: #00529b;   /* Derived from logo - strong blue */
             --mbh-accent: #0891b2;    /* Complimentary cyan */
+            --mbh-action: #E87A5D;    /* Terracotta for CTAs */
+            --mbh-bg-alt: #F5F5F5;    /* Warm Light Gray */
             --mbh-border: #e2e8f0;    /* slate-200 */
             --mbh-card: #ffffff;
             --header-height: 72px;
@@ -131,6 +133,17 @@
             padding-top: clamp(4rem, 10vw, 6rem);
             padding-bottom: clamp(4rem, 10vw, 6rem);
         }
+        
+        /* Background Utilities */
+        .bg-alt {
+            background-color: var(--mbh-bg-alt);
+        }
+        .bg-gradient-to-alt {
+            background: linear-gradient(to bottom, var(--mbh-bg) 0%, var(--mbh-bg-alt) 100%);
+        }
+        .bg-gradient-to-main {
+            background: linear-gradient(to bottom, var(--mbh-bg-alt) 0%, var(--mbh-bg) 100%);
+        }
 
         .section-hero {
             text-align: center;
@@ -160,6 +173,10 @@
         }
         .btn-primary {
             background-color: var(--mbh-primary);
+            color: var(--mbh-bg);
+        }
+        .btn-action {
+            background-color: var(--mbh-action);
             color: var(--mbh-bg);
         }
         .btn-secondary {
@@ -201,7 +218,7 @@
         }
 
         .logo-link .logo-img {
-            height: 40px; /* Adjust logo height */
+            height: 60px; /* Increased from 40px */
             width: auto;
             display: block;
         }
@@ -405,7 +422,7 @@
 
         /* 6) Footer */
         .site-footer {
-            background-color: #f8fafc; /* slate-50 */
+            background-color: var(--mbh-bg-alt);
             border-top: 1px solid var(--mbh-border);
             padding: 3rem 0;
             color: var(--mbh-muted);
@@ -418,7 +435,7 @@
             text-align: center;
         }
         .footer-logo img {
-            height: 32px;
+            height: 48px; /* Increased from 32px */
             width: auto;
         }
         .footer-text p {
@@ -479,10 +496,7 @@
     <header class="site-header" id="site-header">
         <div class="container header-content">
             <a href="index.html" class="logo-link">
-                <!-- LOGO PLACEHOLDER -->
-                <img src="images/mbh-logo.png" alt="My Benefits Help logo" class="logo-img" 
-                     onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='block';">
-                <span style="display:none; font-family: 'Work Sans', sans-serif; font-weight: 700; font-size: 1.25rem; color: var(--mbh-primary); text-decoration: none;">My Benefits Help</span>
+                <img src="Images/logo-no-tagline.png" alt="My Benefits Help logo" class="logo-img">
             </a>
             <nav aria-label="Main navigation">
                 <ul class="nav-links">
@@ -519,12 +533,12 @@
             <div class="container">
                 <h1 class="animate-on-scroll">Your outsourced account team for small groups.</h1>
                 <p class="subheadline mx-auto animate-on-scroll" style="transition-delay: 100ms;">Lower overhead. Happier clients. No hiring required.</p>
-                <a href="contact.html" class="btn btn-primary mt-4 animate-on-scroll" style="transition-delay: 200ms;">Book a Broker Consult</a>
+                <a href="contact.html" class="btn btn-action mt-4 animate-on-scroll" style="transition-delay: 200ms;">Book a Broker Consult</a>
             </div>
         </section>
 
         <!-- Social Proof Section - Moved Up -->
-        <section>
+        <section class="bg-gradient-to-alt">
             <div class="container">
                 <h2 class="text-center animate-on-scroll">What Brokers Say</h2>
                 <div class="testimonial-grid">
@@ -540,7 +554,7 @@
             </div>
         </section>
 
-        <section style="background-color: #f8fafc;">
+        <section class="bg-alt">
             <div class="container text-center" style="max-width: 800px;">
                 <div class="animate-on-scroll">
                     <h2>The Challenge</h2>
@@ -553,7 +567,7 @@
             </div>
         </section>
 
-        <section>
+        <section class="bg-gradient-to-main">
             <div class="container text-center">
                 <h2 class="animate-on-scroll">How It Works</h2>
                 <div class="how-it-works-grid">
@@ -577,7 +591,7 @@
         </section>
 
         <!-- Services Deep-Dive Section -->
-        <section style="background-color: #f8fafc;">
+        <section class="bg-alt">
             <div class="container">
                 <h2 class="text-center animate-on-scroll">What MBH Actually Does for You</h2>
                 <div class="services-grid">
@@ -614,7 +628,7 @@
                 </div>
             </div>
         </section>
-        <section>
+        <section class="bg-gradient-to-main">
             <div class="container" style="max-width: 900px;">
                 <h2 class="text-center animate-on-scroll">Cost & Value: In-House vs. MBH</h2>
                 <div class="card mt-4 animate-on-scroll">
@@ -636,7 +650,7 @@
         </section>
 
         <!-- Common Objections Section -->
-        <section style="background-color: #f8fafc;">
+        <section class="bg-alt">
             <div class="container">
                 <h2 class="text-center animate-on-scroll">Common Questions from Brokers</h2>
                 <div class="faq-grid">
@@ -660,7 +674,7 @@
             </div>
         </section>
 
-        <section>
+        <section class="bg-gradient-to-main">
             <div class="container text-center">
                 <h2 class="animate-on-scroll">Why Brokers Choose MBH</h2>
                 <div class="how-it-works-grid">
@@ -687,7 +701,7 @@
                     <footer>— Jim Horvat, Broker</footer>
                 </div>
                  <div class="mt-6 text-center animate-on-scroll">
-                    <a href="contact.html" class="btn btn-primary">Book a Broker Consult</a>
+                    <a href="contact.html" class="btn btn-action">Book a Broker Consult</a>
                 </div>
             </div>
         </section>
@@ -700,9 +714,7 @@
         <div class="container footer-container">
             <div class="footer-logo">
                  <a href="index.html">
-                    <!-- LOGO PLACEHOLDER -->
-                    <img src="images/mbh-logo.png" alt="My Benefits Help logo" 
-                         onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML = 'My Benefits Help'">
+                    <img src="Images/logo-no-tagline.png" alt="My Benefits Help logo">
                 </a>
             </div>
             <div class="footer-text">
@@ -780,3 +792,4 @@
 
 </body>
 </html>
+
