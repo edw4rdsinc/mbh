@@ -46,6 +46,8 @@
             --mbh-muted: #475569;     /* slate-600 */
             --mbh-primary: #00529b;   /* Derived from logo - strong blue */
             --mbh-accent: #0891b2;    /* Complimentary cyan */
+            --mbh-action: #E87A5D;    /* Terracotta for CTAs */
+            --mbh-bg-alt: #F5F5F5;    /* Warm Light Gray */
             --mbh-border: #e2e8f0;    /* slate-200 */
             --mbh-card: #ffffff;
             --header-height: 72px;
@@ -131,6 +133,17 @@
             padding-top: clamp(4rem, 10vw, 6rem);
             padding-bottom: clamp(4rem, 10vw, 6rem);
         }
+        
+        /* Background Utilities */
+        .bg-alt {
+            background-color: var(--mbh-bg-alt);
+        }
+        .bg-gradient-to-alt {
+            background: linear-gradient(to bottom, var(--mbh-bg) 0%, var(--mbh-bg-alt) 100%);
+        }
+        .bg-gradient-to-main {
+            background: linear-gradient(to bottom, var(--mbh-bg-alt) 0%, var(--mbh-bg) 100%);
+        }
 
         .section-hero {
             text-align: center;
@@ -160,6 +173,10 @@
         }
         .btn-primary {
             background-color: var(--mbh-primary);
+            color: var(--mbh-bg);
+        }
+        .btn-action {
+            background-color: var(--mbh-action);
             color: var(--mbh-bg);
         }
         .btn-secondary {
@@ -201,7 +218,7 @@
         }
 
         .logo-link .logo-img {
-            height: 40px; /* Adjust logo height */
+            height: 60px; /* Increased from 40px */
             width: auto;
             display: block;
         }
@@ -308,6 +325,7 @@
             margin-bottom: 1.5rem;
             border-bottom: 2px solid var(--mbh-border);
             padding-bottom: 0.5rem;
+            color: var(--mbh-primary);
         }
         .resource-links {
             display: flex;
@@ -320,29 +338,35 @@
             border: 1px solid var(--mbh-border);
             border-radius: 0.5rem;
             transition: background-color 0.2s, border-color 0.2s;
+            background-color: var(--mbh-card);
         }
         .resource-links a:hover {
             background-color: #f8fafc; /* slate-50 */
             border-color: var(--mbh-primary);
             text-decoration: none;
         }
+        
+        .quick-access-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
         @media (min-width: 768px) {
             .resource-hub {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
             }
         }
         @media (min-width: 1024px) {
             .resource-hub {
-                grid-template-columns: repeat(4, 1fr);
-            }
-            .resource-hub .resource-category:first-child {
-                grid-column: span 4;
+                grid-template-columns: repeat(3, 1fr);
             }
         }
 
         /* 6) Footer */
         .site-footer {
-            background-color: #f8fafc; /* slate-50 */
+            background-color: var(--mbh-bg-alt);
             border-top: 1px solid var(--mbh-border);
             padding: 3rem 0;
             color: var(--mbh-muted);
@@ -355,7 +379,7 @@
             text-align: center;
         }
         .footer-logo img {
-            height: 32px;
+            height: 48px; /* Increased from 32px */
             width: auto;
         }
         .footer-text p {
@@ -416,10 +440,7 @@
     <header class="site-header" id="site-header">
         <div class="container header-content">
             <a href="index.html" class="logo-link">
-                <!-- LOGO PLACEHOLDER -->
-                <img src="images/mbh-logo.png" alt="My Benefits Help logo" class="logo-img" 
-                     onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='block';">
-                <span style="display:none; font-family: 'Work Sans', sans-serif; font-weight: 700; font-size: 1.25rem; color: var(--mbh-primary); text-decoration: none;">My Benefits Help</span>
+                <img src="Images/logo-no-tagline.png" alt="My Benefits Help logo" class="logo-img">
             </a>
             <nav aria-label="Main navigation">
                 <ul class="nav-links">
@@ -459,22 +480,23 @@
             </div>
         </section>
 
-        <section>
+        <section class="bg-gradient-to-alt">
             <div class="container">
-                <div class="resource-hub">
-                    <div class="resource-category animate-on-scroll">
-                        <h3>Quick Access Buttons</h3>
-                        <div class="resource-links" style="flex-direction: row; flex-wrap: wrap;">
-                            <!-- TODO: replace with live URL -->
-                            <a href="#todo-enrollment-guide" class="btn btn-secondary">📄 Enrollment Guide</a>
-                            <!-- TODO: replace with live URL -->
-                            <a href="#todo-life-event" class="btn btn-secondary">🔄 Life Event Change Form</a>
-                            <!-- TODO: replace with live URL -->
-                            <a href="#todo-claims" class="btn btn-secondary">🩺 Claims Support Request</a>
-                            <!-- TODO: replace with live URL -->
-                            <a href="contact.html" class="btn btn-secondary">☎ Contact MBH Support</a>
-                        </div>
+                 <div class="text-center animate-on-scroll">
+                    <h2>Quick Access</h2>
+                     <div class="quick-access-buttons mt-4">
+                        <!-- TODO: replace with live URL -->
+                        <a href="#todo-enrollment-guide" class="btn btn-secondary">📄 Enrollment Guide</a>
+                        <!-- TODO: replace with live URL -->
+                        <a href="#todo-life-event" class="btn btn-secondary">🔄 Life Event Change Form</a>
+                        <!-- TODO: replace with live URL -->
+                        <a href="#todo-claims" class="btn btn-secondary">🩺 Claims Support Request</a>
+                        <!-- TODO: replace with live URL -->
+                        <a href="contact.html" class="btn btn-action">☎ Contact MBH Support</a>
                     </div>
+                </div>
+
+                <div class="resource-hub mt-6">
                     <div class="resource-category animate-on-scroll" style="transition-delay: 100ms;">
                         <h3>For Employees</h3>
                         <div class="resource-links">
@@ -512,12 +534,6 @@
                             <a href="#todo-mbh-contacts">MBH Contact Directory</a>
                         </div>
                     </div>
-                     <div class="resource-category animate-on-scroll" style="transition-delay: 400ms;">
-                        <h3>Need Something Else?</h3>
-                        <div class="resource-links">
-                             <a href="contact.html">📩 Contact MBH Support</a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -529,9 +545,7 @@
         <div class="container footer-container">
             <div class="footer-logo">
                  <a href="index.html">
-                    <!-- LOGO PLACEHOLDER -->
-                    <img src="images/mbh-logo.png" alt="My Benefits Help logo" 
-                         onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML = 'My Benefits Help'">
+                    <img src="Images/logo-no-tagline.png" alt="My Benefits Help logo">
                 </a>
             </div>
             <div class="footer-text">
@@ -609,3 +623,4 @@
 
 </body>
 </html>
+
