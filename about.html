@@ -176,14 +176,14 @@
             background-color: var(--mbh-primary);
             color: var(--mbh-bg);
         }
+        .btn-action {
+            background-color: var(--mbh-action);
+            color: var(--mbh-bg);
+        }
         .btn-secondary {
             background-color: transparent;
             color: var(--mbh-primary);
             border-color: var(--mbh-border);
-        }
-        .btn-action {
-            background-color: var(--mbh-action);
-            color: var(--mbh-bg);
         }
 
         .card {
@@ -219,7 +219,7 @@
         }
 
         .logo-link .logo-img {
-            height: 60px; /* Adjust logo height */
+            height: 60px; /* Increased from 40px */
             width: auto;
             display: block;
         }
@@ -322,10 +322,13 @@
             gap: 2rem;
             margin-top: 3rem;
         }
-        .team-card .photo-placeholder {
+        .team-card {
+            text-align: center;
+        }
+        .team-card img {
             width: 100%;
             aspect-ratio: 1 / 1;
-            background-color: #f1f5f9; /* slate-100 */
+            object-fit: cover;
             border-radius: 0.75rem;
             margin-bottom: 1rem;
         }
@@ -335,6 +338,11 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
         }
+        .team-card p {
+            font-size: 0.9rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
         @media (min-width: 640px) {
             .team-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -342,7 +350,7 @@
         }
         @media (min-width: 1024px) {
             .team-grid {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(3, 1fr); /* Changed to 3 for better spacing */
             }
         }
         
@@ -382,7 +390,7 @@
             text-align: center;
         }
         .footer-logo img {
-            height: 48px;
+            height: 48px; /* Increased from 32px */
             width: auto;
         }
         .footer-text p {
@@ -486,16 +494,13 @@
         <section class="bg-gradient-to-alt">
             <div class="container text-center" style="max-width: 800px;">
                 <div class="animate-on-scroll">
-                    <h2>MBH was built to make benefits simple, responsive, and human.</h2>
-            
-                </div>
-                <div class="animate-on-scroll mt-6">
-                    <h2>Why Our Team Matters</h2>
-                    <p class="mx-auto">We listen first, provide clear answers, and follow through until it’s resolved.</p>
-                </div>
-                 <div class="animate-on-scroll mt-6">
-                    <h2>Nationwide Support</h2>
-                    <p class="mx-auto">We support clients and employees across the country.</p>
+                    <h2>Our Mission: Simple, Human-Centered Benefits, Nationwide</h2>
+                    <p class="mx-auto mt-4" style="font-size: 1.1rem;">
+                        MBH was built on a simple premise: benefits should be easy to understand and accessible to everyone. We achieve this by focusing on what truly matters: <strong>listening first, providing clear answers, and following through until every issue is resolved.</strong>
+                    </p>
+                    <p class="mx-auto">
+                        From anywhere in the country, we provide the responsive, human-centered support that your clients and employees deserve.
+                    </p>
                 </div>
             </div>
         </section>
@@ -505,31 +510,31 @@
                 <h2 class="text-center animate-on-scroll">Meet the Team</h2>
                 <div class="team-grid">
                     <div class="team-card animate-on-scroll">
-                        <img src="Images/jennifer.jpg" alt="Jennifer McNutt Leonard headshot" style="width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 0.75rem; margin-bottom: 1rem;">
+                        <img src="Images/jennifer.jpg" alt="Jennifer McNutt Leonard headshot">
                         <h4>Jennifer McNutt Leonard</h4>
                         <div class="role">CEO & Director of Operations</div>
                         <p>With more than 20 years industry experience as a broker, and carrier representative, Jennifer understands the importance of providing Industry Partners & Clients a high-level of service. She is determined to succeed in our mission of enhancing the employee benefits experience through consistent service & support.</p>
                     </div>
                     <div class="team-card animate-on-scroll" style="transition-delay: 100ms;">
-                        <img src="Images/nicole.jpg" alt="Nicole Bass headshot" style="width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 0.75rem; margin-bottom: 1rem;">
+                        <img src="Images/nicole.jpg" alt="Nicole Bass headshot">
                         <h4>Nicole Bass</h4>
                         <div class="role">VP - Sales & Marketing</div>
                         <p>With more than 10 years of industry experience & serving as a Senior Sales Consultant for a leading supplemental benefits carrier, Nicole is excited to leverage her skills & network with MBH. She has an enthusiasm for forming strategic partnerships and maintaining strong client relationships through a high-level of customer service and support.</p>
                     </div>
                     <div class="team-card animate-on-scroll" style="transition-delay: 200ms;">
-                        <img src="Images/jeanne-headshot.png" alt="Jeanne Church-Erhardt headshot" style="width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 0.75rem; margin-bottom: 1rem;">
+                        <img src="Images/jeanne-headshot.png" alt="Jeanne Church-Erhardt headshot">
                         <h4>Jeanne Church-Erhardt</h4>
                         <div class="role">Account Relationship Manager</div>
                         <p>Having over 35 years of experience in benefits administration with groups from 2-8,000 employees, Jeanne has a wealth of information and expertise in ongoing business operations; billing, service operations, and claims.</p>
                     </div>
                     <div class="team-card animate-on-scroll" style="transition-delay: 300ms;">
-                        <img src="Images/amy.png" alt="Amy Orak headshot" style="width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 0.75rem; margin-bottom: 1rem;">
+                        <img src="Images/amy.png" alt="Amy Orak headshot">
                         <h4>Amy Orak</h4>
                         <div class="role">Account Implementation & Relationship Manager</div>
                         <p>With a background in education, Amy enjoys helping our payroll contacts and insureds to better understand the value of their overall employee benefits solution. She supports both account implementation and relationship management.</p>
                     </div>
                     <div class="team-card animate-on-scroll" style="transition-delay: 400ms;">
-                        <div class="photo-placeholder" aria-hidden="true"></div>
+                        <img src="Images/mike-headshot.png" alt="Mike Leonard headshot">
                         <h4>Mike Leonard</h4>
                         <div class="role">Internal Account Executive</div>
                         <p>With over 20 years of Sales & Account Management experience, Mike knows how important ease of doing business is to our Industry Partners & Employers. He strives to implement, and improve processes, keeping that in mind.</p>
@@ -639,6 +644,4 @@
 
 </body>
 </html>
-
-
 
