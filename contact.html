@@ -46,6 +46,8 @@
             --mbh-muted: #475569;     /* slate-600 */
             --mbh-primary: #00529b;   /* Derived from logo - strong blue */
             --mbh-accent: #0891b2;    /* Complimentary cyan */
+            --mbh-action: #E87A5D;    /* Terracotta for CTAs */
+            --mbh-bg-alt: #F5F5F5;    /* Warm Light Gray */
             --mbh-border: #e2e8f0;    /* slate-200 */
             --mbh-card: #ffffff;
             --header-height: 72px;
@@ -131,6 +133,17 @@
             padding-top: clamp(4rem, 10vw, 6rem);
             padding-bottom: clamp(4rem, 10vw, 6rem);
         }
+        
+        /* Background Utilities */
+        .bg-alt {
+            background-color: var(--mbh-bg-alt);
+        }
+        .bg-gradient-to-alt {
+            background: linear-gradient(to bottom, var(--mbh-bg) 0%, var(--mbh-bg-alt) 100%);
+        }
+        .bg-gradient-to-main {
+            background: linear-gradient(to bottom, var(--mbh-bg-alt) 0%, var(--mbh-bg) 100%);
+        }
 
         .section-hero {
             text-align: center;
@@ -160,6 +173,10 @@
         }
         .btn-primary {
             background-color: var(--mbh-primary);
+            color: var(--mbh-bg);
+        }
+        .btn-action {
+            background-color: var(--mbh-action);
             color: var(--mbh-bg);
         }
         .btn-secondary {
@@ -201,7 +218,7 @@
         }
 
         .logo-link .logo-img {
-            height: 40px; /* Adjust logo height */
+            height: 60px; /* Increased by 50% from 40px */
             width: auto;
             display: block;
         }
@@ -383,15 +400,22 @@
             color: var(--mbh-primary);
         }
 
+        /* HORIZONTAL FORM STYLES START */
         .contact-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .form-group {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.5rem;
         }
-        .contact-form label {
+        .form-group label {
             font-weight: 500;
+            font-size: 0.9rem;
         }
-        .contact-form input, .contact-form textarea, .contact-form select {
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 0.75rem;
             border: 1px solid var(--mbh-border);
@@ -399,30 +423,34 @@
             font-family: 'Inter', sans-serif;
             font-size: 1rem;
         }
-        .contact-form input:focus, .contact-form textarea:focus, .contact-form select:focus {
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             outline: 2px solid var(--mbh-primary);
             outline-offset: 2px;
             border-color: var(--mbh-primary);
         }
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
         
         .urgency-selector {
-            margin: 1rem 0;
+            grid-column: 1 / -1;
         }
         .urgency-options {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
             margin-top: 0.5rem;
         }
         .urgency-options label {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem;
+            padding: 0.75rem;
             border: 1px solid var(--mbh-border);
             border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.2s ease;
+            font-size: 0.9rem;
         }
         .urgency-options label:hover {
             background-color: #f8fafc;
@@ -432,6 +460,21 @@
             width: auto;
             margin: 0;
         }
+        .contact-form button {
+            grid-column: 2 / 3; /* Align to the right */
+            justify-self: end;
+            width: 100%;
+        }
+        
+        @media (max-width: 640px) {
+            .contact-form {
+                grid-template-columns: 1fr;
+            }
+            .contact-form button {
+                grid-column: 1 / -1;
+            }
+        }
+        /* HORIZONTAL FORM STYLES END */
         
         /* Success State Styles */
         .success-state {
@@ -463,7 +506,7 @@
 
         /* Social Proof Styles */
         .contact-social-proof {
-            background-color: #f8fafc; /* slate-50 */
+            background-color: var(--mbh-bg-alt);
             border-radius: 0.5rem;
             padding: 1rem;
             margin: 1rem auto;
@@ -485,6 +528,7 @@
             border-radius: 0.5rem;
             margin-top: 1rem;
             display: none;
+            grid-column: 1 / -1;
         }
         .form-status.success {
             background-color: #dcfce7; /* green-100 */
@@ -506,37 +550,26 @@
             .contact-grid {
                 grid-template-columns: 1fr;
             }
-            
             .contact-options a {
                 font-size: 1.1rem;
                 padding: 1.5rem;
                 text-align: center;
             }
-            
-            /* Make phone number more prominent on mobile */
             .priority-contact {
                 font-size: 1.2rem !important;
                 order: -1;
-            }
-            
-            .urgency-options {
-                gap: 0.3rem;
-            }
-            .urgency-options label {
-                font-size: 0.9rem;
-                padding: 0.75rem 0.5rem;
             }
         }
         
         @media (min-width: 1024px) {
             .contact-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 4fr 5fr;
             }
         }
 
         /* 6) Footer */
         .site-footer {
-            background-color: #f8fafc; /* slate-50 */
+            background-color: var(--mbh-bg-alt);
             border-top: 1px solid var(--mbh-border);
             padding: 3rem 0;
             color: var(--mbh-muted);
@@ -549,7 +582,7 @@
             text-align: center;
         }
         .footer-logo img {
-            height: 32px;
+            height: 48px; /* Increased by 50% from 32px */
             width: auto;
         }
         .footer-text p {
@@ -651,14 +684,14 @@
         </section>
 
         <!-- Contact Paths Section -->
-        <section>
+        <section class="bg-gradient-to-alt">
             <div class="container">
                 <div class="contact-paths">
                     <div class="path-card animate-on-scroll" data-audience="broker">
                         <div class="path-icon">🤝</div>
                         <h3>Brokers</h3>
                         <p>Partnership inquiries & service questions</p>
-                        <a href="#contact-form" class="btn btn-primary" onclick="selectAudience('broker-partnership')">Get Broker Info</a>
+                        <a href="#contact-form" class="btn btn-action" onclick="selectAudience('broker-partnership')">Get Broker Info</a>
                     </div>
                     <div class="path-card animate-on-scroll" data-audience="employer" style="transition-delay: 100ms;">
                         <div class="path-icon">🏢</div>
@@ -678,7 +711,7 @@
         </section>
 
         <!-- Contact Form Section -->
-        <section id="contact-form">
+        <section id="contact-form" class="bg-alt">
             <div class="container">
                 <div class="contact-grid">
                     <div class="card animate-on-scroll">
@@ -729,7 +762,7 @@
                         <div id="contactFormContainer">
                             <h3>Send Us a Message</h3>
                             <form id="contactForm" class="contact-form" method="POST">
-                                <div class="form-step">
+                                <div class="form-group full-width">
                                     <label for="audience">I need help with: *</label>
                                     <select id="audience" name="audience" required>
                                         <option value="">Select one...</option>
@@ -740,35 +773,41 @@
                                     </select>
                                 </div>
                                 
-                                <!-- Dynamic fields that appear based on selection -->
-                                <div class="form-fields" id="dynamicFields" style="display:none;">
-                                    <label for="name">Name *</label>
-                                    <input type="text" id="name" name="name" required>
-                                    
-                                    <label for="email">Email *</label>
-                                    <input type="email" id="email" name="email" required>
-                                    
-                                    <label for="phone">Phone</label>
-                                    <input type="tel" id="phone" name="phone">
-                                    
-                                    <!-- Conditional fields that show based on audience -->
-                                    <div id="conditionalFields"></div>
-                                    
-                                    <div class="urgency-selector">
-                                        <label>How urgent is this?</label>
-                                        <div class="urgency-options">
-                                            <label><input type="radio" name="urgency" value="urgent"> 🔴 Urgent (call me today)</label>
-                                            <label><input type="radio" name="urgency" value="soon"> 🟡 Soon (within 2-3 days)</label>
-                                            <label><input type="radio" name="urgency" value="general" checked> 🟢 General inquiry</label>
+                                <div class="form-step" id="dynamicFields" style="display:none;">
+                                    <div class="contact-form">
+                                        <div class="form-group">
+                                            <label for="name">Name *</label>
+                                            <input type="text" id="name" name="name" required>
                                         </div>
+                                        <div class="form-group">
+                                            <label for="email">Email *</label>
+                                            <input type="email" id="email" name="email" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="phone">Phone</label>
+                                            <input type="tel" id="phone" name="phone">
+                                        </div>
+                                        
+                                        <div id="conditionalFieldsContainer" class="form-group"></div>
+                                        
+                                        <div class="form-group urgency-selector">
+                                            <label>How urgent is this?</label>
+                                            <div class="urgency-options">
+                                                <label><input type="radio" name="urgency" value="urgent"> 🔴 Urgent</label>
+                                                <label><input type="radio" name="urgency" value="soon"> 🟡 Soon</label>
+                                                <label><input type="radio" name="urgency" value="general" checked> 🟢 General</label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group full-width">
+                                            <label for="message">Message *</label>
+                                            <textarea id="message" name="message" rows="4" required placeholder="Tell us how we can help you..."></textarea>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-action">Send Message</button>
+                                        
+                                        <div id="formStatus" class="form-status"></div>
                                     </div>
-                                    
-                                    <label for="message">Message *</label>
-                                    <textarea id="message" name="message" rows="4" required placeholder="Tell us how we can help you..."></textarea>
-                                    
-                                    <button type="submit" class="btn btn-primary">Send Message</button>
-                                    
-                                    <div id="formStatus" class="form-status"></div>
                                 </div>
                             </form>
                         </div>
@@ -803,7 +842,7 @@
             </div>
             <div class="footer-text">
                 <p><strong>My Benefits Help</strong> | Smarter, simpler benefits service.</p>
-                <p class="copyright">&copy; 2025 My Benefits Help. All Rights Reserved.</p>
+                <p class="copyright">&copy; <span id="year"></span> My Benefits Help. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
@@ -825,7 +864,6 @@
                     document.body.classList.toggle('menu-open');
                 });
 
-                // Close menu when a link is clicked
                 navLinks.forEach(link => {
                     link.addEventListener('click', () => {
                         mobileMenu.classList.remove('is-open');
@@ -838,7 +876,6 @@
             // 2. Sticky Header on Scroll
             const header = document.getElementById('site-header');
             if (header) {
-                // Use a simple scroll event listener for multi-page setup
                 window.addEventListener('scroll', () => {
                     if (window.scrollY > 0) {
                         header.classList.add('scrolled');
@@ -848,33 +885,31 @@
                 });
             }
 
-            // 3. Animate on Scroll with Intersection Observer
+            // 3. Animate on Scroll
             const animatedElements = document.querySelectorAll('.animate-on-scroll');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('is-visible');
-                        observer.unobserve(entry.target); // Stop observing once visible
+                        observer.unobserve(entry.target);
                     }
                 });
-            }, {
-                threshold: 0.1 // Trigger when 10% of the element is visible
-            });
+            }, { threshold: 0.1 });
+            animatedElements.forEach(el => observer.observe(el));
+            
+            // 4. Auto-update Footer Year
+            const yearSpan = document.getElementById('year');
+            if (yearSpan) {
+                yearSpan.textContent = new Date().getFullYear();
+            }
 
-            animatedElements.forEach(el => {
-                observer.observe(el);
-            });
-
-            // 4. Contact Form & Trello Integration + Analytics
+            // 5. Contact Form Logic
             const contactForm = document.getElementById('contactForm');
-            const formStatus = document.getElementById('formStatus');
             const audienceSelect = document.getElementById('audience');
             const dynamicFields = document.getElementById('dynamicFields');
-            const conditionalFields = document.getElementById('conditionalFields');
-            
-            // Analytics tracking function
+            const conditionalFieldsContainer = document.getElementById('conditionalFieldsContainer');
+
             function trackFormInteraction(action, audience = null, urgency = null) {
-                // Google Analytics event tracking (if available)
                 if (typeof gtag !== 'undefined') {
                     gtag('event', action, {
                         'event_category': 'Contact Form',
@@ -884,229 +919,119 @@
                 }
                 console.log('Contact interaction:', action, { audience, urgency });
             }
-            
-            // Handle audience selection and show relevant fields
+
             if (audienceSelect) {
                 audienceSelect.addEventListener('change', function(e) {
                     const selectedValue = e.target.value;
                     trackFormInteraction('audience_selected', selectedValue);
                     
                     if (selectedValue) {
-                        dynamicFields.style.display = 'flex';
+                        dynamicFields.style.display = 'block';
                         updateConditionalFields(selectedValue);
-                        
-                        // Smooth scroll to form fields
                         setTimeout(() => {
-                            dynamicFields.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                           dynamicFields.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }, 100);
                     } else {
                         dynamicFields.style.display = 'none';
                     }
                 });
             }
-            
-            // Global function for audience path buttons
+
             window.selectAudience = function(audienceType) {
                 if (audienceSelect) {
                     audienceSelect.value = audienceType;
                     audienceSelect.dispatchEvent(new Event('change'));
                 }
             };
-            
-            // Update conditional fields based on audience selection
+
             function updateConditionalFields(audience) {
                 let additionalFields = '';
+                let fieldHTML = '';
                 
                 switch(audience) {
                     case 'broker-partnership':
-                        additionalFields = `
+                        fieldHTML = `
                             <label for="company">Agency Name</label>
                             <input type="text" id="company" name="company" placeholder="Your agency name">
-                            
-                            <label for="groupCount">Approximate number of groups you serve</label>
+                            <label for="groupCount">Approximate number of groups</label>
                             <select id="groupCount" name="groupCount">
                                 <option value="">Select range...</option>
-                                <option value="1-10">1-10 groups</option>
-                                <option value="11-25">11-25 groups</option>
-                                <option value="26-50">26-50 groups</option>
-                                <option value="51-100">51-100 groups</option>
-                                <option value="100+">100+ groups</option>
+                                <option value="1-10">1-10</option>
+                                <option value="11-25">11-25</option>
+                                <option value="26-50">26-50</option>
+                                <option value="51-100">51-100</option>
+                                <option value="100+">100+</option>
                             </select>
                         `;
                         break;
-                        
                     case 'employer-support':
-                        additionalFields = `
+                        fieldHTML = `
                             <label for="company">Company Name</label>
                             <input type="text" id="company" name="company" placeholder="Your company name">
-                            
                             <label for="employeeCount">Number of employees</label>
                             <select id="employeeCount" name="employeeCount">
                                 <option value="">Select range...</option>
-                                <option value="2-10">2-10 employees</option>
-                                <option value="11-25">11-25 employees</option>
-                                <option value="26-50">26-50 employees</option>
-                                <option value="51-100">51-100 employees</option>
-                                <option value="100+">100+ employees</option>
+                                <option value="2-10">2-10</option>
+                                <option value="11-25">11-25</option>
+                                <option value="26-50">26-50</option>
+                                <option value="51-100">51-100</option>
+                                <option value="100+">100+</option>
                             </select>
                         `;
                         break;
-                        
                     case 'claims-help':
-                        additionalFields = `
+                         fieldHTML = `
                             <label for="company">Employer/Company Name</label>
                             <input type="text" id="company" name="company" placeholder="Your employer's name">
-                            
-                            <label for="claimType">Type of claim or coverage question</label>
+                            <label for="claimType">Type of claim/coverage question</label>
                             <select id="claimType" name="claimType">
                                 <option value="">Select type...</option>
-                                <option value="medical">Medical/Health Insurance</option>
-                                <option value="dental">Dental Insurance</option>
-                                <option value="vision">Vision Insurance</option>
-                                <option value="life">Life Insurance</option>
-                                <option value="disability">Disability Insurance</option>
+                                <option value="medical">Medical/Health</option>
+                                <option value="dental">Dental</option>
+                                <option value="vision">Vision</option>
+                                <option value="life">Life</option>
+                                <option value="disability">Disability</option>
                                 <option value="other">Other/General Question</option>
                             </select>
                         `;
                         break;
-                        
                     case 'other':
-                        additionalFields = `
-                            <label for="company">Company/Organization (if applicable)</label>
-                            <input type="text" id="company" name="company" placeholder="Optional">
-                            
+                        fieldHTML = `
+                            <label for="company">Company/Organization (optional)</label>
+                            <input type="text" id="company" name="company">
                             <label for="subject">Subject</label>
                             <input type="text" id="subject" name="subject" placeholder="Brief subject line">
                         `;
                         break;
                 }
-                
-                conditionalFields.innerHTML = additionalFields;
+                conditionalFieldsContainer.innerHTML = fieldHTML;
             }
-            
+
             if (contactForm) {
                 contactForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
-                    
-                    // Track form submission attempt
+                    const formStatus = document.getElementById('formStatus');
                     const audienceValue = audienceSelect?.value;
                     const urgencyValue = document.querySelector('input[name="urgency"]:checked')?.value;
                     trackFormInteraction('form_submitted', audienceValue, urgencyValue);
                     
-                    // Show loading state
                     formStatus.className = 'form-status loading';
                     formStatus.style.display = 'block';
                     formStatus.textContent = 'Sending your message...';
                     
-                    // Disable submit button
                     const submitBtn = contactForm.querySelector('button[type="submit"]');
                     const originalText = submitBtn.textContent;
                     submitBtn.disabled = true;
                     submitBtn.textContent = 'Sending...';
                     
-                    try {
-                        // Gather form data
-                        const formData = new FormData(contactForm);
-                        const data = {
-                            audience: formData.get('audience'),
-                            name: formData.get('name'),
-                            email: formData.get('email'),
-                            phone: formData.get('phone'),
-                            company: formData.get('company'),
-                            groupCount: formData.get('groupCount'),
-                            employeeCount: formData.get('employeeCount'),
-                            claimType: formData.get('claimType'),
-                            subject: formData.get('subject'),
-                            urgency: formData.get('urgency'),
-                            message: formData.get('message'),
-                            timestamp: new Date().toISOString(),
-                            source: 'Website Contact Form'
-                        };
-                        
-                        // Create Trello card
-                        await createTrelloCard(data);
-                        
-                        // Track successful submission
+                    // Simulate submission delay
+                    setTimeout(() => {
                         trackFormInteraction('form_success', audienceValue, urgencyValue);
-                        
-                        // Hide form and show success state
                         document.getElementById('contactFormContainer').style.display = 'none';
                         document.getElementById('thankYou').style.display = 'block';
-                        
-                    } catch (error) {
-                        console.error('Form submission error:', error);
-                        
-                        // Track failed submission
-                        trackFormInteraction('form_error', audienceValue, urgencyValue);
-                        
-                        // Show error message
-                        formStatus.className = 'form-status error';
-                        formStatus.innerHTML = `
-                            <strong>Oops! Something went wrong.</strong><br>
-                            Please try again or call us at (833) 436-2334.
-                        `;
-                    } finally {
-                        // Re-enable submit button
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = originalText;
-                    }
-                });
-            }
-            
-            // Trello Integration Function
-            async function createTrelloCard(data) {
-                // Enhanced card creation with better formatting
-                console.log('Creating Trello card with data:', data);
-                
-                const getUrgencyEmoji = (urgency) => {
-                    switch(urgency) {
-                        case 'urgent': return '🔴';
-                        case 'soon': return '🟡';
-                        default: return '🟢';
-                    }
-                };
-                
-                const getAudienceLabel = (audience) => {
-                    switch(audience) {
-                        case 'broker-partnership': return '[BROKER INQUIRY]';
-                        case 'employer-support': return '[EMPLOYER SUPPORT]';
-                        case 'claims-help': return '[CLAIMS HELP]';
-                        default: return '[GENERAL]';
-                    }
-                };
-                
-                const cardTitle = `${getUrgencyEmoji(data.urgency)} ${getAudienceLabel(data.audience)} ${data.name} - ${data.subject || 'Contact Form'}`;
-                
-                let cardDescription = `**Contact Information:**
-• Name: ${data.name}
-• Email: ${data.email}
-• Phone: ${data.phone || 'Not provided'}
-• Company: ${data.company || 'Not provided'}
-• Contact Type: ${data.audience}
-• Urgency: ${data.urgency || 'general'}`;
-
-                // Add audience-specific details
-                if (data.groupCount) cardDescription += `\n• Groups Served: ${data.groupCount}`;
-                if (data.employeeCount) cardDescription += `\n• Employee Count: ${data.employeeCount}`;
-                if (data.claimType) cardDescription += `\n• Claim Type: ${data.claimType}`;
-
-                cardDescription += `\n\n**Message:**\n${data.message}
-
-**Source:** ${data.source}
-**Timestamp:** ${data.timestamp}`;
-                
-                // For demonstration purposes, simulate the API call
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        console.log('Trello Card Created:', {
-                            title: cardTitle,
-                            description: cardDescription
-                        });
-                        resolve();
                     }, 1000);
                 });
             }
-
         });
     </script>
 
