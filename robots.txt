@@ -1,0 +1,7 @@
+# robots.txt for mybenefitshelp.net
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://www.mybenefitshelp.net/sitemap.xml
