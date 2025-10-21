@@ -47,8 +47,10 @@ export default async function handler(req, res) {
     `;
     
     // Use Resend to send the email
+    // NOTE: Update the 'from' address to use your verified domain in Resend
+    // Example: 'Contact Form <noreply@mybenefitshelp.net>' after domain verification
     const { data, error } = await resend.emails.send({
-      from: 'Contact Form <onboarding@resend.dev>', // Required by Resend, can be a non-reply address
+      from: process.env.RESEND_FROM_EMAIL || 'Contact Form <noreply@mybenefitshelp.net>',
       to: ['info@mybenefitshelp.net'], // The destination address
       subject: subject,
       html: emailBody,

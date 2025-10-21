@@ -1,16 +1,19 @@
 {
-  "name": "my-benefits-help-contact-form",
+  "name": "my-benefits-help-website",
   "version": "1.0.0",
-  "description": "Serverless function to handle the contact form for My Benefits Help.",
-  "main": "index.js",
+  "description": "My Benefits Help - Professional benefits administration service website",
   "scripts": {
+    "dev": "python3 -m http.server 8000",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["benefits", "administration", "insurance", "cobra"],
+  "author": "My Benefits Help",
+  "license": "UNLICENSED",
+  "private": true,
   "dependencies": {
     "resend": "^3.2.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.4"
   }
 }
-

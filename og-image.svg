@@ -1,0 +1,44 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#F5F5F5"/>
+
+  <!-- Gradient overlay -->
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00529b;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#0891b2;stop-opacity:0.1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grad)"/>
+
+  <!-- Main content container -->
+  <g>
+    <!-- Company name -->
+    <text x="600" y="240" font-family="Work Sans, sans-serif" font-size="72" font-weight="700" fill="#00529b" text-anchor="middle">
+      My Benefits Help
+    </text>
+
+    <!-- Tagline -->
+    <text x="600" y="320" font-family="Inter, sans-serif" font-size="36" fill="#475569" text-anchor="middle">
+      Smarter, simpler benefits service
+    </text>
+
+    <!-- Divider line -->
+    <line x1="400" y1="370" x2="800" y2="370" stroke="#E87A5D" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Sub-description -->
+    <text x="600" y="440" font-family="Inter, sans-serif" font-size="28" fill="#475569" text-anchor="middle">
+      Serving brokers, employers, and employees
+    </text>
+
+    <!-- Website URL -->
+    <text x="600" y="520" font-family="Inter, sans-serif" font-size="24" font-weight="600" fill="#0891b2" text-anchor="middle">
+      www.mybenefitshelp.net
+    </text>
+  </g>
+
+  <!-- Decorative elements -->
+  <circle cx="150" cy="100" r="60" fill="#00529b" opacity="0.08"/>
+  <circle cx="1050" cy="530" r="80" fill="#E87A5D" opacity="0.08"/>
+  <circle cx="1100" cy="100" r="50" fill="#0891b2" opacity="0.08"/>
+</svg>
