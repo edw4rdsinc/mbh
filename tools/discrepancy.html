@@ -82,12 +82,6 @@
             border-left: 1px solid var(--mbh-border);
         }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
         .user-email {
             font-size: 0.875rem;
             color: var(--mbh-muted);
@@ -119,7 +113,40 @@
             margin-bottom: 1.5rem;
         }
 
-        /* Two-column upload */
+        /* Phase indicator */
+        .phase-indicator {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .phase-step {
+            flex: 1;
+            padding: 0.75rem;
+            background: var(--mbh-bg-alt);
+            border-radius: 0.5rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--mbh-muted);
+            position: relative;
+        }
+
+        .phase-step.active {
+            background: var(--mbh-primary);
+            color: white;
+        }
+
+        .phase-step.completed {
+            background: var(--mbh-success);
+            color: white;
+        }
+
+        .phase-step .step-num {
+            font-weight: 700;
+            display: block;
+        }
+
+        /* Upload */
         .upload-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -127,9 +154,7 @@
         }
 
         @media (max-width: 700px) {
-            .upload-grid {
-                grid-template-columns: 1fr;
-            }
+            .upload-grid { grid-template-columns: 1fr; }
         }
 
         .upload-box {
@@ -138,19 +163,11 @@
             padding: 2rem 1.5rem;
             text-align: center;
             background: var(--mbh-bg-alt);
-            transition: all 0.2s;
             cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .upload-box:hover {
-            border-color: var(--mbh-primary);
-        }
-
-        .upload-box.drag-over {
-            border-color: var(--mbh-primary);
-            background: #eff6ff;
-        }
-
+        .upload-box:hover { border-color: var(--mbh-primary); }
         .upload-box.has-file {
             border-style: solid;
             border-color: var(--mbh-success);
@@ -163,22 +180,11 @@
             color: var(--mbh-primary);
         }
 
-        .upload-box p {
-            font-size: 0.85rem;
-            color: var(--mbh-muted);
-        }
+        .upload-box p { font-size: 0.85rem; color: var(--mbh-muted); }
+        .upload-box .file-name { font-weight: 600; color: var(--mbh-success); margin-top: 0.5rem; }
+        .upload-box input[type="file"] { display: none; }
 
-        .upload-box .file-name {
-            font-weight: 600;
-            color: var(--mbh-success);
-            margin-top: 0.5rem;
-        }
-
-        .upload-box input[type="file"] {
-            display: none;
-        }
-
-        /* Column mapping section */
+        /* Mapping */
         .mapping-section {
             display: none;
             margin-top: 1.5rem;
@@ -186,15 +192,8 @@
             border-top: 1px solid var(--mbh-border);
         }
 
-        .mapping-section.visible {
-            display: block;
-        }
-
-        .mapping-section h3 {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            color: var(--mbh-primary);
-        }
+        .mapping-section.visible { display: block; }
+        .mapping-section h3 { font-size: 1.1rem; margin-bottom: 1rem; color: var(--mbh-primary); }
 
         .mapping-grid {
             display: grid;
@@ -208,11 +207,7 @@
             border-radius: 0.5rem;
         }
 
-        .mapping-group h4 {
-            font-size: 0.9rem;
-            margin-bottom: 0.75rem;
-            color: var(--mbh-fg);
-        }
+        .mapping-group h4 { font-size: 0.9rem; margin-bottom: 0.75rem; }
 
         .mapping-row {
             display: flex;
@@ -221,20 +216,13 @@
             margin-bottom: 0.5rem;
         }
 
-        .mapping-row label {
-            font-size: 0.8rem;
-            color: var(--mbh-muted);
-            width: 100px;
-            flex-shrink: 0;
-        }
-
+        .mapping-row label { font-size: 0.8rem; color: var(--mbh-muted); width: 100px; }
         .mapping-row select {
             flex: 1;
             padding: 0.4rem 0.5rem;
             border: 1px solid var(--mbh-border);
             border-radius: 0.25rem;
             font-size: 0.85rem;
-            background: var(--mbh-bg);
         }
 
         /* Buttons */
@@ -252,57 +240,19 @@
             transition: all 0.2s;
         }
 
-        .btn-primary {
-            background: var(--mbh-action);
-            color: white;
-        }
+        .btn-primary { background: var(--mbh-action); color: white; }
+        .btn-primary:hover:not(:disabled) { background: #d66a4d; }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-secondary { background: var(--mbh-bg); color: var(--mbh-fg); border: 1px solid var(--mbh-border); }
+        .btn-success { background: var(--mbh-success); color: white; }
+        .btn-success:hover { background: #16a34a; }
 
-        .btn-primary:hover:not(:disabled) {
-            background: #d66a4d;
-        }
+        .actions { margin-top: 1.5rem; display: flex; gap: 1rem; }
 
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background: var(--mbh-bg);
-            color: var(--mbh-fg);
-            border: 1px solid var(--mbh-border);
-        }
-
-        .btn-secondary:hover {
-            background: var(--mbh-bg-alt);
-        }
-
-        .btn-success {
-            background: var(--mbh-success);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #16a34a;
-        }
-
-        .actions {
-            margin-top: 1.5rem;
-            display: flex;
-            gap: 1rem;
-        }
-
-        /* Results */
-        .results-section {
-            display: none;
-        }
-
-        .results-section.visible {
-            display: block;
-        }
-
+        /* Summary */
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 1rem;
             margin-bottom: 1.5rem;
         }
@@ -314,52 +264,19 @@
             text-align: center;
         }
 
-        .summary-item .value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--mbh-primary);
-        }
+        .summary-item .value { font-size: 1.5rem; font-weight: 700; color: var(--mbh-primary); }
+        .summary-item .label { font-size: 0.75rem; color: var(--mbh-muted); margin-top: 0.25rem; }
+        .summary-item.success .value { color: var(--mbh-success); }
+        .summary-item.warning .value { color: var(--mbh-warning); }
+        .summary-item.error .value { color: var(--mbh-error); }
 
-        .summary-item .label {
-            font-size: 0.8rem;
-            color: var(--mbh-muted);
-            margin-top: 0.25rem;
-        }
+        /* Review sections */
+        .review-section { display: none; }
+        .review-section.visible { display: block; }
+        .review-section h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .review-section .description { font-size: 0.9rem; color: var(--mbh-muted); margin-bottom: 1rem; }
 
-        .summary-item.success .value {
-            color: var(--mbh-success);
-        }
-
-        .summary-item.warning .value {
-            color: var(--mbh-warning);
-        }
-
-        .summary-item.error .value {
-            color: var(--mbh-error);
-        }
-
-        /* Fuzzy matches review */
-        .fuzzy-section {
-            display: none;
-            margin-top: 1.5rem;
-        }
-
-        .fuzzy-section.visible {
-            display: block;
-        }
-
-        .fuzzy-section h3 {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .fuzzy-section .description {
-            font-size: 0.9rem;
-            color: var(--mbh-muted);
-            margin-bottom: 1rem;
-        }
-
-        .fuzzy-match {
+        .review-item {
             border: 1px solid var(--mbh-border);
             border-radius: 0.5rem;
             padding: 1rem;
@@ -370,118 +287,39 @@
             gap: 1rem;
         }
 
-        .fuzzy-match.approved {
-            border-color: var(--mbh-success);
-            background: #f0fdf4;
-        }
+        .review-item.approved { border-color: var(--mbh-success); background: #f0fdf4; }
+        .review-item.rejected { border-color: var(--mbh-error); background: #fef2f2; }
 
-        .fuzzy-match.rejected {
-            border-color: var(--mbh-error);
-            background: #fef2f2;
-        }
+        .review-info { flex: 1; }
+        .review-names { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .review-names .arrow { color: var(--mbh-muted); }
+        .review-details { font-size: 0.85rem; color: var(--mbh-muted); }
+        .review-score { font-weight: 600; color: var(--mbh-warning); }
 
-        .fuzzy-info {
-            flex: 1;
-        }
-
-        .fuzzy-names {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .fuzzy-names .arrow {
-            color: var(--mbh-muted);
-        }
-
-        .fuzzy-details {
-            font-size: 0.85rem;
-            color: var(--mbh-muted);
-        }
-
-        .fuzzy-score {
-            font-weight: 600;
-            color: var(--mbh-warning);
-        }
-
-        .fuzzy-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .fuzzy-actions button {
+        .review-actions { display: flex; gap: 0.5rem; }
+        .review-actions button {
             padding: 0.4rem 0.75rem;
             font-size: 0.8rem;
             border-radius: 0.25rem;
             cursor: pointer;
             border: 1px solid;
         }
+        .review-actions .approve { background: var(--mbh-success); color: white; border-color: var(--mbh-success); }
+        .review-actions .reject { background: var(--mbh-bg); color: var(--mbh-error); border-color: var(--mbh-error); }
 
-        .fuzzy-actions .approve {
-            background: var(--mbh-success);
-            color: white;
-            border-color: var(--mbh-success);
+        /* Premium review specific */
+        .premium-details {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: var(--mbh-bg-alt);
+            border-radius: 0.25rem;
         }
 
-        .fuzzy-actions .reject {
-            background: var(--mbh-bg);
-            color: var(--mbh-error);
-            border-color: var(--mbh-error);
-        }
+        .premium-details .products { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem; }
+        .premium-details .products div { font-size: 0.8rem; }
 
-        /* Status */
-        .status-message {
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            display: none;
-        }
-
-        .status-message.visible {
-            display: block;
-        }
-
-        .status-message.loading {
-            background: #eff6ff;
-            color: var(--mbh-primary);
-        }
-
-        .status-message.success {
-            background: #f0fdf4;
-            color: #166534;
-        }
-
-        .status-message.error {
-            background: #fef2f2;
-            color: #dc2626;
-        }
-
-        /* Download section */
-        .download-section {
-            display: none;
-            text-align: center;
-            padding: 2rem;
-            background: #f0fdf4;
-            border-radius: 0.5rem;
-        }
-
-        .download-section.visible {
-            display: block;
-        }
-
-        .download-section h3 {
-            color: var(--mbh-success);
-            margin-bottom: 0.5rem;
-        }
-
-        .download-section p {
-            color: var(--mbh-muted);
-            margin-bottom: 1rem;
-        }
-
-        /* Approve all button */
+        /* Bulk actions */
         .bulk-actions {
             display: flex;
             justify-content: space-between;
@@ -492,10 +330,36 @@
             border-radius: 0.5rem;
         }
 
-        .bulk-actions span {
-            font-size: 0.9rem;
-            color: var(--mbh-muted);
+        .bulk-actions span { font-size: 0.9rem; color: var(--mbh-muted); }
+
+        /* Status */
+        .status-message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: none;
         }
+
+        .status-message.visible { display: block; }
+        .status-message.loading { background: #eff6ff; color: var(--mbh-primary); }
+        .status-message.success { background: #f0fdf4; color: #166534; }
+        .status-message.error { background: #fef2f2; color: #dc2626; }
+
+        /* Download */
+        .download-section {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            background: #f0fdf4;
+            border-radius: 0.5rem;
+        }
+
+        .download-section.visible { display: block; }
+        .download-section h3 { color: var(--mbh-success); margin-bottom: 0.5rem; }
+        .download-section p { color: var(--mbh-muted); margin-bottom: 1rem; }
+
+        /* Hidden sections */
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -509,16 +373,33 @@
             </a>
             <span class="header-title">Discrepancy Analyzer</span>
         </div>
-        <div class="header-right">
-            <span class="user-email" id="userEmail"></span>
-        </div>
+        <span class="user-email" id="userEmail"></span>
     </header>
 
     <main class="main">
-        <!-- Upload Section -->
+        <!-- Phase Indicator -->
+        <div class="phase-indicator" id="phaseIndicator">
+            <div class="phase-step active" id="phase1Step">
+                <span class="step-num">1</span>
+                Upload & Name Matching
+            </div>
+            <div class="phase-step" id="phase2Step">
+                <span class="step-num">2</span>
+                Premium Review
+            </div>
+            <div class="phase-step" id="phase3Step">
+                <span class="step-num">3</span>
+                Download Report
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="status-message" id="statusMessage"></div>
+
+        <!-- Phase 1: Upload -->
         <div class="card" id="uploadCard">
             <h2>Upload Files</h2>
-            <p class="description">Compare carrier data with payroll data to find discrepancies, mismatches, and missing employees.</p>
+            <p class="description">Compare carrier data with payroll data to find discrepancies.</p>
 
             <div class="upload-grid">
                 <div class="upload-box" id="carrierUpload">
@@ -535,7 +416,6 @@
                 </div>
             </div>
 
-            <!-- Column Mapping -->
             <div class="mapping-section" id="mappingSection">
                 <h3>Column Mapping</h3>
                 <div class="mapping-grid">
@@ -577,64 +457,90 @@
             </div>
         </div>
 
-        <!-- Status -->
-        <div class="status-message" id="statusMessage"></div>
-
-        <!-- Results Section -->
-        <div class="card results-section" id="resultsCard">
-            <h2>Analysis Results</h2>
+        <!-- Phase 1 Results: Name Review -->
+        <div class="card hidden" id="nameReviewCard">
+            <h2>Phase 1: Name Matching</h2>
 
             <div class="summary-grid">
                 <div class="summary-item success">
-                    <div class="value" id="perfectMatchCount">0</div>
-                    <div class="label">Perfect Matches</div>
+                    <div class="value" id="exactMatchCount">0</div>
+                    <div class="label">Exact Matches</div>
+                </div>
+                <div class="summary-item success">
+                    <div class="value" id="learnedMatchCount">0</div>
+                    <div class="label">Learned Matches</div>
                 </div>
                 <div class="summary-item warning">
                     <div class="value" id="fuzzyMatchCount">0</div>
-                    <div class="label">Fuzzy Matches</div>
-                </div>
-                <div class="summary-item error">
-                    <div class="value" id="discrepancyCount">0</div>
-                    <div class="label">Premium Discrepancies</div>
+                    <div class="label">Need Review</div>
                 </div>
                 <div class="summary-item">
-                    <div class="value" id="missingPayrollCount">0</div>
-                    <div class="label">Missing from Payroll</div>
+                    <div class="value" id="unmatchedCarrierCount">0</div>
+                    <div class="label">Carrier Only</div>
                 </div>
                 <div class="summary-item">
-                    <div class="value" id="missingCarrierCount">0</div>
-                    <div class="label">Missing from Carrier</div>
+                    <div class="value" id="unmatchedPayrollCount">0</div>
+                    <div class="label">Payroll Only</div>
                 </div>
             </div>
 
-            <!-- Fuzzy Matches Review -->
-            <div class="fuzzy-section" id="fuzzySection">
-                <h3>Review Fuzzy Matches</h3>
-                <p class="description">These names are similar but not exact. Approve matches or reject to mark as missing.</p>
+            <div class="review-section" id="fuzzyReviewSection">
+                <h3>Review Fuzzy Name Matches</h3>
+                <p class="description">These names are similar but not exact. Approved matches will be remembered for future runs.</p>
 
                 <div class="bulk-actions">
-                    <span id="fuzzyProgress">0 of 0 reviewed</span>
+                    <span id="nameProgress">0 of 0 reviewed</span>
                     <div>
-                        <button class="btn btn-secondary" id="rejectAllBtn">Reject All</button>
-                        <button class="btn btn-success" id="approveAllBtn">Approve All</button>
+                        <button class="btn btn-secondary" id="rejectAllNamesBtn">Reject All</button>
+                        <button class="btn btn-success" id="approveAllNamesBtn">Approve All</button>
                     </div>
                 </div>
 
                 <div id="fuzzyList"></div>
+            </div>
 
-                <div class="actions">
-                    <button class="btn btn-primary" id="generateReportBtn" disabled>Generate Report</button>
+            <div class="actions">
+                <button class="btn btn-primary" id="submitNamesBtn">Continue to Premium Review</button>
+            </div>
+        </div>
+
+        <!-- Phase 2: Premium Review -->
+        <div class="card hidden" id="premiumReviewCard">
+            <h2>Phase 2: Premium Discrepancies</h2>
+
+            <div class="summary-grid">
+                <div class="summary-item success">
+                    <div class="value" id="perfectMatchCount">0</div>
+                    <div class="label">Premiums Match</div>
+                </div>
+                <div class="summary-item error">
+                    <div class="value" id="discrepancyCount">0</div>
+                    <div class="label">Discrepancies</div>
                 </div>
             </div>
 
-            <!-- No fuzzy matches - direct download -->
-            <div class="actions" id="directDownloadSection" style="display: none;">
-                <button class="btn btn-primary" id="downloadDirectBtn">Download Report</button>
+            <div class="review-section visible" id="premiumReviewSection">
+                <h3>Review Premium Differences</h3>
+                <p class="description">These employees have matching names but different premium amounts. Acknowledge expected differences or leave for investigation.</p>
+
+                <div class="bulk-actions">
+                    <span id="premiumProgress">0 of 0 reviewed</span>
+                    <div>
+                        <button class="btn btn-secondary" id="leaveAllUnresolvedBtn">Leave All Unresolved</button>
+                        <button class="btn btn-success" id="acknowledgeAllBtn">Acknowledge All</button>
+                    </div>
+                </div>
+
+                <div id="premiumList"></div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" id="submitPremiumsBtn">Generate Report</button>
             </div>
         </div>
 
         <!-- Download Section -->
-        <div class="download-section" id="downloadSection">
+        <div class="card download-section" id="downloadSection">
             <h3>Report Ready!</h3>
             <p id="downloadFileName"></p>
             <button class="btn btn-success" id="downloadBtn">Download Excel Report</button>
@@ -652,11 +558,11 @@
         let accessToken = null;
         let carrierFile = null;
         let payrollFile = null;
-        let carrierHeaders = [];
-        let payrollHeaders = [];
         let sessionId = null;
         let fuzzyMatches = [];
-        let fuzzyDecisions = [];
+        let nameDecisions = [];
+        let premiumDiscrepancies = [];
+        let premiumDecisions = [];
 
         // Initialize
         async function init() {
@@ -676,43 +582,22 @@
 
         function setupEventListeners() {
             // File uploads
-            const carrierUpload = document.getElementById('carrierUpload');
-            const payrollUpload = document.getElementById('payrollUpload');
-            const carrierInput = document.getElementById('carrierFile');
-            const payrollInput = document.getElementById('payrollFile');
-
-            carrierUpload.addEventListener('click', () => carrierInput.click());
-            payrollUpload.addEventListener('click', () => payrollInput.click());
-
-            carrierInput.addEventListener('change', (e) => handleFileSelect(e, 'carrier'));
-            payrollInput.addEventListener('change', (e) => handleFileSelect(e, 'payroll'));
-
-            // Drag and drop
-            [carrierUpload, payrollUpload].forEach((zone, i) => {
-                const type = i === 0 ? 'carrier' : 'payroll';
-                zone.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    zone.classList.add('drag-over');
-                });
-                zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-                zone.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    zone.classList.remove('drag-over');
-                    if (e.dataTransfer.files.length) {
-                        handleFileSelect({ target: { files: e.dataTransfer.files } }, type);
-                    }
-                });
-            });
+            document.getElementById('carrierUpload').addEventListener('click', () => document.getElementById('carrierFile').click());
+            document.getElementById('payrollUpload').addEventListener('click', () => document.getElementById('payrollFile').click());
+            document.getElementById('carrierFile').addEventListener('change', (e) => handleFileSelect(e, 'carrier'));
+            document.getElementById('payrollFile').addEventListener('change', (e) => handleFileSelect(e, 'payroll'));
 
             // Buttons
             document.getElementById('analyzeBtn').addEventListener('click', analyzeFiles);
-            document.getElementById('approveAllBtn').addEventListener('click', () => bulkDecision(true));
-            document.getElementById('rejectAllBtn').addEventListener('click', () => bulkDecision(false));
-            document.getElementById('generateReportBtn').addEventListener('click', generateReport);
-            document.getElementById('downloadDirectBtn').addEventListener('click', generateReportDirect);
+            document.getElementById('approveAllNamesBtn').addEventListener('click', () => bulkNameDecision(true));
+            document.getElementById('rejectAllNamesBtn').addEventListener('click', () => bulkNameDecision(false));
+            document.getElementById('submitNamesBtn').addEventListener('click', submitNameDecisions);
+            document.getElementById('acknowledgeAllBtn').addEventListener('click', () => bulkPremiumDecision(true));
+            document.getElementById('leaveAllUnresolvedBtn').addEventListener('click', () => bulkPremiumDecision(false));
+            document.getElementById('submitPremiumsBtn').addEventListener('click', submitPremiumDecisions);
         }
 
-        async function handleFileSelect(e, type) {
+        function handleFileSelect(e, type) {
             const file = e.target.files[0];
             if (!file) return;
 
@@ -720,53 +605,32 @@
                 carrierFile = file;
                 document.getElementById('carrierUpload').classList.add('has-file');
                 document.getElementById('carrierFileName').textContent = file.name;
-                carrierHeaders = await parseHeaders(file);
             } else {
                 payrollFile = file;
                 document.getElementById('payrollUpload').classList.add('has-file');
                 document.getElementById('payrollFileName').textContent = file.name;
-                payrollHeaders = await parseHeaders(file);
             }
 
-            updateAnalyzeButton();
-
-            if (carrierHeaders.length && payrollHeaders.length) {
-                showColumnMapping();
+            document.getElementById('analyzeBtn').disabled = !(carrierFile && payrollFile);
+            if (carrierFile && payrollFile) {
+                document.getElementById('mappingSection').classList.add('visible');
             }
-        }
-
-        async function parseHeaders(file) {
-            // We'll get headers from the API response
-            // For now, return empty - the API will provide them
-            return [];
-        }
-
-        function updateAnalyzeButton() {
-            const btn = document.getElementById('analyzeBtn');
-            btn.disabled = !(carrierFile && payrollFile);
-        }
-
-        function showColumnMapping() {
-            // We'll populate dropdowns after analysis returns headers
-            document.getElementById('mappingSection').classList.add('visible');
         }
 
         function populateDropdowns(carrierHeaders, payrollHeaders) {
             const carrierSelects = ['carrierLastName', 'carrierFirstName', 'carrierPremium'];
             const payrollSelects = ['payrollLastName', 'payrollFirstName', 'payrollPremium'];
 
-            // Carrier defaults
             const carrierDefaults = {
-                carrierLastName: ['LAST', 'Last Name', 'LastName', 'last'],
-                carrierFirstName: ['FIRST', 'First Name', 'FirstName', 'first'],
-                carrierPremium: ['Monthly', 'Premium', 'Amount', 'Total']
+                carrierLastName: ['LAST', 'Last Name', 'LastName'],
+                carrierFirstName: ['FIRST', 'First Name', 'FirstName'],
+                carrierPremium: ['Monthly', 'Premium', 'Amount']
             };
 
-            // Payroll defaults
             const payrollDefaults = {
-                payrollLastName: ['Last', 'Last Name', 'LastName', 'LAST'],
-                payrollFirstName: ['First', 'First Name', 'FirstName', 'FIRST'],
-                payrollPremium: ['Monthly Premium', 'Premium', 'Amount', 'Deduction']
+                payrollLastName: ['Last', 'Last Name', 'LAST'],
+                payrollFirstName: ['First', 'First Name', 'FIRST'],
+                payrollPremium: ['Monthly Premium', 'Premium', 'Deduction']
             };
 
             carrierSelects.forEach(id => {
@@ -794,6 +658,12 @@
             document.getElementById('statusMessage').classList.remove('visible');
         }
 
+        function setPhase(phase) {
+            document.getElementById('phase1Step').className = 'phase-step' + (phase >= 1 ? (phase > 1 ? ' completed' : ' active') : '');
+            document.getElementById('phase2Step').className = 'phase-step' + (phase >= 2 ? (phase > 2 ? ' completed' : ' active') : '');
+            document.getElementById('phase3Step').className = 'phase-step' + (phase >= 3 ? ' active' : '');
+        }
+
         async function analyzeFiles() {
             if (!carrierFile || !payrollFile) return;
 
@@ -803,7 +673,6 @@
             formData.append('carrierFile', carrierFile);
             formData.append('payrollFile', payrollFile);
 
-            // Get column mapping settings
             const settings = {
                 carrierLastName: document.getElementById('carrierLastName').value || 'LAST',
                 carrierFirstName: document.getElementById('carrierFirstName').value || 'FIRST',
@@ -819,30 +688,24 @@
             try {
                 const response = await fetch(`${API_URL}/api/discrepancy/analyze`, {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    },
+                    headers: { 'Authorization': `Bearer ${accessToken}` },
                     body: formData
                 });
 
                 const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Analysis failed');
 
-                if (!response.ok) {
-                    throw new Error(data.error || 'Analysis failed');
-                }
-
-                // Store session and results
                 sessionId = data.sessionId;
                 fuzzyMatches = data.fuzzyMatches || [];
-                fuzzyDecisions = fuzzyMatches.map(() => null);
+                nameDecisions = fuzzyMatches.map(() => null);
 
-                // Populate column dropdowns with actual headers
+                // Populate dropdowns with actual headers
                 if (data.carrierHeaders && data.payrollHeaders) {
                     populateDropdowns(data.carrierHeaders, data.payrollHeaders);
                 }
 
-                // Show results
-                showResults(data);
+                // Show Phase 1 results
+                showNameReview(data);
                 hideStatus();
 
             } catch (error) {
@@ -850,95 +713,81 @@
             }
         }
 
-        function showResults(data) {
-            document.getElementById('resultsCard').classList.add('visible');
+        function showNameReview(data) {
+            document.getElementById('uploadCard').classList.add('hidden');
+            document.getElementById('nameReviewCard').classList.remove('hidden');
+            setPhase(1);
 
-            // Update summary
-            document.getElementById('perfectMatchCount').textContent = data.perfectMatches;
+            document.getElementById('exactMatchCount').textContent = data.exactMatches;
+            document.getElementById('learnedMatchCount').textContent = data.learnedMatches;
             document.getElementById('fuzzyMatchCount').textContent = fuzzyMatches.length;
-            document.getElementById('discrepancyCount').textContent = data.premiumDiscrepancies;
-            document.getElementById('missingPayrollCount').textContent = data.missingFromPayroll;
-            document.getElementById('missingCarrierCount').textContent = data.missingFromCarrier;
+            document.getElementById('unmatchedCarrierCount').textContent = data.unmatchedCarrier;
+            document.getElementById('unmatchedPayrollCount').textContent = data.unmatchedPayroll;
 
-            // Show fuzzy matches or direct download
             if (fuzzyMatches.length > 0) {
-                showFuzzyMatches();
+                document.getElementById('fuzzyReviewSection').classList.add('visible');
+                renderFuzzyList();
             } else {
-                document.getElementById('directDownloadSection').style.display = 'block';
+                document.getElementById('fuzzyReviewSection').classList.remove('visible');
             }
+
+            updateNameProgress();
         }
 
-        function showFuzzyMatches() {
-            const section = document.getElementById('fuzzySection');
+        function renderFuzzyList() {
             const list = document.getElementById('fuzzyList');
-            section.classList.add('visible');
-
             list.innerHTML = fuzzyMatches.map((match, i) => `
-                <div class="fuzzy-match" id="fuzzy-${i}">
-                    <div class="fuzzy-info">
-                        <div class="fuzzy-names">
+                <div class="review-item" id="name-${i}">
+                    <div class="review-info">
+                        <div class="review-names">
                             <span>${match.carrierName}</span>
                             <span class="arrow">→</span>
                             <span>${match.payrollName}</span>
                         </div>
-                        <div class="fuzzy-details">
-                            Similarity: <span class="fuzzy-score">${match.similarityScore}%</span> |
+                        <div class="review-details">
+                            Similarity: <span class="review-score">${match.similarityScore}%</span> |
                             Carrier: $${match.carrierPremium.toFixed(2)} |
-                            Payroll: $${match.payrollPremium.toFixed(2)} |
-                            Diff: $${match.premiumDiff.toFixed(2)}
+                            Payroll: $${match.payrollPremium.toFixed(2)}
                         </div>
                     </div>
-                    <div class="fuzzy-actions">
-                        <button class="approve" onclick="decideFuzzy(${i}, true)">Approve</button>
-                        <button class="reject" onclick="decideFuzzy(${i}, false)">Reject</button>
+                    <div class="review-actions">
+                        <button class="approve" onclick="decideNameMatch(${i}, true)">Approve</button>
+                        <button class="reject" onclick="decideNameMatch(${i}, false)">Reject</button>
                     </div>
                 </div>
             `).join('');
-
-            updateFuzzyProgress();
         }
 
-        function decideFuzzy(index, approved) {
-            fuzzyDecisions[index] = approved;
-
-            const el = document.getElementById(`fuzzy-${index}`);
+        function decideNameMatch(index, approved) {
+            nameDecisions[index] = approved;
+            const el = document.getElementById(`name-${index}`);
             el.classList.remove('approved', 'rejected');
             el.classList.add(approved ? 'approved' : 'rejected');
-
-            updateFuzzyProgress();
+            updateNameProgress();
         }
 
-        function bulkDecision(approved) {
-            fuzzyDecisions = fuzzyDecisions.map(() => approved);
-
+        function bulkNameDecision(approved) {
+            nameDecisions = nameDecisions.map(() => approved);
             fuzzyMatches.forEach((_, i) => {
-                const el = document.getElementById(`fuzzy-${i}`);
+                const el = document.getElementById(`name-${i}`);
                 el.classList.remove('approved', 'rejected');
                 el.classList.add(approved ? 'approved' : 'rejected');
             });
-
-            updateFuzzyProgress();
+            updateNameProgress();
         }
 
-        function updateFuzzyProgress() {
-            const reviewed = fuzzyDecisions.filter(d => d !== null).length;
-            const total = fuzzyDecisions.length;
-            document.getElementById('fuzzyProgress').textContent = `${reviewed} of ${total} reviewed`;
-
-            const btn = document.getElementById('generateReportBtn');
-            btn.disabled = reviewed < total;
+        function updateNameProgress() {
+            const reviewed = nameDecisions.filter(d => d !== null).length;
+            document.getElementById('nameProgress').textContent = `${reviewed} of ${nameDecisions.length} reviewed`;
         }
 
-        async function generateReport() {
-            showStatus('Generating report...', 'loading');
+        async function submitNameDecisions() {
+            showStatus('Processing name decisions...', 'loading');
 
-            const decisions = fuzzyDecisions.map((approved, index) => ({
-                index,
-                approved
-            }));
+            const decisions = nameDecisions.map((approved, index) => ({ index, approved: approved ?? false }));
 
             try {
-                const response = await fetch(`${API_URL}/api/discrepancy/approve-fuzzy`, {
+                const response = await fetch(`${API_URL}/api/discrepancy/submit-names`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
@@ -948,12 +797,12 @@
                 });
 
                 const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Processing failed');
 
-                if (!response.ok) {
-                    throw new Error(data.error || 'Report generation failed');
-                }
+                premiumDiscrepancies = data.premiumDiscrepancies || [];
+                premiumDecisions = premiumDiscrepancies.map(() => null);
 
-                showDownload(data.fileId, data.fileName);
+                showPremiumReview(data);
                 hideStatus();
 
             } catch (error) {
@@ -961,24 +810,94 @@
             }
         }
 
-        async function generateReportDirect() {
+        function showPremiumReview(data) {
+            document.getElementById('nameReviewCard').classList.add('hidden');
+            document.getElementById('premiumReviewCard').classList.remove('hidden');
+            setPhase(2);
+
+            document.getElementById('perfectMatchCount').textContent = data.perfectMatches;
+            document.getElementById('discrepancyCount').textContent = premiumDiscrepancies.length;
+
+            if (premiumDiscrepancies.length > 0) {
+                renderPremiumList();
+            } else {
+                document.getElementById('premiumReviewSection').innerHTML = '<p>No premium discrepancies found. All matched employees have matching premiums.</p>';
+            }
+
+            updatePremiumProgress();
+        }
+
+        function renderPremiumList() {
+            const list = document.getElementById('premiumList');
+            list.innerHTML = premiumDiscrepancies.map((disc, i) => `
+                <div class="review-item" id="premium-${i}">
+                    <div class="review-info">
+                        <div class="review-names">
+                            <span>${disc.name}</span>
+                            <span style="color: var(--mbh-error); margin-left: 0.5rem;">
+                                $${disc.premiumDiff.toFixed(2)} difference
+                            </span>
+                        </div>
+                        <div class="review-details">
+                            Carrier: $${disc.carrierPremium.toFixed(2)} |
+                            Payroll: $${disc.payrollPremium.toFixed(2)} |
+                            Match: ${disc.matchType}
+                        </div>
+                        <div class="premium-details">
+                            <div class="products">
+                                <div><strong>Carrier:</strong><br>${disc.carrierProducts.join('<br>')}</div>
+                                <div><strong>Payroll:</strong><br>${disc.payrollProducts.join('<br>')}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="review-actions">
+                        <button class="approve" onclick="decidePremium(${i}, true)">Acknowledge</button>
+                        <button class="reject" onclick="decidePremium(${i}, false)">Investigate</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function decidePremium(index, acknowledged) {
+            premiumDecisions[index] = acknowledged;
+            const el = document.getElementById(`premium-${index}`);
+            el.classList.remove('approved', 'rejected');
+            el.classList.add(acknowledged ? 'approved' : 'rejected');
+            updatePremiumProgress();
+        }
+
+        function bulkPremiumDecision(acknowledged) {
+            premiumDecisions = premiumDecisions.map(() => acknowledged);
+            premiumDiscrepancies.forEach((_, i) => {
+                const el = document.getElementById(`premium-${i}`);
+                el.classList.remove('approved', 'rejected');
+                el.classList.add(acknowledged ? 'approved' : 'rejected');
+            });
+            updatePremiumProgress();
+        }
+
+        function updatePremiumProgress() {
+            const reviewed = premiumDecisions.filter(d => d !== null).length;
+            document.getElementById('premiumProgress').textContent = `${reviewed} of ${premiumDecisions.length} reviewed`;
+        }
+
+        async function submitPremiumDecisions() {
             showStatus('Generating report...', 'loading');
 
+            const decisions = premiumDecisions.map((acknowledged, index) => ({ index, acknowledged: acknowledged ?? false }));
+
             try {
-                const response = await fetch(`${API_URL}/api/discrepancy/generate-report`, {
+                const response = await fetch(`${API_URL}/api/discrepancy/submit-premiums`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ sessionId })
+                    body: JSON.stringify({ sessionId, decisions })
                 });
 
                 const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Report generation failed');
-                }
+                if (!response.ok) throw new Error(data.error || 'Report generation failed');
 
                 showDownload(data.fileId, data.fileName);
                 hideStatus();
@@ -989,16 +908,16 @@
         }
 
         function showDownload(fileId, fileName) {
-            document.getElementById('resultsCard').classList.remove('visible');
+            document.getElementById('premiumReviewCard').classList.add('hidden');
             document.getElementById('downloadSection').classList.add('visible');
             document.getElementById('downloadFileName').textContent = fileName;
+            setPhase(3);
 
             document.getElementById('downloadBtn').onclick = () => {
                 window.location.href = `${API_URL}/api/discrepancy/download/${fileId}?token=${accessToken}`;
             };
         }
 
-        // Start
         init();
     </script>
 </body>
