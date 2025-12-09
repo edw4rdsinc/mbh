@@ -383,19 +383,24 @@
             <div class="card upload-section" id="uploadSection">
                 <h2>Reconcile Commissions with Bank Statement</h2>
                 <p class="description">
-                    Compare your extracted commission data with bank deposits to identify
+                    Upload carrier commission PDFs and your bank statement to identify
                     matched deposits, variances, and unmatched items.
                 </p>
-
-                <div class="info-note">
-                    <strong>Tip:</strong> Run State Attribution first to generate the commission data,
-                    then use this tool to reconcile against your bank statement.
-                </div>
 
                 <label for="monthInput" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
                     Select Month
                 </label>
                 <input type="month" id="monthInput" class="month-input">
+
+                <div class="upload-zone" id="commissionZone">
+                    <h3>Commission Statements</h3>
+                    <p>Drag and drop PDF files or click to browse</p>
+                    <button class="btn btn-secondary btn-small" onclick="document.getElementById('commissionInput').click()">
+                        Browse Files
+                    </button>
+                    <input type="file" id="commissionInput" multiple accept=".pdf">
+                    <div id="commissionFiles"></div>
+                </div>
 
                 <div class="upload-zone" id="bankZone">
                     <h3>Bank Statement</h3>
@@ -451,6 +456,7 @@
         let authToken = null;
         let state = {
             month: '',
+            commissionFiles: [],
             bankFile: null
         };
 
@@ -459,6 +465,7 @@
         const appContent = document.getElementById('appContent');
         const userEmailEl = document.getElementById('userEmail');
         const monthInput = document.getElementById('monthInput');
+        const commissionInput = document.getElementById('commissionInput');
         const bankInput = document.getElementById('bankInput');
         const reconcileBtn = document.getElementById('reconcileBtn');
         const uploadSection = document.getElementById('uploadSection');
@@ -505,7 +512,14 @@
                 checkUploadReady();
             });
 
-            setupUploadZone('bankZone', bankInput);
+            setupUploadZone('commissionZone', commissionInput, 'commission');
+            commissionInput.addEventListener('change', (e) => {
+                state.commissionFiles = Array.from(e.target.files);
+                displayFiles('commissionFiles', state.commissionFiles);
+                checkUploadReady();
+            });
+
+            setupUploadZone('bankZone', bankInput, 'bank');
             bankInput.addEventListener('change', (e) => {
                 state.bankFile = e.target.files[0] || null;
                 displayFiles('bankFiles', state.bankFile ? [state.bankFile] : []);
@@ -515,7 +529,7 @@
             reconcileBtn.addEventListener('click', startReconciliation);
         }
 
-        function setupUploadZone(zoneId, input) {
+        function setupUploadZone(zoneId, input, type) {
             const zone = document.getElementById(zoneId);
 
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
@@ -535,8 +549,13 @@
 
             zone.addEventListener('drop', (e) => {
                 const files = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf');
-                state.bankFile = files[0] || null;
-                displayFiles('bankFiles', files.slice(0, 1));
+                if (type === 'commission') {
+                    state.commissionFiles = files;
+                    displayFiles('commissionFiles', files);
+                } else {
+                    state.bankFile = files[0] || null;
+                    displayFiles('bankFiles', files.slice(0, 1));
+                }
                 checkUploadReady();
             });
         }
@@ -561,12 +580,15 @@
         }
 
         function checkUploadReady() {
-            reconcileBtn.disabled = !(state.month && state.bankFile);
+            reconcileBtn.disabled = !(state.month && state.commissionFiles.length > 0 && state.bankFile);
         }
 
         async function startReconciliation() {
             const formData = new FormData();
             formData.append('month', state.month);
+            state.commissionFiles.forEach(file => {
+                formData.append('commission_statements', file);
+            });
             formData.append('bank_statement', state.bankFile);
 
             try {
