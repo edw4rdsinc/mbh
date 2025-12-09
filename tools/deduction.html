@@ -353,6 +353,169 @@
             margin-bottom: 0.25rem;
         }
 
+        /* Settings Section */
+        .settings-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--mbh-border);
+        }
+
+        .settings-section h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--mbh-fg);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--mbh-fg);
+        }
+
+        .form-group select,
+        .form-group input[type="number"] {
+            padding: 0.625rem 0.75rem;
+            border: 1px solid var(--mbh-border);
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            font-family: inherit;
+            background: var(--mbh-bg);
+        }
+
+        .form-group select:focus,
+        .form-group input[type="number"]:focus {
+            outline: none;
+            border-color: var(--mbh-primary);
+            box-shadow: 0 0 0 3px rgba(0, 82, 155, 0.1);
+        }
+
+        .input-with-prefix {
+            display: flex;
+            align-items: stretch;
+        }
+
+        .input-prefix {
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            background: var(--mbh-bg-alt);
+            border: 1px solid var(--mbh-border);
+            border-right: none;
+            border-radius: 0.5rem 0 0 0.5rem;
+            font-size: 0.95rem;
+            color: var(--mbh-muted);
+        }
+
+        .input-with-prefix input {
+            border-radius: 0 0.5rem 0.5rem 0;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .input-suffix {
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            background: var(--mbh-bg-alt);
+            border: 1px solid var(--mbh-border);
+            border-left: none;
+            border-radius: 0 0.5rem 0.5rem 0;
+            font-size: 0.95rem;
+            color: var(--mbh-muted);
+        }
+
+        .input-with-suffix {
+            display: flex;
+            align-items: stretch;
+        }
+
+        .input-with-suffix input {
+            border-radius: 0.5rem 0 0 0.5rem;
+            border-right: none;
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* File list for multiple uploads */
+        .file-list {
+            margin-top: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: var(--mbh-bg-alt);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-item-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .file-item .remove-btn {
+            background: none;
+            border: none;
+            color: var(--mbh-error);
+            cursor: pointer;
+            font-size: 1.25rem;
+            line-height: 1;
+            padding: 0.25rem;
+        }
+
+        .file-item .remove-btn:hover {
+            background: #fef2f2;
+            border-radius: 0.25rem;
+        }
+
+        .add-more-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: none;
+            border: 1px dashed var(--mbh-border);
+            border-radius: 0.5rem;
+            color: var(--mbh-primary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .add-more-btn:hover {
+            border-color: var(--mbh-primary);
+            background: #eff6ff;
+        }
+
+        @media (max-width: 640px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Loading */
         .loading {
             display: flex;
@@ -407,28 +570,71 @@
             <div class="card">
                 <!-- Upload View -->
                 <div id="uploadView">
-                    <h2>Upload CSV File</h2>
+                    <h2>Upload CSV Files</h2>
                     <p class="description">
-                        Upload a carrier CSV file and get back a formatted Excel deduction summary.
+                        Upload one or more carrier CSV files and get back a formatted Excel deduction summary.
                     </p>
 
                     <div class="upload-zone" id="uploadZone">
                         <div class="upload-icon">📄</div>
-                        <h3>Drop CSV file here</h3>
+                        <h3>Drop CSV files here</h3>
                         <p>or click to browse</p>
-                        <input type="file" id="fileInput" accept=".csv">
+                        <input type="file" id="fileInput" accept=".csv" multiple>
                     </div>
 
-                    <div id="fileDisplay" style="display: none; text-align: center;">
-                        <div class="file-name">
-                            <span>📄</span>
-                            <span id="fileName"></span>
-                            <button class="remove-btn" onclick="removeFile()">&times;</button>
+                    <div id="fileListContainer" style="display: none;">
+                        <div class="file-list" id="fileList"></div>
+                        <button type="button" class="add-more-btn" id="addMoreBtn">
+                            + Add more files
+                        </button>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div class="settings-section" id="settingsSection" style="display: none;">
+                        <h3>Deduction Settings</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="deductionFrequency">Deduction Frequency</label>
+                                <select id="deductionFrequency">
+                                    <option value="semi-monthly">Semi-Monthly (2x/month)</option>
+                                    <option value="bi-weekly">Bi-Weekly (26x/year)</option>
+                                    <option value="weekly">Weekly (52x/year)</option>
+                                    <option value="monthly">Monthly (12x/year)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contributionType">Employer Contribution</label>
+                                <select id="contributionType">
+                                    <option value="none">None</option>
+                                    <option value="flat">Flat Amount</option>
+                                    <option value="percentage">Percentage</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row" id="contributionValueRow" style="display: none;">
+                            <div class="form-group" id="flatAmountGroup" style="display: none;">
+                                <label for="flatAmount">Amount per Employee</label>
+                                <div class="input-with-prefix">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="flatAmount" min="0" step="0.01" placeholder="50.00">
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="percentageGroup" style="display: none;">
+                                <label for="percentageAmount">Percentage of Premium</label>
+                                <div class="input-with-suffix">
+                                    <input type="number" id="percentageAmount" min="0" max="100" step="1" placeholder="50">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <button class="btn btn-primary" id="processBtn" disabled>
-                        Process File
+                        Process Files
                     </button>
 
                     <div id="errorMessage"></div>
@@ -436,11 +642,11 @@
                     <div class="info-box">
                         <strong>What this tool does:</strong>
                         <ul>
+                            <li>Combines multiple CSV files into one report</li>
                             <li>Filters out terminated employees</li>
-                            <li>Parses and formats names</li>
-                            <li>Calculates Pre-Tax status by product type</li>
-                            <li>Calculates Semi-Monthly deductions</li>
-                            <li>Groups by payor with subtotals</li>
+                            <li>Calculates employer/employee contributions</li>
+                            <li>Groups by employee with subtotals</li>
+                            <li>Supports flexible deduction frequencies</li>
                             <li>Formats Excel with professional styling</li>
                         </ul>
                     </div>
@@ -491,7 +697,7 @@
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let authToken = null;
-        let selectedFile = null;
+        let selectedFiles = [];
 
         // DOM elements
         const loadingView = document.getElementById('loadingView');
@@ -499,13 +705,24 @@
         const userEmailEl = document.getElementById('userEmail');
         const uploadZone = document.getElementById('uploadZone');
         const fileInput = document.getElementById('fileInput');
-        const fileDisplay = document.getElementById('fileDisplay');
-        const fileNameEl = document.getElementById('fileName');
+        const fileListContainer = document.getElementById('fileListContainer');
+        const fileList = document.getElementById('fileList');
+        const settingsSection = document.getElementById('settingsSection');
+        const addMoreBtn = document.getElementById('addMoreBtn');
         const processBtn = document.getElementById('processBtn');
         const errorMessage = document.getElementById('errorMessage');
         const uploadView = document.getElementById('uploadView');
         const processingView = document.getElementById('processingView');
         const successView = document.getElementById('successView');
+
+        // Settings elements
+        const deductionFrequency = document.getElementById('deductionFrequency');
+        const contributionType = document.getElementById('contributionType');
+        const contributionValueRow = document.getElementById('contributionValueRow');
+        const flatAmountGroup = document.getElementById('flatAmountGroup');
+        const percentageGroup = document.getElementById('percentageGroup');
+        const flatAmount = document.getElementById('flatAmount');
+        const percentageAmount = document.getElementById('percentageAmount');
 
         // Auth check
         async function checkAuth() {
@@ -544,10 +761,13 @@
 
             // File input change
             fileInput.addEventListener('change', (e) => {
-                if (e.target.files[0]) {
-                    selectFile(e.target.files[0]);
+                if (e.target.files.length > 0) {
+                    addFiles(Array.from(e.target.files));
                 }
             });
+
+            // Add more button
+            addMoreBtn.addEventListener('click', () => fileInput.click());
 
             // Drag and drop
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
@@ -566,38 +786,105 @@
             });
 
             uploadZone.addEventListener('drop', (e) => {
-                const file = e.dataTransfer.files[0];
-                if (file && file.name.toLowerCase().endsWith('.csv')) {
-                    selectFile(file);
+                const files = Array.from(e.dataTransfer.files).filter(f =>
+                    f.name.toLowerCase().endsWith('.csv')
+                );
+                if (files.length > 0) {
+                    addFiles(files);
                 } else {
-                    showError('Please upload a CSV file');
+                    showError('Please upload CSV files only');
                 }
             });
 
+            // Contribution type change
+            contributionType.addEventListener('change', updateContributionFields);
+
             // Process button
-            processBtn.addEventListener('click', processFile);
+            processBtn.addEventListener('click', processFiles);
         }
 
-        function selectFile(file) {
-            if (!file.name.toLowerCase().endsWith('.csv')) {
-                showError('Please upload a CSV file');
+        function addFiles(files) {
+            const csvFiles = files.filter(f => f.name.toLowerCase().endsWith('.csv'));
+
+            if (csvFiles.length === 0) {
+                showError('Please upload CSV files only');
                 return;
             }
 
-            selectedFile = file;
-            fileNameEl.textContent = file.name;
-            uploadZone.style.display = 'none';
-            fileDisplay.style.display = 'block';
-            processBtn.disabled = false;
+            // Add to selected files (avoid duplicates by name)
+            csvFiles.forEach(file => {
+                if (!selectedFiles.some(f => f.name === file.name)) {
+                    selectedFiles.push(file);
+                }
+            });
+
+            updateFileList();
             clearError();
         }
 
-        function removeFile() {
-            selectedFile = null;
+        function updateFileList() {
+            if (selectedFiles.length === 0) {
+                uploadZone.style.display = 'block';
+                fileListContainer.style.display = 'none';
+                settingsSection.style.display = 'none';
+                processBtn.disabled = true;
+                return;
+            }
+
+            uploadZone.style.display = 'none';
+            fileListContainer.style.display = 'block';
+            settingsSection.style.display = 'block';
+            processBtn.disabled = false;
+
+            fileList.innerHTML = selectedFiles.map((file, index) => `
+                <div class="file-item">
+                    <span class="file-item-name">
+                        <span>📄</span>
+                        <span>${file.name}</span>
+                    </span>
+                    <button class="remove-btn" onclick="removeFile(${index})">&times;</button>
+                </div>
+            `).join('');
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
             fileInput.value = '';
-            uploadZone.style.display = 'block';
-            fileDisplay.style.display = 'none';
-            processBtn.disabled = true;
+            updateFileList();
+        }
+
+        function updateContributionFields() {
+            const type = contributionType.value;
+
+            if (type === 'none') {
+                contributionValueRow.style.display = 'none';
+                flatAmountGroup.style.display = 'none';
+                percentageGroup.style.display = 'none';
+            } else if (type === 'flat') {
+                contributionValueRow.style.display = 'grid';
+                flatAmountGroup.style.display = 'block';
+                percentageGroup.style.display = 'none';
+            } else if (type === 'percentage') {
+                contributionValueRow.style.display = 'grid';
+                flatAmountGroup.style.display = 'none';
+                percentageGroup.style.display = 'block';
+            }
+        }
+
+        function getSettings() {
+            const settings = {
+                frequency: deductionFrequency.value,
+                contributionType: contributionType.value,
+                contributionValue: 0
+            };
+
+            if (settings.contributionType === 'flat') {
+                settings.contributionValue = parseFloat(flatAmount.value) || 0;
+            } else if (settings.contributionType === 'percentage') {
+                settings.contributionValue = parseFloat(percentageAmount.value) || 0;
+            }
+
+            return settings;
         }
 
         function showError(message) {
@@ -608,8 +895,8 @@
             errorMessage.innerHTML = '';
         }
 
-        async function processFile() {
-            if (!selectedFile) return;
+        async function processFiles() {
+            if (selectedFiles.length === 0) return;
 
             // Show processing view
             uploadView.style.display = 'none';
@@ -617,7 +904,15 @@
 
             try {
                 const formData = new FormData();
-                formData.append('file', selectedFile);
+
+                // Add all files
+                selectedFiles.forEach((file, index) => {
+                    formData.append('files', file);
+                });
+
+                // Add settings
+                const settings = getSettings();
+                formData.append('settings', JSON.stringify(settings));
 
                 const response = await fetch(`${API_BASE}/api/deduction/process`, {
                     method: 'POST',
@@ -654,13 +949,22 @@
         }
 
         function resetForm() {
-            selectedFile = null;
+            selectedFiles = [];
             fileInput.value = '';
             uploadZone.style.display = 'block';
-            fileDisplay.style.display = 'none';
+            fileListContainer.style.display = 'none';
+            settingsSection.style.display = 'none';
             processBtn.disabled = true;
             successView.style.display = 'none';
             uploadView.style.display = 'block';
+
+            // Reset settings
+            deductionFrequency.value = 'semi-monthly';
+            contributionType.value = 'none';
+            flatAmount.value = '';
+            percentageAmount.value = '';
+            updateContributionFields();
+
             clearError();
         }
 
