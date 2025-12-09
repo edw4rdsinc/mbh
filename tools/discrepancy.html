@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../Images/mbh-icon.png">
+    <title>Discrepancy Analyzer | My Benefits Help</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --mbh-bg: #ffffff;
+            --mbh-fg: #0f172a;
+            --mbh-muted: #475569;
+            --mbh-primary: #00529b;
+            --mbh-accent: #0891b2;
+            --mbh-action: #E87A5D;
+            --mbh-bg-alt: #F5F5F5;
+            --mbh-border: #e2e8f0;
+            --mbh-success: #22c55e;
+            --mbh-error: #ef4444;
+            --mbh-warning: #f59e0b;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--mbh-bg);
+            color: var(--mbh-fg);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--mbh-bg);
+            border-bottom: 1px solid var(--mbh-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--mbh-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            color: var(--mbh-primary);
+        }
+
+        .header-title {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1.25rem;
+            color: var(--mbh-fg);
+            padding-left: 1rem;
+            border-left: 1px solid var(--mbh-border);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-email {
+            font-size: 0.875rem;
+            color: var(--mbh-muted);
+        }
+
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .card {
+            background: var(--mbh-bg);
+            border: 1px solid var(--mbh-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card h2 {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1.35rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card .description {
+            color: var(--mbh-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Two-column upload */
+        .upload-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 700px) {
+            .upload-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .upload-box {
+            border: 2px dashed var(--mbh-border);
+            border-radius: 0.75rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            background: var(--mbh-bg-alt);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .upload-box:hover {
+            border-color: var(--mbh-primary);
+        }
+
+        .upload-box.drag-over {
+            border-color: var(--mbh-primary);
+            background: #eff6ff;
+        }
+
+        .upload-box.has-file {
+            border-style: solid;
+            border-color: var(--mbh-success);
+            background: #f0fdf4;
+        }
+
+        .upload-box h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--mbh-primary);
+        }
+
+        .upload-box p {
+            font-size: 0.85rem;
+            color: var(--mbh-muted);
+        }
+
+        .upload-box .file-name {
+            font-weight: 600;
+            color: var(--mbh-success);
+            margin-top: 0.5rem;
+        }
+
+        .upload-box input[type="file"] {
+            display: none;
+        }
+
+        /* Column mapping section */
+        .mapping-section {
+            display: none;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--mbh-border);
+        }
+
+        .mapping-section.visible {
+            display: block;
+        }
+
+        .mapping-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--mbh-primary);
+        }
+
+        .mapping-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .mapping-group {
+            background: var(--mbh-bg-alt);
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .mapping-group h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            color: var(--mbh-fg);
+        }
+
+        .mapping-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mapping-row label {
+            font-size: 0.8rem;
+            color: var(--mbh-muted);
+            width: 100px;
+            flex-shrink: 0;
+        }
+
+        .mapping-row select {
+            flex: 1;
+            padding: 0.4rem 0.5rem;
+            border: 1px solid var(--mbh-border);
+            border-radius: 0.25rem;
+            font-size: 0.85rem;
+            background: var(--mbh-bg);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--mbh-action);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #d66a4d;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--mbh-bg);
+            color: var(--mbh-fg);
+            border: 1px solid var(--mbh-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--mbh-bg-alt);
+        }
+
+        .btn-success {
+            background: var(--mbh-success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #16a34a;
+        }
+
+        .actions {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Results */
+        .results-section {
+            display: none;
+        }
+
+        .results-section.visible {
+            display: block;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-item {
+            background: var(--mbh-bg-alt);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .summary-item .value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--mbh-primary);
+        }
+
+        .summary-item .label {
+            font-size: 0.8rem;
+            color: var(--mbh-muted);
+            margin-top: 0.25rem;
+        }
+
+        .summary-item.success .value {
+            color: var(--mbh-success);
+        }
+
+        .summary-item.warning .value {
+            color: var(--mbh-warning);
+        }
+
+        .summary-item.error .value {
+            color: var(--mbh-error);
+        }
+
+        /* Fuzzy matches review */
+        .fuzzy-section {
+            display: none;
+            margin-top: 1.5rem;
+        }
+
+        .fuzzy-section.visible {
+            display: block;
+        }
+
+        .fuzzy-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .fuzzy-section .description {
+            font-size: 0.9rem;
+            color: var(--mbh-muted);
+            margin-bottom: 1rem;
+        }
+
+        .fuzzy-match {
+            border: 1px solid var(--mbh-border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .fuzzy-match.approved {
+            border-color: var(--mbh-success);
+            background: #f0fdf4;
+        }
+
+        .fuzzy-match.rejected {
+            border-color: var(--mbh-error);
+            background: #fef2f2;
+        }
+
+        .fuzzy-info {
+            flex: 1;
+        }
+
+        .fuzzy-names {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .fuzzy-names .arrow {
+            color: var(--mbh-muted);
+        }
+
+        .fuzzy-details {
+            font-size: 0.85rem;
+            color: var(--mbh-muted);
+        }
+
+        .fuzzy-score {
+            font-weight: 600;
+            color: var(--mbh-warning);
+        }
+
+        .fuzzy-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .fuzzy-actions button {
+            padding: 0.4rem 0.75rem;
+            font-size: 0.8rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            border: 1px solid;
+        }
+
+        .fuzzy-actions .approve {
+            background: var(--mbh-success);
+            color: white;
+            border-color: var(--mbh-success);
+        }
+
+        .fuzzy-actions .reject {
+            background: var(--mbh-bg);
+            color: var(--mbh-error);
+            border-color: var(--mbh-error);
+        }
+
+        /* Status */
+        .status-message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .status-message.visible {
+            display: block;
+        }
+
+        .status-message.loading {
+            background: #eff6ff;
+            color: var(--mbh-primary);
+        }
+
+        .status-message.success {
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .status-message.error {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        /* Download section */
+        .download-section {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            background: #f0fdf4;
+            border-radius: 0.5rem;
+        }
+
+        .download-section.visible {
+            display: block;
+        }
+
+        .download-section h3 {
+            color: var(--mbh-success);
+            margin-bottom: 0.5rem;
+        }
+
+        .download-section p {
+            color: var(--mbh-muted);
+            margin-bottom: 1rem;
+        }
+
+        /* Approve all button */
+        .bulk-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: var(--mbh-bg-alt);
+            border-radius: 0.5rem;
+        }
+
+        .bulk-actions span {
+            font-size: 0.9rem;
+            color: var(--mbh-muted);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <a href="index.html" class="back-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Tools
+            </a>
+            <span class="header-title">Discrepancy Analyzer</span>
+        </div>
+        <div class="header-right">
+            <span class="user-email" id="userEmail"></span>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- Upload Section -->
+        <div class="card" id="uploadCard">
+            <h2>Upload Files</h2>
+            <p class="description">Compare carrier data with payroll data to find discrepancies, mismatches, and missing employees.</p>
+
+            <div class="upload-grid">
+                <div class="upload-box" id="carrierUpload">
+                    <h3>Carrier File</h3>
+                    <p>My Access, Aflac, etc.</p>
+                    <p class="file-name" id="carrierFileName"></p>
+                    <input type="file" id="carrierFile" accept=".xlsx,.xls">
+                </div>
+                <div class="upload-box" id="payrollUpload">
+                    <h3>Payroll File</h3>
+                    <p>Paycom, ADP, etc.</p>
+                    <p class="file-name" id="payrollFileName"></p>
+                    <input type="file" id="payrollFile" accept=".xlsx,.xls">
+                </div>
+            </div>
+
+            <!-- Column Mapping -->
+            <div class="mapping-section" id="mappingSection">
+                <h3>Column Mapping</h3>
+                <div class="mapping-grid">
+                    <div class="mapping-group">
+                        <h4>Carrier Columns</h4>
+                        <div class="mapping-row">
+                            <label>Last Name</label>
+                            <select id="carrierLastName"></select>
+                        </div>
+                        <div class="mapping-row">
+                            <label>First Name</label>
+                            <select id="carrierFirstName"></select>
+                        </div>
+                        <div class="mapping-row">
+                            <label>Premium</label>
+                            <select id="carrierPremium"></select>
+                        </div>
+                    </div>
+                    <div class="mapping-group">
+                        <h4>Payroll Columns</h4>
+                        <div class="mapping-row">
+                            <label>Last Name</label>
+                            <select id="payrollLastName"></select>
+                        </div>
+                        <div class="mapping-row">
+                            <label>First Name</label>
+                            <select id="payrollFirstName"></select>
+                        </div>
+                        <div class="mapping-row">
+                            <label>Premium</label>
+                            <select id="payrollPremium"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" id="analyzeBtn" disabled>Analyze Files</button>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div class="status-message" id="statusMessage"></div>
+
+        <!-- Results Section -->
+        <div class="card results-section" id="resultsCard">
+            <h2>Analysis Results</h2>
+
+            <div class="summary-grid">
+                <div class="summary-item success">
+                    <div class="value" id="perfectMatchCount">0</div>
+                    <div class="label">Perfect Matches</div>
+                </div>
+                <div class="summary-item warning">
+                    <div class="value" id="fuzzyMatchCount">0</div>
+                    <div class="label">Fuzzy Matches</div>
+                </div>
+                <div class="summary-item error">
+                    <div class="value" id="discrepancyCount">0</div>
+                    <div class="label">Premium Discrepancies</div>
+                </div>
+                <div class="summary-item">
+                    <div class="value" id="missingPayrollCount">0</div>
+                    <div class="label">Missing from Payroll</div>
+                </div>
+                <div class="summary-item">
+                    <div class="value" id="missingCarrierCount">0</div>
+                    <div class="label">Missing from Carrier</div>
+                </div>
+            </div>
+
+            <!-- Fuzzy Matches Review -->
+            <div class="fuzzy-section" id="fuzzySection">
+                <h3>Review Fuzzy Matches</h3>
+                <p class="description">These names are similar but not exact. Approve matches or reject to mark as missing.</p>
+
+                <div class="bulk-actions">
+                    <span id="fuzzyProgress">0 of 0 reviewed</span>
+                    <div>
+                        <button class="btn btn-secondary" id="rejectAllBtn">Reject All</button>
+                        <button class="btn btn-success" id="approveAllBtn">Approve All</button>
+                    </div>
+                </div>
+
+                <div id="fuzzyList"></div>
+
+                <div class="actions">
+                    <button class="btn btn-primary" id="generateReportBtn" disabled>Generate Report</button>
+                </div>
+            </div>
+
+            <!-- No fuzzy matches - direct download -->
+            <div class="actions" id="directDownloadSection" style="display: none;">
+                <button class="btn btn-primary" id="downloadDirectBtn">Download Report</button>
+            </div>
+        </div>
+
+        <!-- Download Section -->
+        <div class="download-section" id="downloadSection">
+            <h3>Report Ready!</h3>
+            <p id="downloadFileName"></p>
+            <button class="btn btn-success" id="downloadBtn">Download Excel Report</button>
+        </div>
+    </main>
+
+    <script>
+        // Config
+        const API_URL = 'https://commissions.mbh.edw4rds.com';
+        const SUPABASE_URL = 'https://exzeayeoosiabwhgyquq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4emVheWVvb3NpYWJ3aGd5cXVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzQ3MDksImV4cCI6MjA2OTU1MDcwOX0.FPufOFFPsKEk7ZSWL-JgKXACbq7KgEQmNaAnYeyyXgk';
+
+        // State
+        let supabase;
+        let accessToken = null;
+        let carrierFile = null;
+        let payrollFile = null;
+        let carrierHeaders = [];
+        let payrollHeaders = [];
+        let sessionId = null;
+        let fuzzyMatches = [];
+        let fuzzyDecisions = [];
+
+        // Initialize
+        async function init() {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            accessToken = session.access_token;
+            document.getElementById('userEmail').textContent = session.user.email;
+
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // File uploads
+            const carrierUpload = document.getElementById('carrierUpload');
+            const payrollUpload = document.getElementById('payrollUpload');
+            const carrierInput = document.getElementById('carrierFile');
+            const payrollInput = document.getElementById('payrollFile');
+
+            carrierUpload.addEventListener('click', () => carrierInput.click());
+            payrollUpload.addEventListener('click', () => payrollInput.click());
+
+            carrierInput.addEventListener('change', (e) => handleFileSelect(e, 'carrier'));
+            payrollInput.addEventListener('change', (e) => handleFileSelect(e, 'payroll'));
+
+            // Drag and drop
+            [carrierUpload, payrollUpload].forEach((zone, i) => {
+                const type = i === 0 ? 'carrier' : 'payroll';
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+                zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    if (e.dataTransfer.files.length) {
+                        handleFileSelect({ target: { files: e.dataTransfer.files } }, type);
+                    }
+                });
+            });
+
+            // Buttons
+            document.getElementById('analyzeBtn').addEventListener('click', analyzeFiles);
+            document.getElementById('approveAllBtn').addEventListener('click', () => bulkDecision(true));
+            document.getElementById('rejectAllBtn').addEventListener('click', () => bulkDecision(false));
+            document.getElementById('generateReportBtn').addEventListener('click', generateReport);
+            document.getElementById('downloadDirectBtn').addEventListener('click', generateReportDirect);
+        }
+
+        async function handleFileSelect(e, type) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (type === 'carrier') {
+                carrierFile = file;
+                document.getElementById('carrierUpload').classList.add('has-file');
+                document.getElementById('carrierFileName').textContent = file.name;
+                carrierHeaders = await parseHeaders(file);
+            } else {
+                payrollFile = file;
+                document.getElementById('payrollUpload').classList.add('has-file');
+                document.getElementById('payrollFileName').textContent = file.name;
+                payrollHeaders = await parseHeaders(file);
+            }
+
+            updateAnalyzeButton();
+
+            if (carrierHeaders.length && payrollHeaders.length) {
+                showColumnMapping();
+            }
+        }
+
+        async function parseHeaders(file) {
+            // We'll get headers from the API response
+            // For now, return empty - the API will provide them
+            return [];
+        }
+
+        function updateAnalyzeButton() {
+            const btn = document.getElementById('analyzeBtn');
+            btn.disabled = !(carrierFile && payrollFile);
+        }
+
+        function showColumnMapping() {
+            // We'll populate dropdowns after analysis returns headers
+            document.getElementById('mappingSection').classList.add('visible');
+        }
+
+        function populateDropdowns(carrierHeaders, payrollHeaders) {
+            const carrierSelects = ['carrierLastName', 'carrierFirstName', 'carrierPremium'];
+            const payrollSelects = ['payrollLastName', 'payrollFirstName', 'payrollPremium'];
+
+            // Carrier defaults
+            const carrierDefaults = {
+                carrierLastName: ['LAST', 'Last Name', 'LastName', 'last'],
+                carrierFirstName: ['FIRST', 'First Name', 'FirstName', 'first'],
+                carrierPremium: ['Monthly', 'Premium', 'Amount', 'Total']
+            };
+
+            // Payroll defaults
+            const payrollDefaults = {
+                payrollLastName: ['Last', 'Last Name', 'LastName', 'LAST'],
+                payrollFirstName: ['First', 'First Name', 'FirstName', 'FIRST'],
+                payrollPremium: ['Monthly Premium', 'Premium', 'Amount', 'Deduction']
+            };
+
+            carrierSelects.forEach(id => {
+                const select = document.getElementById(id);
+                select.innerHTML = carrierHeaders.map(h =>
+                    `<option value="${h}" ${carrierDefaults[id]?.some(d => h.toLowerCase().includes(d.toLowerCase())) ? 'selected' : ''}>${h}</option>`
+                ).join('');
+            });
+
+            payrollSelects.forEach(id => {
+                const select = document.getElementById(id);
+                select.innerHTML = payrollHeaders.map(h =>
+                    `<option value="${h}" ${payrollDefaults[id]?.some(d => h.toLowerCase().includes(d.toLowerCase())) ? 'selected' : ''}>${h}</option>`
+                ).join('');
+            });
+        }
+
+        function showStatus(message, type = 'loading') {
+            const el = document.getElementById('statusMessage');
+            el.textContent = message;
+            el.className = `status-message visible ${type}`;
+        }
+
+        function hideStatus() {
+            document.getElementById('statusMessage').classList.remove('visible');
+        }
+
+        async function analyzeFiles() {
+            if (!carrierFile || !payrollFile) return;
+
+            showStatus('Analyzing files...', 'loading');
+
+            const formData = new FormData();
+            formData.append('carrierFile', carrierFile);
+            formData.append('payrollFile', payrollFile);
+
+            // Get column mapping settings
+            const settings = {
+                carrierLastName: document.getElementById('carrierLastName').value || 'LAST',
+                carrierFirstName: document.getElementById('carrierFirstName').value || 'FIRST',
+                carrierPremium: document.getElementById('carrierPremium').value || 'Monthly',
+                payrollLastName: document.getElementById('payrollLastName').value || 'Last',
+                payrollFirstName: document.getElementById('payrollFirstName').value || 'First',
+                payrollPremium: document.getElementById('payrollPremium').value || 'Monthly Premium',
+                premiumTolerance: 0.02,
+                nameMatchThreshold: 80
+            };
+            formData.append('settings', JSON.stringify(settings));
+
+            try {
+                const response = await fetch(`${API_URL}/api/discrepancy/analyze`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Analysis failed');
+                }
+
+                // Store session and results
+                sessionId = data.sessionId;
+                fuzzyMatches = data.fuzzyMatches || [];
+                fuzzyDecisions = fuzzyMatches.map(() => null);
+
+                // Populate column dropdowns with actual headers
+                if (data.carrierHeaders && data.payrollHeaders) {
+                    populateDropdowns(data.carrierHeaders, data.payrollHeaders);
+                }
+
+                // Show results
+                showResults(data);
+                hideStatus();
+
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function showResults(data) {
+            document.getElementById('resultsCard').classList.add('visible');
+
+            // Update summary
+            document.getElementById('perfectMatchCount').textContent = data.perfectMatches;
+            document.getElementById('fuzzyMatchCount').textContent = fuzzyMatches.length;
+            document.getElementById('discrepancyCount').textContent = data.premiumDiscrepancies;
+            document.getElementById('missingPayrollCount').textContent = data.missingFromPayroll;
+            document.getElementById('missingCarrierCount').textContent = data.missingFromCarrier;
+
+            // Show fuzzy matches or direct download
+            if (fuzzyMatches.length > 0) {
+                showFuzzyMatches();
+            } else {
+                document.getElementById('directDownloadSection').style.display = 'block';
+            }
+        }
+
+        function showFuzzyMatches() {
+            const section = document.getElementById('fuzzySection');
+            const list = document.getElementById('fuzzyList');
+            section.classList.add('visible');
+
+            list.innerHTML = fuzzyMatches.map((match, i) => `
+                <div class="fuzzy-match" id="fuzzy-${i}">
+                    <div class="fuzzy-info">
+                        <div class="fuzzy-names">
+                            <span>${match.carrierName}</span>
+                            <span class="arrow">→</span>
+                            <span>${match.payrollName}</span>
+                        </div>
+                        <div class="fuzzy-details">
+                            Similarity: <span class="fuzzy-score">${match.similarityScore}%</span> |
+                            Carrier: $${match.carrierPremium.toFixed(2)} |
+                            Payroll: $${match.payrollPremium.toFixed(2)} |
+                            Diff: $${match.premiumDiff.toFixed(2)}
+                        </div>
+                    </div>
+                    <div class="fuzzy-actions">
+                        <button class="approve" onclick="decideFuzzy(${i}, true)">Approve</button>
+                        <button class="reject" onclick="decideFuzzy(${i}, false)">Reject</button>
+                    </div>
+                </div>
+            `).join('');
+
+            updateFuzzyProgress();
+        }
+
+        function decideFuzzy(index, approved) {
+            fuzzyDecisions[index] = approved;
+
+            const el = document.getElementById(`fuzzy-${index}`);
+            el.classList.remove('approved', 'rejected');
+            el.classList.add(approved ? 'approved' : 'rejected');
+
+            updateFuzzyProgress();
+        }
+
+        function bulkDecision(approved) {
+            fuzzyDecisions = fuzzyDecisions.map(() => approved);
+
+            fuzzyMatches.forEach((_, i) => {
+                const el = document.getElementById(`fuzzy-${i}`);
+                el.classList.remove('approved', 'rejected');
+                el.classList.add(approved ? 'approved' : 'rejected');
+            });
+
+            updateFuzzyProgress();
+        }
+
+        function updateFuzzyProgress() {
+            const reviewed = fuzzyDecisions.filter(d => d !== null).length;
+            const total = fuzzyDecisions.length;
+            document.getElementById('fuzzyProgress').textContent = `${reviewed} of ${total} reviewed`;
+
+            const btn = document.getElementById('generateReportBtn');
+            btn.disabled = reviewed < total;
+        }
+
+        async function generateReport() {
+            showStatus('Generating report...', 'loading');
+
+            const decisions = fuzzyDecisions.map((approved, index) => ({
+                index,
+                approved
+            }));
+
+            try {
+                const response = await fetch(`${API_URL}/api/discrepancy/approve-fuzzy`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sessionId, decisions })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Report generation failed');
+                }
+
+                showDownload(data.fileId, data.fileName);
+                hideStatus();
+
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function generateReportDirect() {
+            showStatus('Generating report...', 'loading');
+
+            try {
+                const response = await fetch(`${API_URL}/api/discrepancy/generate-report`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sessionId })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Report generation failed');
+                }
+
+                showDownload(data.fileId, data.fileName);
+                hideStatus();
+
+            } catch (error) {
+                showStatus(`Error: ${error.message}`, 'error');
+            }
+        }
+
+        function showDownload(fileId, fileName) {
+            document.getElementById('resultsCard').classList.remove('visible');
+            document.getElementById('downloadSection').classList.add('visible');
+            document.getElementById('downloadFileName').textContent = fileName;
+
+            document.getElementById('downloadBtn').onclick = () => {
+                window.location.href = `${API_URL}/api/discrepancy/download/${fileId}?token=${accessToken}`;
+            };
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
