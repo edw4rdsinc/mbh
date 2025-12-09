@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../Images/mbh-icon.png">
+    <title>State Attribution | My Benefits Help</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --mbh-bg: #ffffff;
+            --mbh-fg: #0f172a;
+            --mbh-muted: #475569;
+            --mbh-primary: #00529b;
+            --mbh-accent: #0891b2;
+            --mbh-action: #E87A5D;
+            --mbh-bg-alt: #F5F5F5;
+            --mbh-border: #e2e8f0;
+            --mbh-success: #22c55e;
+            --mbh-warning: #f59e0b;
+            --mbh-error: #ef4444;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--mbh-bg);
+            color: var(--mbh-fg);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--mbh-bg);
+            border-bottom: 1px solid var(--mbh-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--mbh-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            color: var(--mbh-primary);
+        }
+
+        .header-title {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1.25rem;
+            color: var(--mbh-fg);
+            padding-left: 1rem;
+            border-left: 1px solid var(--mbh-border);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-email {
+            font-size: 0.875rem;
+            color: var(--mbh-muted);
+        }
+
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .card {
+            background: var(--mbh-bg);
+            border: 1px solid var(--mbh-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card h2 {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1.35rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p.description {
+            color: var(--mbh-muted);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .month-input {
+            width: 100%;
+            max-width: 200px;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--mbh-border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-family: inherit;
+            margin-bottom: 1.5rem;
+        }
+
+        .month-input:focus {
+            outline: none;
+            border-color: var(--mbh-primary);
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--mbh-border);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            background: var(--mbh-bg-alt);
+            transition: all 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .upload-zone.drag-over {
+            border-color: var(--mbh-primary);
+            background: #eff6ff;
+        }
+
+        .upload-zone h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-zone p {
+            color: var(--mbh-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--mbh-primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #003d75;
+        }
+
+        .btn-secondary {
+            background: var(--mbh-bg);
+            color: var(--mbh-primary);
+            border: 1px solid var(--mbh-border);
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .file-list {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: var(--mbh-bg);
+            border-radius: 0.25rem;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .file-count {
+            display: inline-block;
+            background: var(--mbh-primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .progress-section, .review-section, .completion-section {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background: var(--mbh-bg-alt);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--mbh-primary), var(--mbh-accent));
+            border-radius: 12px;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-message {
+            text-align: center;
+            font-size: 1rem;
+            color: var(--mbh-muted);
+            margin: 1rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 1rem;
+            background: var(--mbh-bg-alt);
+            border-radius: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--mbh-primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--mbh-muted);
+            margin-top: 0.25rem;
+        }
+
+        .review-card {
+            background: #fffbeb;
+            border: 2px solid var(--mbh-warning);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .company-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .commission-amount {
+            color: var(--mbh-success);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .match-info {
+            background: #f0fdf4;
+            border: 1px solid var(--mbh-success);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .confidence-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .confidence-high { background: var(--mbh-success); color: white; }
+        .confidence-medium { background: var(--mbh-warning); color: white; }
+        .confidence-low { background: var(--mbh-error); color: white; }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-confirm { background: var(--mbh-success); color: white; }
+        .btn-change { background: var(--mbh-accent); color: white; }
+        .btn-skip { background: var(--mbh-muted); color: white; }
+        .btn-auto { background: #9333ea; color: white; }
+
+        .state-selector {
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 2px solid var(--mbh-accent);
+            border-radius: 0.5rem;
+            min-width: 120px;
+        }
+
+        .remember-checkbox {
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .review-progress {
+            text-align: center;
+            color: var(--mbh-muted);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .completion-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .learning-note {
+            background: #eff6ff;
+            border-left: 4px solid var(--mbh-primary);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid var(--mbh-error);
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--mbh-border);
+            border-top-color: var(--mbh-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .app-content {
+            display: none;
+        }
+
+        .app-content.authenticated {
+            display: block;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-buttons .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading State -->
+    <div class="loading" id="loadingView">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- App Content -->
+    <div class="app-content" id="appContent">
+        <header class="header">
+            <div class="header-left">
+                <a href="./index.html" class="back-link">← Back</a>
+                <span class="header-title">State Attribution</span>
+            </div>
+            <div class="header-right">
+                <span class="user-email" id="userEmail"></span>
+            </div>
+        </header>
+
+        <main class="main">
+            <!-- Upload Section -->
+            <div class="card upload-section" id="uploadSection">
+                <h2>Upload Commission Statements</h2>
+                <p class="description">
+                    Upload carrier commission PDFs to extract and attribute commissions by state.
+                    The system will match group names to your master contacts list.
+                </p>
+
+                <label for="monthInput" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">
+                    Select Month
+                </label>
+                <input type="month" id="monthInput" class="month-input">
+
+                <div class="upload-zone" id="commissionZone">
+                    <h3>Commission Statements</h3>
+                    <p>Drag and drop PDF files or click to browse</p>
+                    <button class="btn btn-secondary btn-small" onclick="document.getElementById('commissionInput').click()">
+                        Browse Files
+                    </button>
+                    <input type="file" id="commissionInput" multiple accept=".pdf">
+                    <div id="commissionFiles"></div>
+                </div>
+
+                <button class="btn btn-primary" id="uploadBtn" disabled style="width: 100%; margin-top: 1rem;">
+                    Upload and Process
+                </button>
+            </div>
+
+            <!-- Progress Section -->
+            <div class="card progress-section" id="progressSection">
+                <h2>Processing</h2>
+                <div class="status-message" id="statusMessage">Initializing...</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%">0%</div>
+                </div>
+                <div class="stats-grid" id="statsGrid"></div>
+            </div>
+
+            <!-- Review Section -->
+            <div class="card review-section" id="reviewSection">
+                <h2>Review Required</h2>
+                <div id="reviewContent"></div>
+                <div class="learning-note">
+                    Your corrections are saved and will be applied automatically next time.
+                </div>
+            </div>
+
+            <!-- Completion Section -->
+            <div class="card completion-section" id="completionSection">
+                <div class="completion-icon"></div>
+                <h2>State Attribution Complete!</h2>
+                <p id="completionMessage">Your report has been generated.</p>
+                <div class="stats-grid" id="finalStats"></div>
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="#" class="btn btn-primary" id="downloadReportBtn" download>
+                        Download Report
+                    </a>
+                    <button class="btn btn-secondary" onclick="location.reload()">
+                        Process Another Month
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Config
+        const SUPABASE_URL = 'https://exzeayeoosiabwhgyquq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4emVheWVvb3NpYWJ3aGd5cXVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzQ3MDksImV4cCI6MjA2OTU1MDcwOX0.9xwKT8fyCH7GTPOEFh-1eP-l3Myfv-nwJpsAwvjEW0s';
+        const API_BASE = 'https://mbh.comp.edw4rds.com';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // State
+        let authToken = null;
+        let ws = null;
+        let state = {
+            month: '',
+            commissionFiles: [],
+            currentReview: null
+        };
+
+        // DOM elements
+        const loadingView = document.getElementById('loadingView');
+        const appContent = document.getElementById('appContent');
+        const userEmailEl = document.getElementById('userEmail');
+        const monthInput = document.getElementById('monthInput');
+        const commissionInput = document.getElementById('commissionInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const uploadSection = document.getElementById('uploadSection');
+        const progressSection = document.getElementById('progressSection');
+        const reviewSection = document.getElementById('reviewSection');
+        const completionSection = document.getElementById('completionSection');
+
+        // Auth check
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (!session) {
+                window.location.href = './login.html';
+                return;
+            }
+
+            const { data: user } = await supabase
+                .from('mbh_tool_users')
+                .select('email, name')
+                .eq('email', session.user.email)
+                .single();
+
+            if (!user) {
+                await supabase.auth.signOut();
+                window.location.href = './login.html';
+                return;
+            }
+
+            authToken = session.access_token;
+            userEmailEl.textContent = user.email;
+
+            loadingView.style.display = 'none';
+            appContent.classList.add('authenticated');
+
+            initializeUpload();
+        }
+
+        function initializeUpload() {
+            const now = new Date();
+            monthInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            state.month = monthInput.value;
+
+            monthInput.addEventListener('change', (e) => {
+                state.month = e.target.value;
+                checkUploadReady();
+            });
+
+            setupUploadZone('commissionZone', commissionInput);
+            commissionInput.addEventListener('change', (e) => {
+                state.commissionFiles = Array.from(e.target.files);
+                displayFiles('commissionFiles', state.commissionFiles);
+                checkUploadReady();
+            });
+
+            uploadBtn.addEventListener('click', startUpload);
+        }
+
+        function setupUploadZone(zoneId, input) {
+            const zone = document.getElementById(zoneId);
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
+                zone.addEventListener(event, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+
+            ['dragenter', 'dragover'].forEach(event => {
+                zone.addEventListener(event, () => zone.classList.add('drag-over'));
+            });
+
+            ['dragleave', 'drop'].forEach(event => {
+                zone.addEventListener(event, () => zone.classList.remove('drag-over'));
+            });
+
+            zone.addEventListener('drop', (e) => {
+                const files = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf');
+                state.commissionFiles = files;
+                displayFiles('commissionFiles', files);
+                checkUploadReady();
+            });
+        }
+
+        function displayFiles(containerId, files) {
+            const container = document.getElementById(containerId);
+            if (files.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="file-list">
+                    <div style="margin-bottom: 0.5rem;">
+                        <span class="file-count">${files.length} file${files.length > 1 ? 's' : ''}</span>
+                    </div>
+                    ${files.map(f => `
+                        <div class="file-item">
+                            <span>${f.name}</span>
+                            <span>${(f.size / 1024).toFixed(1)} KB</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function checkUploadReady() {
+            uploadBtn.disabled = !(state.month && state.commissionFiles.length > 0);
+        }
+
+        async function startUpload() {
+            const formData = new FormData();
+            formData.append('month', state.month);
+
+            state.commissionFiles.forEach(file => {
+                formData.append('commission_statements', file);
+            });
+
+            try {
+                uploadSection.style.display = 'none';
+                progressSection.style.display = 'block';
+                updateStatus('Uploading files...');
+
+                const response = await fetch(`${API_BASE}/api/state-attribution/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Upload failed');
+                }
+
+                connectWebSocket();
+
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        function connectWebSocket() {
+            const wsProtocol = API_BASE.startsWith('https') ? 'wss' : 'ws';
+            const wsHost = API_BASE.replace(/^https?:\/\//, '');
+            ws = new WebSocket(`${wsProtocol}://${wsHost}/state-attribution?token=${authToken}`);
+
+            ws.onopen = () => {
+                updateStatus('Connected. Starting processing...');
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleWebSocketMessage(data);
+            };
+
+            ws.onerror = (error) => {
+                showError('Connection error');
+            };
+        }
+
+        function handleWebSocketMessage(data) {
+            switch (data.type) {
+                case 'connected':
+                    ws.send(JSON.stringify({
+                        type: 'start_processing',
+                        month: state.month
+                    }));
+                    break;
+
+                case 'status':
+                    updateStatus(data.message);
+                    if (data.progress !== undefined) {
+                        updateProgress(data.progress);
+                    }
+                    if (data.phase === 'review_needed') {
+                        updateStats({
+                            'Auto-Matched': data.highConfidence,
+                            'Needs Review': data.needsReview
+                        });
+                    }
+                    if (data.phase === 'complete') {
+                        showCompletion(data);
+                    }
+                    break;
+
+                case 'review_request':
+                    showReview(data);
+                    break;
+            }
+        }
+
+        function updateStatus(message) {
+            document.getElementById('statusMessage').textContent = message;
+        }
+
+        function updateProgress(percent) {
+            const bar = document.getElementById('progressBar');
+            bar.style.width = `${percent}%`;
+            bar.textContent = `${Math.round(percent)}%`;
+        }
+
+        function updateStats(stats) {
+            document.getElementById('statsGrid').innerHTML = Object.entries(stats).map(([label, value]) => `
+                <div class="stat-box">
+                    <div class="stat-number">${value}</div>
+                    <div class="stat-label">${label}</div>
+                </div>
+            `).join('');
+        }
+
+        function showReview(data) {
+            state.currentReview = data.item;
+            progressSection.style.display = 'none';
+            reviewSection.style.display = 'block';
+
+            const confidenceClass = data.item.best_match.confidence >= 80 ? 'high' :
+                                   data.item.best_match.confidence >= 60 ? 'medium' : 'low';
+
+            document.getElementById('reviewContent').innerHTML = `
+                <div class="review-card">
+                    <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <div class="company-name">${data.item.group_name}</div>
+                            <div class="commission-amount">$${data.item.commission.toFixed(2)}</div>
+                            <div style="color: var(--mbh-muted); font-size: 0.9rem;">From: ${data.item.carrier}</div>
+                        </div>
+                        <span class="confidence-badge confidence-${confidenceClass}">
+                            ${data.item.best_match.confidence}% Match
+                        </span>
+                    </div>
+
+                    <div class="match-info">
+                        <strong>Best Match:</strong> ${data.item.best_match.matched_name || data.item.group_name}<br>
+                        <strong>State:</strong> ${data.item.best_match.state}
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-confirm" onclick="confirmMatch()">
+                            Correct - ${data.item.best_match.state}
+                        </button>
+                        <select class="state-selector" id="stateSelector" onchange="if(this.value) changeState(this.value)">
+                            <option value="">Change State...</option>
+                            ${getStateOptions()}
+                        </select>
+                        <button class="btn btn-skip" onclick="skipReview()">Skip</button>
+                        <button class="btn btn-auto" onclick="autoApproveAll()">
+                            Auto-Approve All (${data.progress.remaining})
+                        </button>
+                    </div>
+
+                    <label class="remember-checkbox">
+                        <input type="checkbox" id="rememberChoice" checked>
+                        Remember this for "${data.item.group_name}"
+                    </label>
+                </div>
+
+                <div class="review-progress">
+                    Reviewing ${data.progress.current} of ${data.progress.total}
+                </div>
+            `;
+        }
+
+        function getStateOptions() {
+            const states = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
+            return states.map(s => `<option value="${s}">${s}</option>`).join('');
+        }
+
+        function confirmMatch() {
+            sendReviewResponse('confirm', state.currentReview.best_match.state);
+        }
+
+        function changeState(newState) {
+            sendReviewResponse('change', newState);
+        }
+
+        function skipReview() {
+            sendReviewResponse('skip');
+        }
+
+        function autoApproveAll() {
+            if (confirm('Auto-approve all remaining items?')) {
+                ws.send(JSON.stringify({ type: 'auto_approve_all' }));
+                reviewSection.style.display = 'none';
+                progressSection.style.display = 'block';
+                updateStatus('Auto-approving remaining items...');
+            }
+        }
+
+        function sendReviewResponse(action, newState) {
+            ws.send(JSON.stringify({
+                type: 'review_response',
+                action: action,
+                state: state.currentReview.best_match.state,
+                new_state: newState,
+                remember: document.getElementById('rememberChoice').checked
+            }));
+
+            reviewSection.style.display = 'none';
+            progressSection.style.display = 'block';
+            updateStatus('Processing...');
+        }
+
+        function showCompletion(data) {
+            progressSection.style.display = 'none';
+            reviewSection.style.display = 'none';
+            completionSection.style.display = 'block';
+
+            const stats = data.stats || data;
+            if (stats && typeof stats === 'object') {
+                document.getElementById('finalStats').innerHTML = Object.entries(stats)
+                    .filter(([key]) => key !== 'fileId' && key !== 'fileName')
+                    .map(([label, value]) => `
+                        <div class="stat-box">
+                            <div class="stat-number">${value}</div>
+                            <div class="stat-label">${label.replace(/_/g, ' ')}</div>
+                        </div>
+                    `).join('');
+            }
+
+            if (data.fileId && data.fileName) {
+                const downloadBtn = document.getElementById('downloadReportBtn');
+                downloadBtn.href = `${API_BASE}/api/state-attribution/download/${data.fileId}?token=${authToken}`;
+                downloadBtn.download = data.fileName;
+            }
+        }
+
+        function showError(message) {
+            progressSection.innerHTML += `<div class="error-message">${message}</div>`;
+        }
+
+        checkAuth();
+    </script>
+</body>
+</html>
