@@ -882,7 +882,8 @@
             {
                 key: 'Number',
                 label: 'Policy Number',
-                required: true,
+                required: false,  // Allow blank
+                allowBlank: true,
                 aliases: ['number', 'policy', 'policy number', 'policy #', 'policy#', 'certificate', 'certificate #', 'cert #', 'cert#', 'policy no', 'policyno'],
                 defaultHint: 'e.g., 12345678'
             },
@@ -896,7 +897,9 @@
             {
                 key: 'Product Type',
                 label: 'Product Type',
-                required: true,
+                required: false,  // Can use filename
+                allowBlank: true,
+                supportsFilename: true,  // Special: can derive from filename
                 aliases: ['product type', 'product', 'plan', 'plan name', 'plan type', 'coverage', 'coverage type', 'producttype', 'benefit', 'benefit type'],
                 defaultHint: 'e.g., Accident'
             },
@@ -911,6 +914,7 @@
                 key: 'Status',
                 label: 'Status',
                 required: false,
+                allowBlank: true,
                 aliases: ['status', 'policy status', 'coverage status', 'account status'],
                 defaultValue: 'Active',
                 defaultHint: 'e.g., Active'
@@ -919,6 +923,7 @@
                 key: 'Effective Date',
                 label: 'Effective Date',
                 required: false,
+                allowBlank: true,
                 aliases: ['effective date', 'effective', 'eff date', 'start date', 'effectivedate', 'eff. date', 'coverage date'],
                 defaultHint: 'e.g., 01/01/2025'
             }
@@ -1130,6 +1135,15 @@
 
                 columnMapping[field.key] = bestMatch || '__NOT_IN_FILE__';
 
+                // Build options for the dropdown
+                let extraOptions = '';
+                if (field.supportsFilename) {
+                    extraOptions = `<option value="__FROM_FILENAME__">📁 Use filename</option>`;
+                }
+                if (field.allowBlank) {
+                    extraOptions += `<option value="__LEAVE_BLANK__">— Leave blank</option>`;
+                }
+
                 return `
                     <div class="mapping-row">
                         <div class="mapping-label">
@@ -1140,6 +1154,7 @@
                                 data-field="${field.key}"
                                 onchange="handleMappingChange(this, '${field.key}')">
                             <option value="__NOT_IN_FILE__" ${isNotMapped ? 'selected' : ''}>-- Not in file --</option>
+                            ${extraOptions}
                             ${detectedColumns.map(col => `
                                 <option value="${col}" ${col === bestMatch ? 'selected' : ''}>${col}</option>
                             `).join('')}
@@ -1163,6 +1178,7 @@
 
             const defaultDiv = document.getElementById(`default-${fieldKey}`);
 
+            // Show default input only for "Not in file" (not for Leave blank or Use filename)
             if (value === '__NOT_IN_FILE__') {
                 selectEl.classList.add('not-mapped');
                 defaultDiv.classList.add('visible');
@@ -1216,6 +1232,7 @@
         function getColumnMapping() {
             const mapping = {};
             const defaults = {};
+            const special = {};  // For special handling like __FROM_FILENAME__, __LEAVE_BLANK__
 
             REQUIRED_FIELDS.forEach(field => {
                 const selectEl = document.querySelector(`select[data-field="${field.key}"]`);
@@ -1223,16 +1240,27 @@
 
                 if (selectEl) {
                     const value = selectEl.value;
+
                     if (value === '__NOT_IN_FILE__') {
+                        // Use default value from input
                         mapping[field.key] = null;
                         defaults[field.key] = defaultInput ? defaultInput.value : (field.defaultValue || '');
+                    } else if (value === '__LEAVE_BLANK__') {
+                        // Explicitly leave blank
+                        mapping[field.key] = null;
+                        special[field.key] = 'LEAVE_BLANK';
+                    } else if (value === '__FROM_FILENAME__') {
+                        // Derive from filename
+                        mapping[field.key] = null;
+                        special[field.key] = 'FROM_FILENAME';
                     } else {
+                        // Normal column mapping
                         mapping[field.key] = value;
                     }
                 }
             });
 
-            return { mapping, defaults };
+            return { mapping, defaults, special };
         }
 
         function updateContributionFields() {
@@ -1281,15 +1309,16 @@
             if (selectedFiles.length === 0) return;
 
             // Validate required fields
-            const { mapping, defaults } = getColumnMapping();
+            const { mapping, defaults, special } = getColumnMapping();
 
-            // Check that required fields are either mapped or have defaults
+            // Check that required fields are either mapped, have defaults, or have special handling
             for (const field of REQUIRED_FIELDS) {
                 if (field.required) {
                     const isMapped = mapping[field.key] !== null;
                     const hasDefault = defaults[field.key] && defaults[field.key].trim() !== '';
+                    const hasSpecial = special[field.key] !== undefined;
 
-                    if (!isMapped && !hasDefault) {
+                    if (!isMapped && !hasDefault && !hasSpecial) {
                         showError(`"${field.label}" is required. Please map it to a column or provide a default value.`);
                         return;
                     }
@@ -1303,17 +1332,21 @@
             try {
                 const formData = new FormData();
 
-                // Add all files
+                // Add all files with their original names
                 selectedFiles.forEach((file, index) => {
                     formData.append('files', file);
                 });
 
+                // Add filenames separately so backend knows the original names
+                formData.append('filenames', JSON.stringify(selectedFiles.map(f => f.name)));
+
                 // Add settings with frequency and contribution
                 const settings = getSettings();
 
-                // Add column mapping and defaults
+                // Add column mapping, defaults, and special handling
                 settings.columnMapping = mapping;
                 settings.columnDefaults = defaults;
+                settings.columnSpecial = special;  // FROM_FILENAME, LEAVE_BLANK
 
                 // Add payor name override
                 const payorOverride = payorNameOverride.value.trim();
