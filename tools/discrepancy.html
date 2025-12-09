@@ -147,6 +147,34 @@
         }
 
         /* Upload */
+        .input-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--mbh-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--mbh-border);
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--mbh-primary);
+        }
+
         .upload-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -385,10 +413,6 @@
             </div>
             <div class="phase-step" id="phase2Step">
                 <span class="step-num">2</span>
-                Premium Review
-            </div>
-            <div class="phase-step" id="phase3Step">
-                <span class="step-num">3</span>
                 Download Report
             </div>
         </div>
@@ -400,6 +424,17 @@
         <div class="card" id="uploadCard">
             <h2>Upload Files</h2>
             <p class="description">Compare carrier data with payroll data to find discrepancies.</p>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="groupName">Group Name</label>
+                    <input type="text" id="groupName" placeholder="e.g. ABC Company" required>
+                </div>
+                <div class="input-group">
+                    <label for="reportMonth">Report Month</label>
+                    <input type="month" id="reportMonth" required>
+                </div>
+            </div>
 
             <div class="upload-grid">
                 <div class="upload-box" id="carrierUpload">
@@ -500,50 +535,16 @@
             </div>
 
             <div class="actions">
-                <button class="btn btn-primary" id="submitNamesBtn">Continue to Premium Review</button>
+                <button class="btn btn-primary" id="submitNamesBtn">Generate Report</button>
             </div>
         </div>
 
-        <!-- Phase 2: Premium Review -->
-        <div class="card hidden" id="premiumReviewCard">
-            <h2>Phase 2: Premium Discrepancies</h2>
-
-            <div class="summary-grid">
-                <div class="summary-item success">
-                    <div class="value" id="perfectMatchCount">0</div>
-                    <div class="label">Premiums Match</div>
-                </div>
-                <div class="summary-item error">
-                    <div class="value" id="discrepancyCount">0</div>
-                    <div class="label">Discrepancies</div>
-                </div>
-            </div>
-
-            <div class="review-section visible" id="premiumReviewSection">
-                <h3>Review Premium Differences</h3>
-                <p class="description">These employees have matching names but different premium amounts. Acknowledge expected differences or leave for investigation.</p>
-
-                <div class="bulk-actions">
-                    <span id="premiumProgress">0 of 0 reviewed</span>
-                    <div>
-                        <button class="btn btn-secondary" id="leaveAllUnresolvedBtn">Leave All Unresolved</button>
-                        <button class="btn btn-success" id="acknowledgeAllBtn">Acknowledge All</button>
-                    </div>
-                </div>
-
-                <div id="premiumList"></div>
-            </div>
-
-            <div class="actions">
-                <button class="btn btn-primary" id="submitPremiumsBtn">Generate Report</button>
-            </div>
-        </div>
-
+        
         <!-- Download Section -->
         <div class="card download-section" id="downloadSection">
             <h3>Report Ready!</h3>
             <p id="downloadFileName"></p>
-            <button class="btn btn-success" id="downloadBtn">Download Excel Report</button>
+            <a href="#" class="btn btn-success" id="downloadBtn" download>Download Excel Report</a>
         </div>
     </main>
 
@@ -561,9 +562,9 @@
         let sessionId = null;
         let fuzzyMatches = [];
         let nameDecisions = [];
-        let premiumDiscrepancies = [];
-        let premiumDecisions = [];
-
+        let groupName = '';
+        let reportMonth = '';
+        
         // Initialize
         async function init() {
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -577,10 +578,18 @@
             accessToken = session.access_token;
             document.getElementById('userEmail').textContent = session.user.email;
 
+            // Set default month to current month
+            const now = new Date();
+            document.getElementById('reportMonth').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
             setupEventListeners();
         }
 
         function setupEventListeners() {
+            // Group and month inputs
+            document.getElementById('groupName').addEventListener('input', checkCanAnalyze);
+            document.getElementById('reportMonth').addEventListener('change', checkCanAnalyze);
+
             // File uploads
             document.getElementById('carrierUpload').addEventListener('click', () => document.getElementById('carrierFile').click());
             document.getElementById('payrollUpload').addEventListener('click', () => document.getElementById('payrollFile').click());
@@ -592,9 +601,6 @@
             document.getElementById('approveAllNamesBtn').addEventListener('click', () => bulkNameDecision(true));
             document.getElementById('rejectAllNamesBtn').addEventListener('click', () => bulkNameDecision(false));
             document.getElementById('submitNamesBtn').addEventListener('click', submitNameDecisions);
-            document.getElementById('acknowledgeAllBtn').addEventListener('click', () => bulkPremiumDecision(true));
-            document.getElementById('leaveAllUnresolvedBtn').addEventListener('click', () => bulkPremiumDecision(false));
-            document.getElementById('submitPremiumsBtn').addEventListener('click', submitPremiumDecisions);
         }
 
         function handleFileSelect(e, type) {
@@ -611,10 +617,16 @@
                 document.getElementById('payrollFileName').textContent = file.name;
             }
 
-            document.getElementById('analyzeBtn').disabled = !(carrierFile && payrollFile);
+            checkCanAnalyze();
             if (carrierFile && payrollFile) {
                 document.getElementById('mappingSection').classList.add('visible');
             }
+        }
+
+        function checkCanAnalyze() {
+            const hasGroup = document.getElementById('groupName').value.trim().length > 0;
+            const hasMonth = document.getElementById('reportMonth').value.length > 0;
+            document.getElementById('analyzeBtn').disabled = !(carrierFile && payrollFile && hasGroup && hasMonth);
         }
 
         function populateDropdowns(carrierHeaders, payrollHeaders) {
@@ -660,12 +672,19 @@
 
         function setPhase(phase) {
             document.getElementById('phase1Step').className = 'phase-step' + (phase >= 1 ? (phase > 1 ? ' completed' : ' active') : '');
-            document.getElementById('phase2Step').className = 'phase-step' + (phase >= 2 ? (phase > 2 ? ' completed' : ' active') : '');
-            document.getElementById('phase3Step').className = 'phase-step' + (phase >= 3 ? ' active' : '');
+            document.getElementById('phase2Step').className = 'phase-step' + (phase >= 2 ? ' active' : '');
         }
 
         async function analyzeFiles() {
             if (!carrierFile || !payrollFile) return;
+
+            groupName = document.getElementById('groupName').value.trim();
+            reportMonth = document.getElementById('reportMonth').value;
+
+            if (!groupName || !reportMonth) {
+                showStatus('Please enter Group Name and Report Month', 'error');
+                return;
+            }
 
             showStatus('Analyzing files...', 'loading');
 
@@ -674,6 +693,8 @@
             formData.append('payrollFile', payrollFile);
 
             const settings = {
+                groupName,
+                reportMonth,
                 carrierLastName: document.getElementById('carrierLastName').value || 'LAST',
                 carrierFirstName: document.getElementById('carrierFirstName').value || 'FIRST',
                 carrierPremium: document.getElementById('carrierPremium').value || 'Monthly',
@@ -782,7 +803,7 @@
         }
 
         async function submitNameDecisions() {
-            showStatus('Processing name decisions...', 'loading');
+            showStatus('Generating report...', 'loading');
 
             const decisions = nameDecisions.map((approved, index) => ({ index, approved: approved ?? false }));
 
@@ -793,111 +814,11 @@
                         'Authorization': `Bearer ${accessToken}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ sessionId, decisions })
+                    body: JSON.stringify({ sessionId, decisions, generateReport: true })
                 });
 
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Processing failed');
-
-                premiumDiscrepancies = data.premiumDiscrepancies || [];
-                premiumDecisions = premiumDiscrepancies.map(() => null);
-
-                showPremiumReview(data);
-                hideStatus();
-
-            } catch (error) {
-                showStatus(`Error: ${error.message}`, 'error');
-            }
-        }
-
-        function showPremiumReview(data) {
-            document.getElementById('nameReviewCard').classList.add('hidden');
-            document.getElementById('premiumReviewCard').classList.remove('hidden');
-            setPhase(2);
-
-            document.getElementById('perfectMatchCount').textContent = data.perfectMatches;
-            document.getElementById('discrepancyCount').textContent = premiumDiscrepancies.length;
-
-            if (premiumDiscrepancies.length > 0) {
-                renderPremiumList();
-            } else {
-                document.getElementById('premiumReviewSection').innerHTML = '<p>No premium discrepancies found. All matched employees have matching premiums.</p>';
-            }
-
-            updatePremiumProgress();
-        }
-
-        function renderPremiumList() {
-            const list = document.getElementById('premiumList');
-            list.innerHTML = premiumDiscrepancies.map((disc, i) => `
-                <div class="review-item" id="premium-${i}">
-                    <div class="review-info">
-                        <div class="review-names">
-                            <span>${disc.name}</span>
-                            <span style="color: var(--mbh-error); margin-left: 0.5rem;">
-                                $${disc.premiumDiff.toFixed(2)} difference
-                            </span>
-                        </div>
-                        <div class="review-details">
-                            Carrier: $${disc.carrierPremium.toFixed(2)} |
-                            Payroll: $${disc.payrollPremium.toFixed(2)} |
-                            Match: ${disc.matchType}
-                        </div>
-                        <div class="premium-details">
-                            <div class="products">
-                                <div><strong>Carrier:</strong><br>${disc.carrierProducts.join('<br>')}</div>
-                                <div><strong>Payroll:</strong><br>${disc.payrollProducts.join('<br>')}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="review-actions">
-                        <button class="approve" onclick="decidePremium(${i}, true)">Acknowledge</button>
-                        <button class="reject" onclick="decidePremium(${i}, false)">Investigate</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function decidePremium(index, acknowledged) {
-            premiumDecisions[index] = acknowledged;
-            const el = document.getElementById(`premium-${index}`);
-            el.classList.remove('approved', 'rejected');
-            el.classList.add(acknowledged ? 'approved' : 'rejected');
-            updatePremiumProgress();
-        }
-
-        function bulkPremiumDecision(acknowledged) {
-            premiumDecisions = premiumDecisions.map(() => acknowledged);
-            premiumDiscrepancies.forEach((_, i) => {
-                const el = document.getElementById(`premium-${i}`);
-                el.classList.remove('approved', 'rejected');
-                el.classList.add(acknowledged ? 'approved' : 'rejected');
-            });
-            updatePremiumProgress();
-        }
-
-        function updatePremiumProgress() {
-            const reviewed = premiumDecisions.filter(d => d !== null).length;
-            document.getElementById('premiumProgress').textContent = `${reviewed} of ${premiumDecisions.length} reviewed`;
-        }
-
-        async function submitPremiumDecisions() {
-            showStatus('Generating report...', 'loading');
-
-            const decisions = premiumDecisions.map((acknowledged, index) => ({ index, acknowledged: acknowledged ?? false }));
-
-            try {
-                const response = await fetch(`${API_URL}/api/discrepancy/submit-premiums`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ sessionId, decisions })
-                });
-
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.error || 'Report generation failed');
 
                 showDownload(data.fileId, data.fileName);
                 hideStatus();
@@ -908,14 +829,14 @@
         }
 
         function showDownload(fileId, fileName) {
-            document.getElementById('premiumReviewCard').classList.add('hidden');
+            document.getElementById('nameReviewCard').classList.add('hidden');
             document.getElementById('downloadSection').classList.add('visible');
             document.getElementById('downloadFileName').textContent = fileName;
-            setPhase(3);
+            setPhase(2);
 
-            document.getElementById('downloadBtn').onclick = () => {
-                window.location.href = `${API_URL}/api/discrepancy/download/${fileId}?token=${accessToken}`;
-            };
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.href = `${API_URL}/api/discrepancy/download/${fileId}?token=${accessToken}`;
+            downloadBtn.download = fileName;
         }
 
         init();
