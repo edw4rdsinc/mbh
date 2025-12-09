@@ -522,11 +522,16 @@
             <div class="card completion-section" id="completionSection">
                 <div class="completion-icon">✅</div>
                 <h2>Processing Complete!</h2>
-                <p>Your report has been generated and emailed.</p>
+                <p id="completionMessage">Your report has been generated.</p>
                 <div class="stats-grid" id="finalStats"></div>
-                <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 1.5rem;">
-                    Process Another Month
-                </button>
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="#" class="btn btn-primary" id="downloadReportBtn" download>
+                        📥 Download Report
+                    </a>
+                    <button class="btn btn-secondary" onclick="location.reload()">
+                        Process Another Month
+                    </button>
+                </div>
             </div>
         </main>
     </div>
@@ -880,18 +885,28 @@
             updateStatus('Processing...');
         }
 
-        function showCompletion(stats) {
+        function showCompletion(data) {
             progressSection.style.display = 'none';
             reviewSection.style.display = 'none';
             completionSection.style.display = 'block';
 
-            if (stats) {
-                document.getElementById('finalStats').innerHTML = Object.entries(stats).map(([label, value]) => `
-                    <div class="stat-box">
-                        <div class="stat-number">${value}</div>
-                        <div class="stat-label">${label.replace(/_/g, ' ')}</div>
-                    </div>
-                `).join('');
+            const stats = data.stats || data;
+            if (stats && typeof stats === 'object') {
+                document.getElementById('finalStats').innerHTML = Object.entries(stats)
+                    .filter(([key]) => key !== 'fileId' && key !== 'fileName')
+                    .map(([label, value]) => `
+                        <div class="stat-box">
+                            <div class="stat-number">${value}</div>
+                            <div class="stat-label">${label.replace(/_/g, ' ')}</div>
+                        </div>
+                    `).join('');
+            }
+
+            // Set up download link
+            if (data.fileId && data.fileName) {
+                const downloadBtn = document.getElementById('downloadReportBtn');
+                downloadBtn.href = `${API_BASE}/api/commission/download/${data.fileId}?token=${authToken}`;
+                downloadBtn.download = data.fileName;
             }
         }
 
