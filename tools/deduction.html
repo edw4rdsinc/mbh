@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../Images/mbh-icon.png">
+    <title>Deduction Report | My Benefits Help</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --mbh-bg: #ffffff;
+            --mbh-fg: #0f172a;
+            --mbh-muted: #475569;
+            --mbh-primary: #00529b;
+            --mbh-accent: #0891b2;
+            --mbh-action: #E87A5D;
+            --mbh-bg-alt: #F5F5F5;
+            --mbh-border: #e2e8f0;
+            --mbh-success: #22c55e;
+            --mbh-error: #ef4444;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--mbh-bg);
+            color: var(--mbh-fg);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--mbh-bg);
+            border-bottom: 1px solid var(--mbh-border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--mbh-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            color: var(--mbh-primary);
+        }
+
+        .header-title {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1.25rem;
+            color: var(--mbh-fg);
+            padding-left: 1rem;
+            border-left: 1px solid var(--mbh-border);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-email {
+            font-size: 0.875rem;
+            color: var(--mbh-muted);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .card {
+            background: var(--mbh-bg);
+            border: 1px solid var(--mbh-border);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card h2 {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1.35rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card .description {
+            color: var(--mbh-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--mbh-border);
+            border-radius: 0.75rem;
+            padding: 3rem 2rem;
+            text-align: center;
+            background: var(--mbh-bg-alt);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--mbh-primary);
+        }
+
+        .upload-zone.drag-over {
+            border-color: var(--mbh-primary);
+            background: #eff6ff;
+        }
+
+        .upload-zone.has-file {
+            border-style: solid;
+            border-color: var(--mbh-success);
+            background: #f0fdf4;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-zone h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-zone p {
+            color: var(--mbh-muted);
+            font-size: 0.9rem;
+        }
+
+        .file-name {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            background: var(--mbh-bg);
+            border-radius: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+        }
+
+        .file-name .remove-btn {
+            background: none;
+            border: none;
+            color: var(--mbh-error);
+            cursor: pointer;
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--mbh-primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #003d75;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Processing State */
+        .processing-view {
+            display: none;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--mbh-border);
+            border-top-color: var(--mbh-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .processing-view h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .processing-view p {
+            color: var(--mbh-muted);
+        }
+
+        /* Success State */
+        .success-view {
+            display: none;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-view h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--mbh-success);
+        }
+
+        .success-view p {
+            color: var(--mbh-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: var(--mbh-success);
+            color: white;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .download-btn:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--mbh-primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--mbh-muted);
+        }
+
+        .another-btn {
+            margin-top: 1.5rem;
+            color: var(--mbh-primary);
+            background: none;
+            border: none;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .another-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* Error State */
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid var(--mbh-error);
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid var(--mbh-primary);
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-box ul {
+            margin: 0;
+            padding-left: 1.25rem;
+            color: var(--mbh-muted);
+        }
+
+        .info-box li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .app-content {
+            display: none;
+        }
+
+        .app-content.authenticated {
+            display: block;
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stats-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading State -->
+    <div class="loading" id="loadingView">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- App Content -->
+    <div class="app-content" id="appContent">
+        <header class="header">
+            <div class="header-left">
+                <a href="./index.html" class="back-link">← Back</a>
+                <span class="header-title">📋 Deduction Report</span>
+            </div>
+            <div class="header-right">
+                <span class="user-email" id="userEmail"></span>
+            </div>
+        </header>
+
+        <main class="main">
+            <div class="card">
+                <!-- Upload View -->
+                <div id="uploadView">
+                    <h2>Upload CSV File</h2>
+                    <p class="description">
+                        Upload a carrier CSV file and get back a formatted Excel deduction summary.
+                    </p>
+
+                    <div class="upload-zone" id="uploadZone">
+                        <div class="upload-icon">📄</div>
+                        <h3>Drop CSV file here</h3>
+                        <p>or click to browse</p>
+                        <input type="file" id="fileInput" accept=".csv">
+                    </div>
+
+                    <div id="fileDisplay" style="display: none; text-align: center;">
+                        <div class="file-name">
+                            <span>📄</span>
+                            <span id="fileName"></span>
+                            <button class="remove-btn" onclick="removeFile()">&times;</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" id="processBtn" disabled>
+                        Process File
+                    </button>
+
+                    <div id="errorMessage"></div>
+
+                    <div class="info-box">
+                        <strong>What this tool does:</strong>
+                        <ul>
+                            <li>Filters out terminated employees</li>
+                            <li>Parses and formats names</li>
+                            <li>Calculates Pre-Tax status by product type</li>
+                            <li>Calculates Semi-Monthly deductions</li>
+                            <li>Groups by payor with subtotals</li>
+                            <li>Formats Excel with professional styling</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Processing View -->
+                <div class="processing-view" id="processingView">
+                    <div class="spinner"></div>
+                    <h3>Processing your file...</h3>
+                    <p>This usually takes just a few seconds</p>
+                </div>
+
+                <!-- Success View -->
+                <div class="success-view" id="successView">
+                    <div class="success-icon">✅</div>
+                    <h3>Report Generated!</h3>
+                    <p>Your formatted Excel file is ready</p>
+
+                    <div class="stats-row">
+                        <div class="stat">
+                            <div class="stat-value" id="inputRows">-</div>
+                            <div class="stat-label">Input Rows</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="outputRows">-</div>
+                            <div class="stat-label">Output Rows</div>
+                        </div>
+                    </div>
+
+                    <a href="#" class="download-btn" id="downloadBtn">
+                        📥 Download Excel File
+                    </a>
+
+                    <button class="another-btn" onclick="resetForm()">
+                        Process another file
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Config
+        const SUPABASE_URL = 'https://exzeayeoosiawhgyquq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4emVheWVvb3NpYWJ3aGd5cXVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzQ3MDksImV4cCI6MjA2OTU1MDcwOX0.9xwKT8fyCH7GTPOEFh-1eP-nwJpsAwvjEW0s';
+        const API_BASE = 'https://mbh.comp.edw4rds.com';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let authToken = null;
+        let selectedFile = null;
+
+        // DOM elements
+        const loadingView = document.getElementById('loadingView');
+        const appContent = document.getElementById('appContent');
+        const userEmailEl = document.getElementById('userEmail');
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileDisplay = document.getElementById('fileDisplay');
+        const fileNameEl = document.getElementById('fileName');
+        const processBtn = document.getElementById('processBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const uploadView = document.getElementById('uploadView');
+        const processingView = document.getElementById('processingView');
+        const successView = document.getElementById('successView');
+
+        // Auth check
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (!session) {
+                window.location.href = './login.html';
+                return;
+            }
+
+            // Verify whitelisted
+            const { data: user } = await supabase
+                .from('mbh_tool_users')
+                .select('email, name')
+                .eq('email', session.user.email)
+                .single();
+
+            if (!user) {
+                await supabase.auth.signOut();
+                window.location.href = './login.html';
+                return;
+            }
+
+            authToken = session.access_token;
+            userEmailEl.textContent = user.email;
+
+            loadingView.style.display = 'none';
+            appContent.classList.add('authenticated');
+
+            initializeUpload();
+        }
+
+        function initializeUpload() {
+            // Click to browse
+            uploadZone.addEventListener('click', () => fileInput.click());
+
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files[0]) {
+                    selectFile(e.target.files[0]);
+                }
+            });
+
+            // Drag and drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
+                uploadZone.addEventListener(event, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+
+            ['dragenter', 'dragover'].forEach(event => {
+                uploadZone.addEventListener(event, () => uploadZone.classList.add('drag-over'));
+            });
+
+            ['dragleave', 'drop'].forEach(event => {
+                uploadZone.addEventListener(event, () => uploadZone.classList.remove('drag-over'));
+            });
+
+            uploadZone.addEventListener('drop', (e) => {
+                const file = e.dataTransfer.files[0];
+                if (file && file.name.toLowerCase().endsWith('.csv')) {
+                    selectFile(file);
+                } else {
+                    showError('Please upload a CSV file');
+                }
+            });
+
+            // Process button
+            processBtn.addEventListener('click', processFile);
+        }
+
+        function selectFile(file) {
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                showError('Please upload a CSV file');
+                return;
+            }
+
+            selectedFile = file;
+            fileNameEl.textContent = file.name;
+            uploadZone.style.display = 'none';
+            fileDisplay.style.display = 'block';
+            processBtn.disabled = false;
+            clearError();
+        }
+
+        function removeFile() {
+            selectedFile = null;
+            fileInput.value = '';
+            uploadZone.style.display = 'block';
+            fileDisplay.style.display = 'none';
+            processBtn.disabled = true;
+        }
+
+        function showError(message) {
+            errorMessage.innerHTML = `<div class="error-message">❌ ${message}</div>`;
+        }
+
+        function clearError() {
+            errorMessage.innerHTML = '';
+        }
+
+        async function processFile() {
+            if (!selectedFile) return;
+
+            // Show processing view
+            uploadView.style.display = 'none';
+            processingView.style.display = 'block';
+
+            try {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+
+                const response = await fetch(`${API_BASE}/api/deduction/process`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Processing failed');
+                }
+
+                const result = await response.json();
+
+                // Show success
+                processingView.style.display = 'none';
+                successView.style.display = 'block';
+
+                document.getElementById('inputRows').textContent = result.stats.inputRows;
+                document.getElementById('outputRows').textContent = result.stats.outputRows;
+
+                // Set download link
+                const downloadBtn = document.getElementById('downloadBtn');
+                downloadBtn.href = `${API_BASE}/api/deduction/download/${result.fileId}?token=${authToken}`;
+                downloadBtn.download = result.fileName;
+
+            } catch (error) {
+                processingView.style.display = 'none';
+                uploadView.style.display = 'block';
+                showError(error.message);
+            }
+        }
+
+        function resetForm() {
+            selectedFile = null;
+            fileInput.value = '';
+            uploadZone.style.display = 'block';
+            fileDisplay.style.display = 'none';
+            processBtn.disabled = true;
+            successView.style.display = 'none';
+            uploadView.style.display = 'block';
+            clearError();
+        }
+
+        // Initialize
+        checkAuth();
+    </script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../Images/mbh-icon.png">
+    <title>Team Login | My Benefits Help</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --mbh-bg: #ffffff;
+            --mbh-fg: #0f172a;
+            --mbh-muted: #475569;
+            --mbh-primary: #00529b;
+            --mbh-accent: #0891b2;
+            --mbh-action: #E87A5D;
+            --mbh-bg-alt: #F5F5F5;
+            --mbh-border: #e2e8f0;
+            --mbh-success: #22c55e;
+            --mbh-error: #ef4444;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--mbh-bg-alt) 0%, var(--mbh-bg) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-container {
+            background: var(--mbh-bg);
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 180px;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1.75rem;
+            color: var(--mbh-fg);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--mbh-muted);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: var(--mbh-fg);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        input[type="email"] {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--mbh-border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="email"]:focus {
+            outline: none;
+            border-color: var(--mbh-primary);
+            box-shadow: 0 0 0 3px rgba(0, 82, 155, 0.1);
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 9999px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary {
+            background-color: var(--mbh-primary);
+            color: white;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .message.success {
+            background-color: #f0fdf4;
+            border: 1px solid var(--mbh-success);
+            color: #166534;
+            display: block;
+        }
+
+        .message.error {
+            background-color: #fef2f2;
+            border: 1px solid var(--mbh-error);
+            color: #991b1b;
+            display: block;
+        }
+
+        .message.info {
+            background-color: #eff6ff;
+            border: 1px solid var(--mbh-primary);
+            color: var(--mbh-primary);
+            display: block;
+        }
+
+        /* Check Email View */
+        .check-email-view {
+            display: none;
+        }
+
+        .check-email-view.active {
+            display: block;
+        }
+
+        .login-form-view.hidden {
+            display: none;
+        }
+
+        .email-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .resend-link {
+            color: var(--mbh-primary);
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+
+        .resend-link:hover {
+            color: var(--mbh-accent);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: var(--mbh-muted);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .back-link:hover {
+            color: var(--mbh-primary);
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: var(--mbh-muted);
+        }
+
+        .footer-note a {
+            color: var(--mbh-primary);
+            text-decoration: none;
+        }
+
+        .footer-note a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <a href="../index.html">
+            <img src="../Images/logo-no-tagline.png" alt="My Benefits Help" class="logo">
+        </a>
+
+        <!-- Login Form View -->
+        <div class="login-form-view" id="loginFormView">
+            <h1>Team Login</h1>
+            <p class="subtitle">Access your benefits management tools</p>
+
+            <div class="message" id="message"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Work Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="you@mybenefitshelp.net"
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    Send Login Link
+                </button>
+            </form>
+
+            <p class="footer-note">
+                <a href="../index.html">&larr; Back to website</a>
+            </p>
+        </div>
+
+        <!-- Check Email View -->
+        <div class="check-email-view" id="checkEmailView">
+            <div class="email-icon">📧</div>
+            <h1>Check Your Email</h1>
+            <p class="subtitle">
+                We sent a login link to<br>
+                <strong id="sentEmailDisplay"></strong>
+            </p>
+
+            <div class="message info">
+                Click the link in your email to sign in. The link expires in 1 hour.
+            </div>
+
+            <p style="margin-top: 1.5rem; color: var(--mbh-muted); font-size: 0.9rem;">
+                Didn't receive it? Check spam or
+                <span class="resend-link" id="resendLink">send again</span>
+            </p>
+
+            <p class="back-link" id="backToLogin">&larr; Use a different email</p>
+        </div>
+    </div>
+
+    <script>
+        // Supabase config
+        const SUPABASE_URL = 'https://exzeayeoosiawhgyquq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4emVheWVvb3NpYWJ3aGd5cXVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzQ3MDksImV4cCI6MjA2OTU1MDcwOX0.9xwKT8fyCH7GTPOEFh-1eP-nwJpsAwvjEW0s';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // DOM elements
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const submitBtn = document.getElementById('submitBtn');
+        const messageEl = document.getElementById('message');
+        const loginFormView = document.getElementById('loginFormView');
+        const checkEmailView = document.getElementById('checkEmailView');
+        const sentEmailDisplay = document.getElementById('sentEmailDisplay');
+        const resendLink = document.getElementById('resendLink');
+        const backToLogin = document.getElementById('backToLogin');
+
+        let lastEmail = '';
+
+        // Check if already logged in
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                // Verify user is whitelisted
+                const { data: user } = await supabase
+                    .from('mbh_tool_users')
+                    .select('email')
+                    .eq('email', session.user.email)
+                    .single();
+
+                if (user) {
+                    window.location.href = './index.html';
+                } else {
+                    // Not whitelisted, sign out
+                    await supabase.auth.signOut();
+                    showMessage('Your email is not authorized to access these tools.', 'error');
+                }
+            }
+        }
+
+        // Handle magic link callback
+        async function handleAuthCallback() {
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            const accessToken = hashParams.get('access_token');
+
+            if (accessToken) {
+                // Let Supabase handle the session
+                const { data: { session }, error } = await supabase.auth.getSession();
+
+                if (session && !error) {
+                    // Verify whitelisted
+                    const { data: user } = await supabase
+                        .from('mbh_tool_users')
+                        .select('email')
+                        .eq('email', session.user.email)
+                        .single();
+
+                    if (user) {
+                        // Update last login
+                        await supabase
+                            .from('mbh_tool_users')
+                            .update({ last_login: new Date().toISOString() })
+                            .eq('email', session.user.email);
+
+                        window.location.href = './index.html';
+                    } else {
+                        await supabase.auth.signOut();
+                        showMessage('Your email is not authorized to access these tools.', 'error');
+                    }
+                }
+            }
+        }
+
+        // Show message
+        function showMessage(text, type) {
+            messageEl.textContent = text;
+            messageEl.className = 'message ' + type;
+        }
+
+        // Set loading state
+        function setLoading(loading) {
+            submitBtn.disabled = loading;
+            submitBtn.innerHTML = loading
+                ? '<span class="spinner"></span>Sending...'
+                : 'Send Login Link';
+        }
+
+        // Handle form submit
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = emailInput.value.trim().toLowerCase();
+            lastEmail = email;
+
+            if (!email) {
+                showMessage('Please enter your email address.', 'error');
+                return;
+            }
+
+            setLoading(true);
+            messageEl.className = 'message';
+
+            try {
+                // First check if email is whitelisted
+                const { data: user, error: checkError } = await supabase
+                    .from('mbh_tool_users')
+                    .select('email')
+                    .eq('email', email)
+                    .single();
+
+                if (!user) {
+                    showMessage('This email is not authorized. Please contact your administrator.', 'error');
+                    setLoading(false);
+                    return;
+                }
+
+                // Send magic link
+                const { error } = await supabase.auth.signInWithOtp({
+                    email: email,
+                    options: {
+                        emailRedirectTo: window.location.origin + '/tools/login.html'
+                    }
+                });
+
+                if (error) throw error;
+
+                // Show check email view
+                sentEmailDisplay.textContent = email;
+                loginFormView.classList.add('hidden');
+                checkEmailView.classList.add('active');
+
+            } catch (error) {
+                console.error('Login error:', error);
+                showMessage(error.message || 'Something went wrong. Please try again.', 'error');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Resend link
+        resendLink.addEventListener('click', async () => {
+            if (!lastEmail) return;
+
+            resendLink.textContent = 'Sending...';
+            resendLink.style.pointerEvents = 'none';
+
+            try {
+                const { error } = await supabase.auth.signInWithOtp({
+                    email: lastEmail,
+                    options: {
+                        emailRedirectTo: window.location.origin + '/tools/login.html'
+                    }
+                });
+
+                if (error) throw error;
+
+                resendLink.textContent = 'Sent!';
+                setTimeout(() => {
+                    resendLink.textContent = 'send again';
+                    resendLink.style.pointerEvents = 'auto';
+                }, 3000);
+
+            } catch (error) {
+                resendLink.textContent = 'Failed - try again';
+                resendLink.style.pointerEvents = 'auto';
+            }
+        });
+
+        // Back to login
+        backToLogin.addEventListener('click', () => {
+            loginFormView.classList.remove('hidden');
+            checkEmailView.classList.remove('active');
+            emailInput.value = '';
+            lastEmail = '';
+        });
+
+        // Initialize
+        handleAuthCallback();
+        checkAuth();
+    </script>
+</body>
+</html>
