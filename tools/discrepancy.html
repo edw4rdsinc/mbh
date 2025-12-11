@@ -196,10 +196,6 @@
         }
 
         .upload-box:hover { border-color: var(--mbh-primary); }
-        .upload-box.dragover {
-            border-color: var(--mbh-primary);
-            background: #eff6ff;
-        }
         .upload-box.has-file {
             border-style: solid;
             border-color: var(--mbh-success);
@@ -600,54 +596,12 @@
             document.getElementById('carrierFile').addEventListener('change', (e) => handleFileSelect(e, 'carrier'));
             document.getElementById('payrollFile').addEventListener('change', (e) => handleFileSelect(e, 'payroll'));
 
-            // File uploads - drag and drop
-            setupDragDrop('carrierUpload', 'carrier');
-            setupDragDrop('payrollUpload', 'payroll');
 
             // Buttons
             document.getElementById('analyzeBtn').addEventListener('click', analyzeFiles);
             document.getElementById('approveAllNamesBtn').addEventListener('click', () => bulkNameDecision(true));
             document.getElementById('rejectAllNamesBtn').addEventListener('click', () => bulkNameDecision(false));
             document.getElementById('submitNamesBtn').addEventListener('click', submitNameDecisions);
-        }
-
-        function setupDragDrop(elementId, type) {
-            const el = document.getElementById(elementId);
-
-            el.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                el.classList.add('dragover');
-            });
-
-            el.addEventListener('dragleave', () => {
-                el.classList.remove('dragover');
-            });
-
-            el.addEventListener('drop', (e) => {
-                e.preventDefault();
-                el.classList.remove('dragover');
-                const file = e.dataTransfer.files[0];
-                if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))) {
-                    handleFileDrop(file, type);
-                }
-            });
-        }
-
-        function handleFileDrop(file, type) {
-            if (type === 'carrier') {
-                carrierFile = file;
-                document.getElementById('carrierUpload').classList.add('has-file');
-                document.getElementById('carrierFileName').textContent = file.name;
-            } else {
-                payrollFile = file;
-                document.getElementById('payrollUpload').classList.add('has-file');
-                document.getElementById('payrollFileName').textContent = file.name;
-            }
-
-            checkCanAnalyze();
-            if (carrierFile && payrollFile) {
-                document.getElementById('mappingSection').classList.add('visible');
-            }
         }
 
         function handleFileSelect(e, type) {
@@ -748,7 +702,7 @@
                 payrollLastName: document.getElementById('payrollLastName').value || 'Last',
                 payrollFirstName: document.getElementById('payrollFirstName').value || 'First',
                 payrollPremium: document.getElementById('payrollPremium').value || 'Monthly Premium',
-                premiumTolerance: 0.02,
+                premiumTolerance: 0.05,
                 nameMatchThreshold: 80
             };
             formData.append('settings', JSON.stringify(settings));
