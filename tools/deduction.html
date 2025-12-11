@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="../Images/mbh-icon.png">
-    <title>Deduction Report | My Benefits Help</title>
+    <title>Amy's Deduction Report | My Benefits Help</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -133,11 +133,6 @@
 
         .upload-zone:hover {
             border-color: var(--mbh-primary);
-        }
-
-        .upload-zone.drag-over {
-            border-color: var(--mbh-primary);
-            background: #eff6ff;
         }
 
         .upload-zone.has-file {
@@ -667,6 +662,66 @@
             }
         }
 
+        /* Product Contribution Rows */
+        .product-contribution-row {
+            display: grid;
+            grid-template-columns: 1fr 100px 120px auto;
+            gap: 0.5rem;
+            align-items: center;
+            padding: 0.5rem;
+            background: var(--mbh-bg);
+            border: 1px solid var(--mbh-border);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-contribution-row input[type="text"] {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--mbh-border);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+        }
+
+        .product-contribution-row input[type="number"] {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--mbh-border);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            width: 100%;
+        }
+
+        .product-contribution-row select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--mbh-border);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-family: inherit;
+            background: var(--mbh-bg);
+        }
+
+        .product-contribution-row .remove-btn {
+            background: none;
+            border: none;
+            color: var(--mbh-error);
+            cursor: pointer;
+            font-size: 1.25rem;
+            line-height: 1;
+            padding: 0.25rem;
+        }
+
+        .product-contribution-row .remove-btn:hover {
+            background: #fef2f2;
+            border-radius: 0.25rem;
+        }
+
+        @media (max-width: 640px) {
+            .product-contribution-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 640px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -716,7 +771,7 @@
         <header class="header">
             <div class="header-left">
                 <a href="./index.html" class="back-link">← Back</a>
-                <span class="header-title">📋 Deduction Report</span>
+                <span class="header-title">📋 Amy's Deduction Report</span>
             </div>
             <div class="header-right">
                 <span class="user-email" id="userEmail"></span>
@@ -734,8 +789,8 @@
 
                     <div class="upload-zone" id="uploadZone">
                         <div class="upload-icon">📄</div>
-                        <h3>Drop CSV files here</h3>
-                        <p>or click to browse</p>
+                        <h3>Click to select CSV files</h3>
+                        <p>Select one or more carrier CSV files</p>
                         <input type="file" id="fileInput" accept=".csv" multiple>
                     </div>
 
@@ -790,22 +845,15 @@
                             </div>
                         </div>
 
-                        <div class="form-row" id="contributionValueRow" style="display: none;">
-                            <div class="form-group" id="flatAmountGroup" style="display: none;">
-                                <label for="flatAmount">Amount per Employee</label>
-                                <div class="input-with-prefix">
-                                    <span class="input-prefix">$</span>
-                                    <input type="number" id="flatAmount" min="0" step="0.01" placeholder="50.00">
-                                </div>
-                            </div>
-
-                            <div class="form-group" id="percentageGroup" style="display: none;">
-                                <label for="percentageAmount">Percentage of Premium</label>
-                                <div class="input-with-suffix">
-                                    <input type="number" id="percentageAmount" min="0" max="100" step="1" placeholder="50">
-                                    <span class="input-suffix">%</span>
-                                </div>
-                            </div>
+                        <!-- Per-Product Contribution Section -->
+                        <div id="productContributionsSection" style="display: none; margin-top: 1rem;">
+                            <p style="font-size: 0.875rem; color: var(--mbh-muted); margin-bottom: 0.75rem;">
+                                Set employer contribution for each product type:
+                            </p>
+                            <div id="productContributionsList"></div>
+                            <button type="button" class="add-more-btn" id="addProductContributionBtn" style="margin-top: 0.5rem;">
+                                + Add Product
+                            </button>
                         </div>
                     </div>
 
@@ -818,12 +866,12 @@
                     <div class="info-box">
                         <strong>What this tool does:</strong>
                         <ul>
-                            <li>Combines multiple CSV files into one report</li>
+                            <li>Combines multiple CSV files (dental, vision, misc) into one report</li>
                             <li>Filters out terminated employees</li>
-                            <li>Calculates employer/employee contributions</li>
-                            <li>Groups by employee with subtotals</li>
-                            <li>Supports flexible deduction frequencies</li>
-                            <li>Formats Excel with professional styling</li>
+                            <li>Per-product employer contributions (Dental: $X, Vision: $Y, etc.)</li>
+                            <li>Groups by employee with deduction subtotals</li>
+                            <li>Excel formulas for EE contribution &amp; per-period deduction</li>
+                            <li>Formats output matching Amy's exact template</li>
                         </ul>
                     </div>
                 </div>
@@ -952,11 +1000,12 @@
         // Settings elements
         const deductionFrequency = document.getElementById('deductionFrequency');
         const contributionType = document.getElementById('contributionType');
-        const contributionValueRow = document.getElementById('contributionValueRow');
-        const flatAmountGroup = document.getElementById('flatAmountGroup');
-        const percentageGroup = document.getElementById('percentageGroup');
-        const flatAmount = document.getElementById('flatAmount');
-        const percentageAmount = document.getElementById('percentageAmount');
+        const productContributionsSection = document.getElementById('productContributionsSection');
+        const productContributionsList = document.getElementById('productContributionsList');
+        const addProductContributionBtn = document.getElementById('addProductContributionBtn');
+
+        // Product contributions data
+        let productContributions = [];
 
         // Auth check
         async function checkAuth() {
@@ -1003,38 +1052,54 @@
             // Add more button
             addMoreBtn.addEventListener('click', () => fileInput.click());
 
-            // Drag and drop
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
-                uploadZone.addEventListener(event, (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-            });
-
-            ['dragenter', 'dragover'].forEach(event => {
-                uploadZone.addEventListener(event, () => uploadZone.classList.add('drag-over'));
-            });
-
-            ['dragleave', 'drop'].forEach(event => {
-                uploadZone.addEventListener(event, () => uploadZone.classList.remove('drag-over'));
-            });
-
-            uploadZone.addEventListener('drop', (e) => {
-                const files = Array.from(e.dataTransfer.files).filter(f =>
-                    f.name.toLowerCase().endsWith('.csv')
-                );
-                if (files.length > 0) {
-                    addFiles(files);
-                } else {
-                    showError('Please upload CSV files only');
-                }
-            });
-
             // Contribution type change
             contributionType.addEventListener('change', updateContributionFields);
 
+            // Add product contribution button
+            addProductContributionBtn.addEventListener('click', addProductContribution);
+
             // Process button
             processBtn.addEventListener('click', processFiles);
+        }
+
+        function addProductContribution(productType = '', contributionTypeVal = 'flat', value = '') {
+            const id = Date.now();
+            productContributions.push({ id, productType, contributionType: contributionTypeVal, value });
+            renderProductContributions();
+        }
+
+        function removeProductContribution(id) {
+            productContributions = productContributions.filter(p => p.id !== id);
+            renderProductContributions();
+        }
+
+        function updateProductContribution(id, field, value) {
+            const item = productContributions.find(p => p.id === id);
+            if (item) {
+                item[field] = value;
+            }
+        }
+
+        function renderProductContributions() {
+            productContributionsList.innerHTML = productContributions.map(item => `
+                <div class="product-contribution-row" data-id="${item.id}">
+                    <input type="text"
+                           placeholder="Product Type (e.g., Dental)"
+                           value="${item.productType}"
+                           onchange="updateProductContribution(${item.id}, 'productType', this.value)">
+                    <select onchange="updateProductContribution(${item.id}, 'contributionType', this.value)">
+                        <option value="flat" ${item.contributionType === 'flat' ? 'selected' : ''}>$ Flat</option>
+                        <option value="percentage" ${item.contributionType === 'percentage' ? 'selected' : ''}>% of Premium</option>
+                    </select>
+                    <input type="number"
+                           min="0"
+                           step="${item.contributionType === 'flat' ? '0.01' : '1'}"
+                           placeholder="${item.contributionType === 'flat' ? '20.00' : '50'}"
+                           value="${item.value}"
+                           onchange="updateProductContribution(${item.id}, 'value', this.value)">
+                    <button class="remove-btn" onclick="removeProductContribution(${item.id})">&times;</button>
+                </div>
+            `).join('');
         }
 
         async function addFiles(files) {
@@ -1267,17 +1332,15 @@
             const type = contributionType.value;
 
             if (type === 'none') {
-                contributionValueRow.style.display = 'none';
-                flatAmountGroup.style.display = 'none';
-                percentageGroup.style.display = 'none';
-            } else if (type === 'flat') {
-                contributionValueRow.style.display = 'grid';
-                flatAmountGroup.style.display = 'block';
-                percentageGroup.style.display = 'none';
-            } else if (type === 'percentage') {
-                contributionValueRow.style.display = 'grid';
-                flatAmountGroup.style.display = 'none';
-                percentageGroup.style.display = 'block';
+                productContributionsSection.style.display = 'none';
+                productContributions = [];
+                renderProductContributions();
+            } else if (type === 'flat' || type === 'percentage') {
+                productContributionsSection.style.display = 'block';
+                // Add a default product row if empty
+                if (productContributions.length === 0) {
+                    addProductContribution('', type, '');
+                }
             }
         }
 
@@ -1285,13 +1348,18 @@
             const settings = {
                 frequency: deductionFrequency.value,
                 contributionType: contributionType.value,
-                contributionValue: 0
+                productContributions: []
             };
 
-            if (settings.contributionType === 'flat') {
-                settings.contributionValue = parseFloat(flatAmount.value) || 0;
-            } else if (settings.contributionType === 'percentage') {
-                settings.contributionValue = parseFloat(percentageAmount.value) || 0;
+            // Build product contributions array
+            if (settings.contributionType !== 'none') {
+                settings.productContributions = productContributions
+                    .filter(p => p.productType && p.value)
+                    .map(p => ({
+                        productType: p.productType.trim(),
+                        type: p.contributionType,
+                        value: parseFloat(p.value) || 0
+                    }));
             }
 
             return settings;
@@ -1413,8 +1481,8 @@
             // Reset settings
             deductionFrequency.value = 'semi-monthly';
             contributionType.value = 'none';
-            flatAmount.value = '';
-            percentageAmount.value = '';
+            productContributions = [];
+            renderProductContributions();
             updateContributionFields();
 
             clearError();

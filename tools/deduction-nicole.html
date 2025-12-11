@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="../Images/mbh-icon.png">
+    <title>Nicole's Deduction Report | MBH Tools</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Work+Sans:wght@600;700&display=swap" rel="stylesheet">
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --mbh-primary: #1e40af;
+            --mbh-primary-dark: #1e3a8a;
+            --mbh-secondary: #3b82f6;
+            --mbh-accent: #60a5fa;
+            --mbh-success: #22c55e;
+            --mbh-error: #ef4444;
+            --mbh-warning: #f59e0b;
+            --mbh-bg: #f8fafc;
+            --mbh-card: #ffffff;
+            --mbh-text: #1e293b;
+            --mbh-text-light: #64748b;
+            --mbh-border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--mbh-bg);
+            color: var(--mbh-text);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--mbh-primary) 0%, var(--mbh-primary-dark) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .header-nav a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .user-email {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: var(--mbh-card);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card h2 {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--mbh-primary);
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--mbh-border);
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--mbh-bg);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--mbh-primary);
+        }
+
+        .upload-zone.has-file {
+            border-style: solid;
+            border-color: var(--mbh-success);
+            background: #f0fdf4;
+        }
+
+        .upload-zone input[type="file"] {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-zone h3 {
+            color: var(--mbh-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-zone p {
+            color: var(--mbh-text-light);
+            font-size: 0.9rem;
+        }
+
+        .file-info {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid var(--mbh-border);
+        }
+
+        .file-info.visible {
+            display: block;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: var(--mbh-text);
+        }
+
+        .file-size {
+            color: var(--mbh-text-light);
+            font-size: 0.85rem;
+        }
+
+        .remove-file {
+            background: none;
+            border: none;
+            color: var(--mbh-error);
+            cursor: pointer;
+            padding: 0.25rem;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--mbh-text);
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--mbh-border);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--mbh-primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--mbh-primary);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--mbh-primary-dark);
+        }
+
+        .btn-primary:disabled {
+            background: var(--mbh-border);
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--mbh-bg);
+            color: var(--mbh-text);
+            border: 1px solid var(--mbh-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--mbh-border);
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .status-message.visible {
+            display: block;
+        }
+
+        .status-message.success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-message.error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .status-message.loading {
+            background: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: #1e40af;
+        }
+
+        .info-box ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .info-box li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .loading .spinner {
+            width: 40px;
+            height: 40px;
+            border-width: 3px;
+            border-color: var(--mbh-primary);
+            border-right-color: transparent;
+        }
+
+        .app-content {
+            display: none;
+        }
+
+        .app-content.authenticated {
+            display: block;
+        }
+
+        @media (max-width: 640px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 0.5rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading State -->
+    <div class="loading" id="loadingView">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- App Content (hidden until authenticated) -->
+    <div class="app-content" id="appContent">
+        <header class="header">
+            <h1>Nicole's Deduction Report</h1>
+            <nav class="header-nav">
+                <span class="user-email" id="userEmail"></span>
+                <a href="index.html">All Tools</a>
+            </nav>
+        </header>
+
+        <main class="container">
+            <div class="card">
+                <h2>Upload Benefits Enrollment CSV</h2>
+
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon">📄</div>
+                    <h3>Click to select CSV file</h3>
+                    <p>Select the benefits enrollment export CSV</p>
+                    <input type="file" id="fileInput" accept=".csv">
+                </div>
+
+                <div class="file-info" id="fileInfo">
+                    <div class="file-item" id="fileItem">
+                        <div>
+                            <span class="file-name" id="fileName"></span>
+                            <span class="file-size" id="fileSize"></span>
+                        </div>
+                        <button class="remove-file" id="removeFile" title="Remove file">&times;</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Report Settings</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="payCycle">Pay Cycle</label>
+                        <select id="payCycle">
+                            <option value="Semi-Monthly" selected>Semi-Monthly (24/year)</option>
+                            <option value="Bi-Weekly">Bi-Weekly (26/year)</option>
+                            <option value="Monthly">Monthly (12/year)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reportDate">Report Date</label>
+                        <input type="text" id="reportDate" placeholder="MM/DD/YY" value="">
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <strong>What this tool does:</strong>
+                    <ul>
+                        <li>Transforms benefits enrollment CSV to deduction report format</li>
+                        <li>Uses ER/EE contributions directly from the CSV</li>
+                        <li>Calculates per-pay-cycle amounts based on pay cycle</li>
+                        <li>Groups by employee with subtotal formulas</li>
+                        <li>Formats output matching Nicole's exact template</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <button class="btn btn-primary" id="generateBtn" disabled>
+                    Generate Report
+                </button>
+
+                <div class="status-message" id="statusMessage"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Config
+        const SUPABASE_URL = 'https://exzeayeoosiabwhgyquq.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4emVheWVvb3NpYWJ3aGd5cXVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzQ3MDksImV4cCI6MjA2OTU1MDcwOX0.9xwKT8fyCH7GTPOEFh-1eP-l3Myfv-nwJpsAwvjEW0s';
+        const API_BASE = 'https://mbh.comp.edw4rds.com';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let authToken = null;
+
+        // DOM elements
+        const loadingView = document.getElementById('loadingView');
+        const appContent = document.getElementById('appContent');
+        const userEmailEl = document.getElementById('userEmail');
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeFile = document.getElementById('removeFile');
+        const generateBtn = document.getElementById('generateBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const payCycle = document.getElementById('payCycle');
+        const reportDate = document.getElementById('reportDate');
+
+        // State
+        let selectedFile = null;
+
+        // Set default report date to today
+        const today = new Date();
+        reportDate.value = `${today.getMonth() + 1}/${today.getDate()}/${String(today.getFullYear()).slice(-2)}`;
+
+        // Auth check
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (!session) {
+                window.location.href = './login.html';
+                return;
+            }
+
+            // Verify whitelisted
+            const { data: user } = await supabase
+                .from('mbh_tool_users')
+                .select('email, name')
+                .eq('email', session.user.email)
+                .single();
+
+            if (!user) {
+                await supabase.auth.signOut();
+                window.location.href = './login.html';
+                return;
+            }
+
+            authToken = session.access_token;
+            userEmailEl.textContent = user.email;
+
+            loadingView.style.display = 'none';
+            appContent.classList.add('authenticated');
+
+            initializeUpload();
+        }
+
+        function initializeUpload() {
+            // Click to browse
+            uploadZone.addEventListener('click', () => fileInput.click());
+
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file && file.name.toLowerCase().endsWith('.csv')) {
+                    setFile(file);
+                } else if (file) {
+                    showError('Please select a CSV file');
+                }
+            });
+
+            // Remove file button
+            removeFile.addEventListener('click', (e) => {
+                e.stopPropagation();
+                clearFile();
+            });
+
+            // Generate button
+            generateBtn.addEventListener('click', generateReport);
+        }
+
+        // Functions
+        function setFile(file) {
+            selectedFile = file;
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.classList.add('visible');
+            uploadZone.classList.add('has-file');
+            generateBtn.disabled = false;
+            hideStatus();
+        }
+
+        function clearFile() {
+            selectedFile = null;
+            fileInput.value = '';
+            fileInfo.classList.remove('visible');
+            uploadZone.classList.remove('has-file');
+            generateBtn.disabled = true;
+            hideStatus();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message visible ${type}`;
+
+            if (type === 'loading') {
+                statusMessage.innerHTML = `<span class="spinner"></span>${message}`;
+            }
+        }
+
+        function showError(message) {
+            showStatus(message, 'error');
+        }
+
+        function hideStatus() {
+            statusMessage.className = 'status-message';
+        }
+
+        function getSettings() {
+            return {
+                payCycle: payCycle.value,
+                reportDate: reportDate.value,
+            };
+        }
+
+        async function generateReport() {
+            if (!selectedFile) {
+                showError('Please select a CSV file');
+                return;
+            }
+
+            showStatus('Generating report...', 'loading');
+            generateBtn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                formData.append('settings', JSON.stringify(getSettings()));
+
+                const response = await fetch(`${API_BASE}/api/deduction-report-nicole/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to generate report');
+                }
+
+                const result = await response.json();
+
+                // Download the file
+                const downloadUrl = `${API_BASE}/api/deduction-report-nicole/download/${result.fileId}?token=${authToken}`;
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = result.fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                showStatus(`Report generated successfully! ${result.stats.inputRows} input rows, ${result.stats.outputRows} output rows.`, 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'An error occurred');
+            } finally {
+                generateBtn.disabled = false;
+            }
+        }
+
+        // Initialize
+        checkAuth();
+    </script>
+</body>
+</html>
