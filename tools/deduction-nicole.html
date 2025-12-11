@@ -44,41 +44,51 @@
         }
 
         .header {
-            background: linear-gradient(135deg, var(--mbh-primary) 0%, var(--mbh-primary-dark) 100%);
-            color: white;
+            background: var(--mbh-card);
+            border-bottom: 1px solid var(--mbh-border);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .header h1 {
-            font-family: 'Work Sans', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .header-nav {
+        .header-left {
             display: flex;
-            gap: 1rem;
             align-items: center;
+            gap: 1rem;
         }
 
-        .header-nav a {
-            color: white;
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--mbh-text-light);
             text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            transition: background 0.2s;
+            font-weight: 500;
+            font-size: 0.9rem;
         }
 
-        .header-nav a:hover {
-            background: rgba(255,255,255,0.1);
+        .back-link:hover {
+            color: var(--mbh-primary);
+        }
+
+        .header-title {
+            font-family: 'Work Sans', sans-serif;
+            font-size: 1.25rem;
+            color: var(--mbh-text);
+            padding-left: 1rem;
+            border-left: 1px solid var(--mbh-border);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
         .user-email {
             font-size: 0.875rem;
-            opacity: 0.9;
+            color: var(--mbh-text-light);
         }
 
         .container {
@@ -365,11 +375,13 @@
     <!-- App Content (hidden until authenticated) -->
     <div class="app-content" id="appContent">
         <header class="header">
-            <h1>Nicole's Deduction Report</h1>
-            <nav class="header-nav">
+            <div class="header-left">
+                <a href="./index.html" class="back-link">← Back</a>
+                <span class="header-title">📋 Nicole's Deduction Report</span>
+            </div>
+            <div class="header-right">
                 <span class="user-email" id="userEmail"></span>
-                <a href="index.html">All Tools</a>
-            </nav>
+            </div>
         </header>
 
         <main class="container">
