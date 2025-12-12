@@ -863,6 +863,14 @@
 
                     <div id="errorMessage"></div>
 
+                    <!-- Mixed Formats Info Box -->
+                    <div class="info-box" id="mixedFormatsInfo" style="display: none; background: #f0fdf4; border-left-color: var(--mbh-success);">
+                        <strong>Auto-detection enabled</strong>
+                        <p style="margin: 0; color: var(--mbh-muted);">
+                            Your files have different formats (dental/vision + misc). Column mapping will be handled automatically for each file type.
+                        </p>
+                    </div>
+
                     <div class="info-box">
                         <strong>What this tool does:</strong>
                         <ul>
@@ -1102,6 +1110,10 @@
             `).join('');
         }
 
+        // Track detected formats across all files
+        let detectedFormats = [];  // Array of { filename, format, columns }
+        let mixedFormats = false;  // True if files have different formats
+
         async function addFiles(files) {
             const csvFiles = files.filter(f => f.name.toLowerCase().endsWith('.csv'));
 
@@ -1111,19 +1123,84 @@
             }
 
             // Add to selected files (avoid duplicates by name)
-            csvFiles.forEach(file => {
+            for (const file of csvFiles) {
                 if (!selectedFiles.some(f => f.name === file.name)) {
                     selectedFiles.push(file);
+                    // Detect format for each new file
+                    await detectFileFormat(file);
                 }
-            });
+            }
 
-            // Parse headers from first file to detect columns
-            if (selectedFiles.length > 0 && detectedColumns.length === 0) {
-                await detectColumns(selectedFiles[0]);
+            // Check if we have mixed formats
+            checkForMixedFormats();
+
+            // Only show column mapping if all files have the same format
+            if (!mixedFormats && selectedFiles.length > 0 && detectedColumns.length === 0) {
+                // Use columns from first file for mapping UI
+                const firstFormat = detectedFormats[0];
+                if (firstFormat) {
+                    detectedColumns = firstFormat.columns;
+                    renderColumnMapping();
+                }
             }
 
             updateFileList();
             clearError();
+        }
+
+        // Detect format of a single file based on its headers
+        async function detectFileFormat(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const text = e.target.result;
+                    const lines = text.split(/\r?\n/);
+                    if (lines.length > 0) {
+                        const columns = parseCSVLine(lines[0]);
+
+                        // Determine format based on columns
+                        let format = 'unknown';
+                        if (columns.includes('Insured Name') && columns.includes('Mode Premium')) {
+                            format = 'misc';  // Allstate misc format
+                        } else if (columns.includes('employee_name') && columns.includes('employee_premium_amt')) {
+                            format = 'dental_vision';  // Dental/Vision format
+                        }
+
+                        detectedFormats.push({
+                            filename: file.name,
+                            format: format,
+                            columns: columns
+                        });
+                    }
+                    resolve();
+                };
+                reader.readAsText(file);
+            });
+        }
+
+        // Check if files have mixed formats
+        function checkForMixedFormats() {
+            const mixedFormatsInfo = document.getElementById('mixedFormatsInfo');
+
+            if (detectedFormats.length <= 1) {
+                mixedFormats = false;
+                mixedFormatsInfo.style.display = 'none';
+                return;
+            }
+
+            const formats = detectedFormats.map(f => f.format);
+            const uniqueFormats = [...new Set(formats)];
+            mixedFormats = uniqueFormats.length > 1;
+
+            if (mixedFormats) {
+                console.log('Mixed formats detected:', uniqueFormats);
+                // Hide column mapping section when formats are mixed
+                mappingSection.style.display = 'none';
+                // Show mixed formats info box
+                mixedFormatsInfo.style.display = 'block';
+            } else {
+                mixedFormatsInfo.style.display = 'none';
+            }
         }
 
         async function detectColumns(file) {
@@ -1282,13 +1359,30 @@
         }
 
         function removeFile(index) {
+            const removedFile = selectedFiles[index];
             selectedFiles.splice(index, 1);
             fileInput.value = '';
+
+            // Remove from format tracking
+            if (removedFile) {
+                detectedFormats = detectedFormats.filter(f => f.filename !== removedFile.name);
+            }
 
             // If removing all files, reset column detection
             if (selectedFiles.length === 0) {
                 detectedColumns = [];
                 columnMapping = {};
+                detectedFormats = [];
+                mixedFormats = false;
+            } else {
+                // Re-check for mixed formats
+                checkForMixedFormats();
+
+                // If no longer mixed formats, show column mapping for first file
+                if (!mixedFormats && detectedFormats.length > 0) {
+                    detectedColumns = detectedFormats[0].columns;
+                    renderColumnMapping();
+                }
             }
 
             updateFileList();
@@ -1298,6 +1392,12 @@
             const mapping = {};
             const defaults = {};
             const special = {};  // For special handling like __FROM_FILENAME__, __LEAVE_BLANK__
+
+            // If mixed formats detected, return empty mapping to let backend auto-detect per file
+            if (mixedFormats) {
+                console.log('Mixed formats - sending empty mapping for backend auto-detection');
+                return { mapping: {}, defaults: {}, special: {}, autoDetect: true };
+            }
 
             REQUIRED_FIELDS.forEach(field => {
                 const selectEl = document.querySelector(`select[data-field="${field.key}"]`);
@@ -1325,7 +1425,7 @@
                 }
             });
 
-            return { mapping, defaults, special };
+            return { mapping, defaults, special, autoDetect: false };
         }
 
         function updateContributionFields() {
@@ -1377,18 +1477,21 @@
             if (selectedFiles.length === 0) return;
 
             // Validate required fields
-            const { mapping, defaults, special } = getColumnMapping();
+            const { mapping, defaults, special, autoDetect } = getColumnMapping();
 
-            // Check that required fields are either mapped, have defaults, or have special handling
-            for (const field of REQUIRED_FIELDS) {
-                if (field.required) {
-                    const isMapped = mapping[field.key] !== null;
-                    const hasDefault = defaults[field.key] && defaults[field.key].trim() !== '';
-                    const hasSpecial = special[field.key] !== undefined;
+            // Skip validation if auto-detect is enabled (mixed formats)
+            if (!autoDetect) {
+                // Check that required fields are either mapped, have defaults, or have special handling
+                for (const field of REQUIRED_FIELDS) {
+                    if (field.required) {
+                        const isMapped = mapping[field.key] !== null;
+                        const hasDefault = defaults[field.key] && defaults[field.key].trim() !== '';
+                        const hasSpecial = special[field.key] !== undefined;
 
-                    if (!isMapped && !hasDefault && !hasSpecial) {
-                        showError(`"${field.label}" is required. Please map it to a column or provide a default value.`);
-                        return;
+                        if (!isMapped && !hasDefault && !hasSpecial) {
+                            showError(`"${field.label}" is required. Please map it to a column or provide a default value.`);
+                            return;
+                        }
                     }
                 }
             }
@@ -1462,6 +1565,8 @@
             selectedFiles = [];
             detectedColumns = [];
             columnMapping = {};
+            detectedFormats = [];  // Reset format tracking
+            mixedFormats = false;  // Reset mixed format flag
             fileInput.value = '';
             uploadZone.style.display = 'block';
             fileListContainer.style.display = 'none';
