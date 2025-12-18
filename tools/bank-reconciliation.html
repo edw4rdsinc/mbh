@@ -481,7 +481,7 @@
                 return;
             }
 
-            const { data: user } = await supabase
+            const { data: user } = await supabaseClient
                 .from('mbh_tool_users')
                 .select('email, name')
                 .eq('email', session.user.email)

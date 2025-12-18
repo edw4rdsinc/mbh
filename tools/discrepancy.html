@@ -554,8 +554,9 @@
         const SUPABASE_URL = 'https://exzeayeoosiabwhgyquq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4emVheWVvb3NpYWJ3aGd5cXVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzQ3MDksImV4cCI6MjA2OTU1MDcwOX0.FPufOFFPsKEk7ZSWL-JgKXACbq7KgEQmNaAnYeyyXgk';
 
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         // State
-        let supabase;
         let accessToken = null;
         let carrierFile = null;
         let payrollFile = null;
@@ -567,8 +568,6 @@
         
         // Initialize
         async function init() {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) {
                 window.location.href = 'index.html';
