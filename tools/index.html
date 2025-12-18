@@ -405,33 +405,51 @@
 
         // Check authentication
         async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
+            try {
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-            if (!session) {
-                window.location.href = './login.html';
-                return;
+                if (sessionError) {
+                    console.error('Session error:', sessionError);
+                    window.location.href = './login.html';
+                    return;
+                }
+
+                if (!session) {
+                    window.location.href = './login.html';
+                    return;
+                }
+
+                // Verify user is whitelisted
+                const { data: user, error } = await supabase
+                    .from('mbh_tool_users')
+                    .select('email, name')
+                    .eq('email', session.user.email)
+                    .single();
+
+                if (!user || error) {
+                    console.error('Whitelist check failed:', error);
+                    await supabase.auth.signOut();
+                    window.location.href = './login.html';
+                    return;
+                }
+
+                // Show app content
+                loadingView.style.display = 'none';
+                appContent.classList.add('authenticated');
+
+                // Set user info
+                userEmail.textContent = user.email;
+                userName.textContent = user.name || user.email.split('@')[0];
+            } catch (err) {
+                console.error('Auth check failed:', err);
+                // Show error to user instead of infinite spinner
+                loadingView.innerHTML = `
+                    <p style="color: #dc2626; text-align: center;">
+                        Unable to connect. Please refresh or try again later.<br>
+                        <a href="./login.html" style="color: #00529b;">Go to login</a>
+                    </p>
+                `;
             }
-
-            // Verify user is whitelisted
-            const { data: user, error } = await supabase
-                .from('mbh_tool_users')
-                .select('email, name')
-                .eq('email', session.user.email)
-                .single();
-
-            if (!user || error) {
-                await supabase.auth.signOut();
-                window.location.href = './login.html';
-                return;
-            }
-
-            // Show app content
-            loadingView.style.display = 'none';
-            appContent.classList.add('authenticated');
-
-            // Set user info
-            userEmail.textContent = user.email;
-            userName.textContent = user.name || user.email.split('@')[0];
         }
 
         // Handle logout
