@@ -297,7 +297,7 @@
         const SUPABASE_URL = 'https://exzeayeoosiabwhgyquq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4emVheWVvb3NpYWJ3aGd5cXVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzQ3MDksImV4cCI6MjA2OTU1MDcwOX0.9xwKT8fyCH7GTPOEFh-1eP-l3Myfv-nwJpsAwvjEW0s';
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // DOM elements
         const loginForm = document.getElementById('loginForm');
@@ -314,7 +314,7 @@
 
         // Check if already logged in
         async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 // Verify user is whitelisted
                 const { data: user } = await supabase
@@ -327,7 +327,7 @@
                     window.location.href = './index.html';
                 } else {
                     // Not whitelisted, sign out
-                    await supabase.auth.signOut();
+                    await supabaseClient.auth.signOut();
                     showMessage('Your email is not authorized to access these tools.', 'error');
                 }
             }
@@ -340,7 +340,7 @@
 
             if (accessToken) {
                 // Let Supabase handle the session
-                const { data: { session }, error } = await supabase.auth.getSession();
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
 
                 if (session && !error) {
                     // Verify whitelisted
@@ -359,7 +359,7 @@
 
                         window.location.href = './index.html';
                     } else {
-                        await supabase.auth.signOut();
+                        await supabaseClient.auth.signOut();
                         showMessage('Your email is not authorized to access these tools.', 'error');
                     }
                 }
@@ -420,7 +420,7 @@
                 }
 
                 // Send magic link
-                const { error } = await supabase.auth.signInWithOtp({
+                const { error } = await supabaseClient.auth.signInWithOtp({
                     email: email,
                     options: {
                         emailRedirectTo: window.location.origin + '/tools/login.html'
@@ -450,7 +450,7 @@
             resendLink.style.pointerEvents = 'none';
 
             try {
-                const { error } = await supabase.auth.signInWithOtp({
+                const { error } = await supabaseClient.auth.signInWithOtp({
                     email: lastEmail,
                     options: {
                         emailRedirectTo: window.location.origin + '/tools/login.html'
