@@ -394,7 +394,7 @@
         const SUPABASE_URL = 'https://exzeayeoosiabwhgyquq.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4emVheWVvb3NpYWJ3aGd5cXVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5NzQ3MDksImV4cCI6MjA2OTU1MDcwOX0.9xwKT8fyCH7GTPOEFh-1eP-l3Myfv-nwJpsAwvjEW0s';
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // DOM elements
         const loadingView = document.getElementById('loadingView');
@@ -406,7 +406,7 @@
         // Check authentication
         async function checkAuth() {
             try {
-                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
 
                 if (sessionError) {
                     console.error('Session error:', sessionError);
@@ -420,7 +420,7 @@
                 }
 
                 // Verify user is whitelisted
-                const { data: user, error } = await supabase
+                const { data: user, error } = await supabaseClient
                     .from('mbh_tool_users')
                     .select('email, name')
                     .eq('email', session.user.email)
@@ -428,7 +428,7 @@
 
                 if (!user || error) {
                     console.error('Whitelist check failed:', error);
-                    await supabase.auth.signOut();
+                    await supabaseClient.auth.signOut();
                     window.location.href = './login.html';
                     return;
                 }
@@ -454,7 +454,7 @@
 
         // Handle logout
         logoutBtn.addEventListener('click', async () => {
-            await supabase.auth.signOut();
+            await supabaseClient.auth.signOut();
             window.location.href = './login.html';
         });
 
