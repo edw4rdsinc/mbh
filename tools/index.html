@@ -458,8 +458,17 @@
             window.location.href = './login.html';
         });
 
-        // Initialize
-        checkAuth();
+        // Initialize with SDK check
+        if (typeof window.supabase === 'undefined') {
+            loadingView.innerHTML = `
+                <p style="color: #dc2626; text-align: center;">
+                    Failed to load authentication. Please refresh the page.<br>
+                    <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; cursor: pointer;">Refresh</button>
+                </p>
+            `;
+        } else {
+            checkAuth();
+        }
     </script>
 </body>
 </html>
