@@ -317,7 +317,7 @@
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 // Verify user is whitelisted
-                const { data: user } = await supabase
+                const { data: user } = await supabaseClient
                     .from('mbh_tool_users')
                     .select('email')
                     .eq('email', session.user.email)
@@ -344,7 +344,7 @@
 
                 if (session && !error) {
                     // Verify whitelisted
-                    const { data: user } = await supabase
+                    const { data: user } = await supabaseClient
                         .from('mbh_tool_users')
                         .select('email')
                         .eq('email', session.user.email)
@@ -352,7 +352,7 @@
 
                     if (user) {
                         // Update last login
-                        await supabase
+                        await supabaseClient
                             .from('mbh_tool_users')
                             .update({ last_login: new Date().toISOString() })
                             .eq('email', session.user.email);
@@ -398,7 +398,7 @@
             try {
                 // First check if email is whitelisted
                 console.log('Checking whitelist for:', email);
-                const { data: user, error: checkError } = await supabase
+                const { data: user, error: checkError } = await supabaseClient
                     .from('mbh_tool_users')
                     .select('email')
                     .eq('email', email)
