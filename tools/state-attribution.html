@@ -558,6 +558,12 @@
                 <p id="completionMessage">Your report has been generated.</p>
                 <div class="stats-grid" id="finalStats"></div>
 
+                <!-- Grand Total Display -->
+                <div id="grandTotalDisplay" style="background: linear-gradient(135deg, var(--mbh-primary), var(--mbh-accent)); color: white; padding: 1.5rem; border-radius: 0.75rem; text-align: center; margin: 1.5rem 0;">
+                    <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.25rem;">Total Commissions</div>
+                    <div id="grandTotalAmount" style="font-size: 2.5rem; font-weight: 700;">$0.00</div>
+                </div>
+
                 <!-- Results Table -->
                 <div class="results-table-container" id="resultsTableContainer">
                     <table class="results-table">
@@ -907,6 +913,9 @@
                 const tbody = document.getElementById('resultsTableBody');
                 let html = '';
                 const states = Object.keys(data.resultsData.byState).sort();
+
+                // Update grand total display
+                document.getElementById('grandTotalAmount').textContent = '$' + data.resultsData.grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
                 for (const state of states) {
                     const stateData = data.resultsData.byState[state];
