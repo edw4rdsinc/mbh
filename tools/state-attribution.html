@@ -380,6 +380,60 @@
             margin: 1rem 0;
         }
 
+        .results-table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            margin: 1.5rem 0;
+            border: 1px solid var(--mbh-border);
+            border-radius: 0.5rem;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .results-table th {
+            background: var(--mbh-primary);
+            color: white;
+            padding: 0.75rem;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+
+        .results-table td {
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid var(--mbh-border);
+        }
+
+        .results-table tr:hover {
+            background: var(--mbh-bg-alt);
+        }
+
+        .state-subtotal {
+            background: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .grand-total {
+            background: var(--mbh-success);
+            color: white;
+            font-weight: 700;
+        }
+
+        .commission-amount {
+            text-align: right;
+            font-family: monospace;
+        }
+
+        .state-header {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: var(--mbh-primary);
+        }
+
         .loading {
             display: flex;
             align-items: center;
@@ -503,6 +557,22 @@
                 <h2>State Attribution Complete!</h2>
                 <p id="completionMessage">Your report has been generated.</p>
                 <div class="stats-grid" id="finalStats"></div>
+
+                <!-- Results Table -->
+                <div class="results-table-container" id="resultsTableContainer">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>State</th>
+                                <th>Carrier</th>
+                                <th>Group Name</th>
+                                <th style="text-align: right;">Commission</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody"></tbody>
+                    </table>
+                </div>
+
                 <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
                     <a href="#" class="btn btn-primary" id="downloadReportBtn" download>
                         Download Report
@@ -823,13 +893,54 @@
             const stats = data.stats || data;
             if (stats && typeof stats === 'object') {
                 document.getElementById('finalStats').innerHTML = Object.entries(stats)
-                    .filter(([key]) => key !== 'fileId' && key !== 'fileName')
+                    .filter(([key]) => key !== 'fileId' && key !== 'fileName' && key !== 'resultsData')
                     .map(([label, value]) => `
                         <div class="stat-box">
                             <div class="stat-number">${value}</div>
                             <div class="stat-label">${label.replace(/_/g, ' ')}</div>
                         </div>
                     `).join('');
+            }
+
+            // Populate results table
+            if (data.resultsData && data.resultsData.byState) {
+                const tbody = document.getElementById('resultsTableBody');
+                let html = '';
+                const states = Object.keys(data.resultsData.byState).sort();
+
+                for (const state of states) {
+                    const stateData = data.resultsData.byState[state];
+
+                    // Add each entry for this state
+                    for (const entry of stateData.entries) {
+                        html += `
+                            <tr>
+                                <td>${state}</td>
+                                <td>${entry.carrier}</td>
+                                <td>${entry.group_name}</td>
+                                <td class="commission-amount">$${entry.commission.toFixed(2)}</td>
+                            </tr>
+                        `;
+                    }
+
+                    // Add state subtotal
+                    html += `
+                        <tr class="state-subtotal">
+                            <td colspan="3">${state} Subtotal (${stateData.entries.length} entries)</td>
+                            <td class="commission-amount">$${stateData.total.toFixed(2)}</td>
+                        </tr>
+                    `;
+                }
+
+                // Add grand total
+                html += `
+                    <tr class="grand-total">
+                        <td colspan="3">GRAND TOTAL</td>
+                        <td class="commission-amount">$${data.resultsData.grandTotal.toFixed(2)}</td>
+                    </tr>
+                `;
+
+                tbody.innerHTML = html;
             }
 
             if (data.fileId && data.fileName) {
