@@ -1,0 +1,24 @@
+{
+  "name": "deduction-report-automation",
+  "version": "1.0.0",
+  "description": "Automated deduction report processing for MBH",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node src/test.js",
+    "dev": "node --watch src/index.js",
+    "check-emails": "node email-processor.js"
+  },
+  "keywords": ["automation", "excel", "csv", "reports"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.525.0",
+    "csv-parse": "^5.5.5",
+    "exceljs": "^4.4.0",
+    "date-fns": "^3.3.1",
+    "dotenv": "^16.4.5",
+    "nylas": "^7.6.0"
+  }
+}
