@@ -43,7 +43,7 @@ export async function createWorkbook(data, config) {
  * Add header section (rows 1-7) - Amy's format
  */
 function addHeaderSection(worksheet, accountName, accountNumber, carrierName, reportDate, formatting, settings) {
-  const numCols = 12;
+  const numCols = 13;
 
   // Row 1: Last Updated:
   worksheet.getRow(1).values = ['Last Updated:', reportDate];
@@ -93,13 +93,14 @@ function getColLetter(colIndex) {
 }
 
 /**
- * Add column headers (row 8) - Amy's format (12 columns)
+ * Add column headers (row 8) - Amy's format (13 columns)
  */
 function addColumnHeaders(worksheet, frequencyLabel) {
   const headers = [
     'Policy Number',
     'Last Name',
     'First Name',
+    'Payor Name',
     'Product Type',
     'Pre-Tax',
     'Status',
@@ -133,6 +134,7 @@ function addColumnHeaders(worksheet, frequencyLabel) {
     { key: 'policyNumber', width: 18 },
     { key: 'lastName', width: 15 },
     { key: 'firstName', width: 15 },
+    { key: 'payorName', width: 22 },
     { key: 'productType', width: 20 },
     { key: 'preTax', width: 10 },
     { key: 'status', width: 12 },
@@ -164,19 +166,19 @@ function addDataRows(worksheet, rows, frequencyLabel) {
 
     if (row.isEmployeeSubtotal) {
       // Employee subtotal row - just "Total:" and SUM formula
-      const values = new Array(12).fill('');
-      values[10] = 'Total:';  // Column K
-      // Column L gets a SUM formula - will be set after we know the range
-      values[11] = { formula: `SUM(L${row.startRow}:L${currentRow - 1})` };
+      const values = new Array(13).fill('');
+      values[11] = 'Total:';  // Column L
+      // Column M gets a SUM formula - will be set after we know the range
+      values[12] = { formula: `SUM(M${row.startRow}:M${currentRow - 1})` };
 
       excelRow.values = values;
-      excelRow.getCell(12).numFmt = '$#,##0.00';
+      excelRow.getCell(13).numFmt = '$#,##0.00';
 
       // Right-align "Total:" text
-      excelRow.getCell(11).alignment = { horizontal: 'right' };
+      excelRow.getCell(12).alignment = { horizontal: 'right' };
 
       // Highlight subtotal row with BRIGHT yellow background
-      for (let col = 1; col <= 12; col++) {
+      for (let col = 1; col <= 13; col++) {
         excelRow.getCell(col).fill = {
           type: 'pattern',
           pattern: 'solid',
@@ -191,28 +193,29 @@ function addDataRows(worksheet, rows, frequencyLabel) {
         row.policyNumber,
         row.lastName,
         row.firstName,
+        row.payorName || '',
         row.productType,
         row.preTax,
         row.status,
         row.effectiveDate,
         row.monthlyPremium,
         row.erContribution || 0,  // ER contribution per product
-        { formula: `H${currentRow}-I${currentRow}` },  // EE Contribution = Premium - ER
+        { formula: `I${currentRow}-J${currentRow}` },  // EE Contribution = Premium - ER
         frequencyLabel,
-        { formula: `J${currentRow}/2` },  // Deduction = EE / 2 (for semi-monthly)
+        { formula: `K${currentRow}/2` },  // Deduction = EE / 2 (for semi-monthly)
       ];
 
       excelRow.values = values;
 
       // Format currency columns
-      excelRow.getCell(8).numFmt = '$#,##0.00';   // Monthly Premium
-      excelRow.getCell(9).numFmt = '$#,##0.00';   // ER Contribution
-      excelRow.getCell(10).numFmt = '$#,##0.00';  // EE Contribution (formula)
-      excelRow.getCell(12).numFmt = '$#,##0.00';  // Deduction (formula)
+      excelRow.getCell(9).numFmt = '$#,##0.00';   // Monthly Premium
+      excelRow.getCell(10).numFmt = '$#,##0.00';  // ER Contribution
+      excelRow.getCell(11).numFmt = '$#,##0.00';  // EE Contribution (formula)
+      excelRow.getCell(13).numFmt = '$#,##0.00';  // Deduction (formula)
 
       // Format date column
       if (row.effectiveDate !== undefined && row.effectiveDate !== null && row.effectiveDate !== '') {
-        const dateCell = excelRow.getCell(7);
+        const dateCell = excelRow.getCell(8);
         dateCell.value = row.effectiveDate;
         dateCell.numFmt = 'm/d/yyyy';
       }
@@ -228,7 +231,7 @@ function addDataRows(worksheet, rows, frequencyLabel) {
  * Apply all formatting (borders, colors, etc.)
  */
 function applyFormatting(worksheet, rows) {
-  const numCols = 12;
+  const numCols = 13;
   let currentRow = 9;
 
   for (const row of rows) {
@@ -255,8 +258,8 @@ function applyFormatting(worksheet, rows) {
         };
       }
 
-      // Special border box around the Semi-Monthly EE Deduction column (L = column 12)
-      excelRow.getCell(12).border = {
+      // Special border box around the Semi-Monthly EE Deduction column (M = column 13)
+      excelRow.getCell(13).border = {
         top: { style: 'thin' },
         bottom: { style: 'thin' },
         left: { style: 'thin' },
