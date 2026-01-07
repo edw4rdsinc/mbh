@@ -39,13 +39,13 @@ const CONFIG = {
   commission: {
     dataDir: '/home/sam/commission_automator/data/mbh',
     pythonPath: '/home/sam/pdfplumber-env/bin/python3',
-    scriptsDir: '/home/sam/chatbot-platform/mbh/commission-automator/src',
-    outputDir: '/home/sam/chatbot-platform/mbh/commission-automator/output',
+    scriptsDir: '/home/sam/github-repos/mbh/commission-automator/src',
+    outputDir: '/home/sam/github-repos/mbh/commission-automator/output',
     learningDbPath: '/home/sam/.commission_learning.json'
   },
   // Deduction report paths
   deduction: {
-    scriptsDir: '/home/sam/chatbot-platform/mbh/deduction-report/src',
+    scriptsDir: '/home/sam/github-repos/mbh/deduction-report/src',
     tempDir: '/tmp/mbh-deduction'
   },
   // Supabase
@@ -1310,10 +1310,10 @@ app.post('/api/deduction/process',
 
     try {
       // Import deduction report modules dynamically
-      const { parseCSVWithMapping } = await import('/home/sam/chatbot-platform/mbh/deduction-report/src/csv-parser.js');
-      const { transform } = await import('/home/sam/chatbot-platform/mbh/deduction-report/src/data-transformer.js');
-      const { createWorkbook, getWorkbookBuffer } = await import('/home/sam/chatbot-platform/mbh/deduction-report/src/excel-generator.js');
-      const config = (await import('/home/sam/chatbot-platform/mbh/deduction-report/src/config.js')).default;
+      const { parseCSVWithMapping } = await import('/home/sam/github-repos/mbh/deduction-report/src/csv-parser.js');
+      const { transform } = await import('/home/sam/github-repos/mbh/deduction-report/src/data-transformer.js');
+      const { createWorkbook, getWorkbookBuffer } = await import('/home/sam/github-repos/mbh/deduction-report/src/excel-generator.js');
+      const config = (await import('/home/sam/github-repos/mbh/deduction-report/src/config.js')).default;
 
       // Parse all CSV files and combine rows
       let combinedRows = [];
@@ -1483,8 +1483,8 @@ app.post('/api/deduction-report-nicole/generate',
       console.log(`   Parsed ${csvRows.length} rows from CSV`);
 
       // Import Nicole's deduction report modules
-      const { transform } = await import('/home/sam/chatbot-platform/mbh/deduction-report-nicole/src/data-transformer.js');
-      const { generateExcelBuffer } = await import('/home/sam/chatbot-platform/mbh/deduction-report-nicole/src/excel-generator.js');
+      const { transform } = await import('/home/sam/github-repos/mbh/deduction-report-nicole/src/data-transformer.js');
+      const { generateExcelBuffer } = await import('/home/sam/github-repos/mbh/deduction-report-nicole/src/excel-generator.js');
 
       // Transform data
       const transformedData = transform(csvRows, settings);
@@ -1601,8 +1601,8 @@ app.post('/api/discrepancy/analyze',
 
     try {
       // Import discrepancy analyzer modules
-      const { parseExcel } = await import('/home/sam/chatbot-platform/mbh/discrepancy-analyzer/src/excel-parser.js');
-      const { findNameMatches } = await import('/home/sam/chatbot-platform/mbh/discrepancy-analyzer/src/matcher.js');
+      const { parseExcel } = await import('/home/sam/github-repos/mbh/discrepancy-analyzer/src/excel-parser.js');
+      const { findNameMatches } = await import('/home/sam/github-repos/mbh/discrepancy-analyzer/src/matcher.js');
 
       // Parse both files
       const carrierData = await parseExcel(carrierFile.buffer);
@@ -1708,7 +1708,7 @@ app.post('/api/discrepancy/submit-names',
     console.log(`📊 Name decisions: ${decisions?.length || 0} for session ${sessionId}`);
 
     try {
-      const { applyNameDecisions, comparePremiums } = await import('/home/sam/chatbot-platform/mbh/discrepancy-analyzer/src/matcher.js');
+      const { applyNameDecisions, comparePremiums } = await import('/home/sam/github-repos/mbh/discrepancy-analyzer/src/matcher.js');
 
       // Apply name decisions (or empty array if no fuzzy matches)
       const nameResults = applyNameDecisions(session.phase1Results, decisions || []);
@@ -1742,7 +1742,7 @@ app.post('/api/discrepancy/submit-names',
 
       // If generateReport flag is set, skip premium review and generate report directly
       if (generateReport) {
-        const { generateTwoPhaseReport, getWorkbookBuffer } = await import('/home/sam/chatbot-platform/mbh/discrepancy-analyzer/src/report-generator.js');
+        const { generateTwoPhaseReport, getWorkbookBuffer } = await import('/home/sam/github-repos/mbh/discrepancy-analyzer/src/report-generator.js');
 
         // Build final results - all discrepancies go to unresolved (no approval step)
         const finalResults = {
@@ -1835,8 +1835,8 @@ app.post('/api/discrepancy/submit-premiums',
     console.log(`📊 Premium decisions: ${decisions?.length || 0} for session ${sessionId}`);
 
     try {
-      const { applyPremiumDecisions } = await import('/home/sam/chatbot-platform/mbh/discrepancy-analyzer/src/matcher.js');
-      const { generateTwoPhaseReport, getWorkbookBuffer } = await import('/home/sam/chatbot-platform/mbh/discrepancy-analyzer/src/report-generator.js');
+      const { applyPremiumDecisions } = await import('/home/sam/github-repos/mbh/discrepancy-analyzer/src/matcher.js');
+      const { generateTwoPhaseReport, getWorkbookBuffer } = await import('/home/sam/github-repos/mbh/discrepancy-analyzer/src/report-generator.js');
 
       // Apply premium decisions
       const finalResults = applyPremiumDecisions(session.phase2Results, decisions || []);
@@ -1903,8 +1903,8 @@ app.post('/api/discrepancy/generate-report',
     }
 
     try {
-      const { applyNameDecisions, comparePremiums } = await import('/home/sam/chatbot-platform/mbh/discrepancy-analyzer/src/matcher.js');
-      const { generateTwoPhaseReport, getWorkbookBuffer } = await import('/home/sam/chatbot-platform/mbh/discrepancy-analyzer/src/report-generator.js');
+      const { applyNameDecisions, comparePremiums } = await import('/home/sam/github-repos/mbh/discrepancy-analyzer/src/matcher.js');
+      const { generateTwoPhaseReport, getWorkbookBuffer } = await import('/home/sam/github-repos/mbh/discrepancy-analyzer/src/report-generator.js');
 
       // Auto-approve all fuzzy matches
       const allApproved = session.phase1Results.fuzzyMatches.map((_, i) => ({ index: i, approved: true }));
