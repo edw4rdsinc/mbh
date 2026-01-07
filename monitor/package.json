@@ -1,0 +1,16 @@
+{
+  "name": "mbh-monitoring",
+  "version": "1.0.0",
+  "description": "Health monitoring for MBH commission and deduction systems",
+  "type": "module",
+  "main": "health-check.js",
+  "scripts": {
+    "check": "node health-check.js",
+    "test": "node health-check.js"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "author": "Sam Edwards",
+  "license": "MIT"
+}

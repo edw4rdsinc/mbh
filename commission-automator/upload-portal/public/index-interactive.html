@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Commission Processing Portal - Interactive</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            display: block;
+        }
+
+        .upload-section.hidden {
+            display: none;
+        }
+
+        .month-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .upload-zone {
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+        }
+
+        .upload-zone.drag-over {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .upload-zone h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .file-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .file-item {
+            padding: 8px;
+            background: #f0f0f0;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .file-count {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .btn-clear {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-clear:hover {
+            background: #cc0000;
+            transform: scale(1.05);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-browse {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 15px 0;
+            transition: all 0.3s;
+        }
+
+        .btn-browse:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Processing Section */
+        .processing-section {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-message {
+            text-align: center;
+            font-size: 18px;
+            margin: 20px 0;
+            color: #333;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Review Section */
+        .review-section {
+            display: none;
+        }
+
+        .review-card {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .commission-amount {
+            font-size: 20px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .match-box {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .confidence-meter {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .confidence-high {
+            background: #4caf50;
+            color: white;
+        }
+
+        .confidence-medium {
+            background: #ff9800;
+            color: white;
+        }
+
+        .confidence-low {
+            background: #f44336;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-confirm {
+            background: #4caf50;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-change {
+            background: #2196f3;
+            color: white;
+        }
+
+        .btn-skip {
+            background: #9e9e9e;
+            color: white;
+        }
+
+        .btn-auto {
+            background: #9c27b0;
+            color: white;
+        }
+
+        .state-selector {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #2196f3;
+            border-radius: 6px;
+            min-width: 150px;
+        }
+
+        .alternatives {
+            margin-top: 15px;
+        }
+
+        .alternative-item {
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .alternative-item:hover {
+            background: #e0e0e0;
+        }
+
+        /* Completion Section */
+        .completion-section {
+            display: none;
+            text-align: center;
+        }
+
+        .completion-icon {
+            font-size: 64px;
+            color: #4caf50;
+            margin-bottom: 20px;
+        }
+
+        .learning-note {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .error-message {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 20px 0;
+            color: #c62828;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Commission Processing Portal</h1>
+            <p>Interactive Review System</p>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="card upload-section" id="uploadSection">
+            <h2>Upload Commission Files</h2>
+
+            <input
+                type="month"
+                id="monthInput"
+                class="month-input"
+                placeholder="Select month (e.g., 2025-10)"
+                required
+            />
+
+            <div class="upload-zone" id="commissionZone">
+                <h3>📄 Commission Statements</h3>
+                <p>Drag and drop PDF files here or click to browse</p>
+                <button class="btn-browse" onclick="document.getElementById('commissionInput').click()">
+                    📂 Browse Files
+                </button>
+                <input type="file" id="commissionInput" multiple accept=".pdf" style="display: none;">
+                <div id="commissionCount"></div>
+                <div class="file-list" id="commissionList"></div>
+            </div>
+
+            <div class="upload-zone" id="bankZone">
+                <h3>🏦 Bank Statement</h3>
+                <p>Drag and drop PDF file here or click to browse</p>
+                <button class="btn-browse" onclick="document.getElementById('bankInput').click()">
+                    📂 Browse Files
+                </button>
+                <input type="file" id="bankInput" accept=".pdf" style="display: none;">
+                <div id="bankCount"></div>
+                <div class="file-list" id="bankList"></div>
+            </div>
+
+            <button class="btn btn-primary" id="uploadBtn" disabled>
+                Upload and Start Processing
+            </button>
+        </div>
+
+        <!-- Processing Section -->
+        <div class="card processing-section" id="processingSection">
+            <h2>Processing Commission Data</h2>
+
+            <div class="status-message" id="statusMessage">Initializing...</div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%">0%</div>
+            </div>
+
+            <div class="stats-grid" id="statsGrid"></div>
+        </div>
+
+        <!-- Review Section -->
+        <div class="card review-section" id="reviewSection">
+            <h2>Review Required Match</h2>
+
+            <div id="reviewContent">
+                <!-- Review cards will be inserted here -->
+            </div>
+
+            <div class="learning-note">
+                💡 <strong>Smart Learning:</strong> Your corrections are saved and will be applied automatically next time. After a few months, you'll rarely need to review anything!
+            </div>
+        </div>
+
+        <!-- Completion Section -->
+        <div class="card completion-section" id="completionSection">
+            <div class="completion-icon">✅</div>
+            <h2>Processing Complete!</h2>
+            <p>Your report has been generated and emailed.</p>
+
+            <div class="stats-grid" id="finalStats"></div>
+
+            <button class="btn btn-primary" onclick="location.reload()">
+                Process Another Month
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        const state = {
+            month: '',
+            commissionFiles: [],
+            bankFile: null,
+            ws: null,
+            sessionId: null,
+            currentReview: null,
+            stats: {
+                total: 0,
+                reviewed: 0,
+                remaining: 0
+            }
+        };
+
+        // Initialize upload handlers
+        function initializeUpload() {
+            const monthInput = document.getElementById('monthInput');
+            const commissionZone = document.getElementById('commissionZone');
+            const commissionInput = document.getElementById('commissionInput');
+            const bankZone = document.getElementById('bankZone');
+            const bankInput = document.getElementById('bankInput');
+            const uploadBtn = document.getElementById('uploadBtn');
+
+            // Month input handler
+            monthInput.addEventListener('change', (e) => {
+                state.month = e.target.value;
+                checkUploadReady();
+            });
+
+            // Set default to current month
+            const now = new Date();
+            const defaultMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+            monthInput.value = defaultMonth;
+            state.month = defaultMonth;
+
+            // Commission files handlers
+            setupFileZone(commissionZone, commissionInput, 'commission');
+
+            // Bank file handlers
+            setupFileZone(bankZone, bankInput, 'bank');
+
+            // Upload button handler
+            uploadBtn.addEventListener('click', uploadFiles);
+        }
+
+        // Setup file upload zone
+        function setupFileZone(zone, input, type) {
+            // Click to browse (but not on button)
+            zone.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('btn-browse') && e.target.tagName !== 'BUTTON') {
+                    input.click();
+                }
+            });
+
+            // File input change
+            input.addEventListener('change', (e) => {
+                handleFiles(e.target.files, type);
+            });
+
+            // Drag and drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                zone.addEventListener(eventName, () => {
+                    zone.classList.add('drag-over');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, () => {
+                    zone.classList.remove('drag-over');
+                });
+            });
+
+            zone.addEventListener('drop', (e) => {
+                const files = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf');
+                handleFiles(files, type);
+            });
+        }
+
+        // Handle file selection
+        function handleFiles(files, type) {
+            if (type === 'commission') {
+                state.commissionFiles = Array.from(files);
+                updateFileDisplay('commission', state.commissionFiles);
+            } else {
+                state.bankFile = files[0];
+                updateFileDisplay('bank', state.bankFile ? [state.bankFile] : []);
+            }
+            checkUploadReady();
+        }
+
+        // Update file display
+        function updateFileDisplay(type, files) {
+            const countEl = document.getElementById(type + 'Count');
+            const listEl = document.getElementById(type + 'List');
+
+            if (files.length === 0) {
+                countEl.innerHTML = '';
+                listEl.innerHTML = '';
+                return;
+            }
+
+            countEl.innerHTML = `
+                <span class="file-count">${files.length} file${files.length > 1 ? 's' : ''}</span>
+                <button class="btn-clear" onclick="clearFiles('${type}')" title="Clear files">✖ Clear</button>
+            `;
+
+            listEl.innerHTML = files.map(file => `
+                <div class="file-item">
+                    <span>${file.name}</span>
+                    <span>${(file.size / 1024).toFixed(1)} KB</span>
+                </div>
+            `).join('');
+        }
+
+        // Clear files function
+        function clearFiles(type) {
+            if (type === 'commission') {
+                state.commissionFiles = [];
+                document.getElementById('commissionInput').value = '';
+                updateFileDisplay('commission', []);
+            } else {
+                state.bankFile = null;
+                document.getElementById('bankInput').value = '';
+                updateFileDisplay('bank', []);
+            }
+            checkUploadReady();
+        }
+
+        // Check if ready to upload
+        function checkUploadReady() {
+            const btn = document.getElementById('uploadBtn');
+            const ready = state.month && state.commissionFiles.length > 0 && state.bankFile;
+            btn.disabled = !ready;
+        }
+
+        // Upload files
+        async function uploadFiles() {
+            const formData = new FormData();
+            formData.append('month', state.month);
+
+            state.commissionFiles.forEach(file => {
+                formData.append('commission_statements', file);
+            });
+
+            if (state.bankFile) {
+                formData.append('bank_statement', state.bankFile);
+            }
+
+            try {
+                // Hide upload section, show processing
+                document.getElementById('uploadSection').style.display = 'none';
+                document.getElementById('processingSection').style.display = 'block';
+                updateStatus('Uploading files...');
+
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Connect WebSocket for interactive processing
+                    connectWebSocket();
+                } else {
+                    throw new Error(result.error);
+                }
+
+            } catch (error) {
+                console.error('Upload error:', error);
+                showError('Upload failed: ' + error.message);
+            }
+        }
+
+        // Connect WebSocket for real-time updates
+        function connectWebSocket() {
+            // Use wss:// for HTTPS, ws:// for HTTP
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}`;
+            state.ws = new WebSocket(wsUrl);
+
+            state.ws.onopen = () => {
+                console.log('WebSocket connected');
+                updateStatus('Connected. Starting processing...');
+            };
+
+            state.ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleWebSocketMessage(data);
+            };
+
+            state.ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                showError('Connection error');
+            };
+
+            state.ws.onclose = () => {
+                console.log('WebSocket disconnected');
+            };
+        }
+
+        // Handle WebSocket messages
+        function handleWebSocketMessage(data) {
+            console.log('WebSocket message:', data);
+
+            switch (data.type) {
+                case 'connected':
+                    state.sessionId = data.sessionId;
+                    // Start processing
+                    state.ws.send(JSON.stringify({
+                        type: 'start_processing',
+                        month: state.month
+                    }));
+                    break;
+
+                case 'status':
+                    handleStatusUpdate(data);
+                    break;
+
+                case 'review_request':
+                    handleReviewRequest(data);
+                    break;
+
+                case 'complete':
+                    handleComplete(data);
+                    break;
+
+                case 'error':
+                    showError(data.message);
+                    break;
+            }
+        }
+
+        // Handle status updates
+        function handleStatusUpdate(data) {
+            updateStatus(data.message);
+
+            if (data.progress !== undefined) {
+                updateProgress(data.progress);
+            }
+
+            if (data.phase === 'review_needed') {
+                updateStats({
+                    'Auto-Matched': data.highConfidence,
+                    'Needs Review': data.needsReview,
+                    'Total': data.highConfidence + data.needsReview
+                });
+            }
+        }
+
+        // Handle review request
+        function handleReviewRequest(data) {
+            state.currentReview = data.item;
+
+            // Hide processing, show review
+            document.getElementById('processingSection').style.display = 'none';
+            document.getElementById('reviewSection').style.display = 'block';
+
+            // Build review UI
+            const content = document.getElementById('reviewContent');
+            content.innerHTML = `
+                <div class="review-card">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div class="company-name">${data.item.group_name}</div>
+                            <div class="commission-amount">Commission: $${data.item.commission.toFixed(2)}</div>
+                        </div>
+                        <div class="confidence-meter ${getConfidenceClass(data.item.best_match.confidence)}">
+                            ${data.item.best_match.confidence}% Match
+                        </div>
+                    </div>
+
+                    <div style="color: #666; margin-bottom: 15px;">
+                        From: ${data.item.carrier}
+                    </div>
+
+                    <div class="match-box">
+                        <h4>📍 Best Match Found:</h4>
+                        <div style="margin: 10px 0;">
+                            <strong>${data.item.best_match.matched_name || data.item.group_name}</strong><br>
+                            Location: ${data.item.best_match.state}
+                        </div>
+                    </div>
+
+                    ${data.item.alternatives && data.item.alternatives.length > 0 ? `
+                        <div class="alternatives">
+                            <h4>Other Possible Matches:</h4>
+                            ${data.item.alternatives.map(alt => `
+                                <div class="alternative-item" onclick="selectAlternative('${alt.state}')">
+                                    <span>${alt.name}</span>
+                                    <span>${alt.confidence}%</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+
+                    <div class="action-buttons">
+                        <button class="btn btn-confirm" onclick="confirmMatch()">
+                            ✓ Correct - ${data.item.best_match.state}
+                        </button>
+
+                        <select class="state-selector" id="stateSelector" onchange="if(this.value) changeState(this.value)">
+                            <option value="">Change State...</option>
+                            ${getStateOptions()}
+                        </select>
+
+                        <button class="btn btn-skip" onclick="skipReview()">
+                            Skip
+                        </button>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <label>
+                            <input type="checkbox" id="rememberChoice" checked>
+                            Remember this match for "${data.item.group_name}"
+                        </label>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button class="btn btn-auto" onclick="autoApproveAll()">
+                            Auto-Approve All Remaining (${data.progress.remaining} items)
+                        </button>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 20px; color: #666;">
+                    Reviewing ${data.progress.current} of ${data.progress.total}
+                </div>
+            `;
+        }
+
+        // Get confidence class for styling
+        function getConfidenceClass(confidence) {
+            if (confidence >= 80) return 'confidence-high';
+            if (confidence >= 60) return 'confidence-medium';
+            return 'confidence-low';
+        }
+
+        // Get state options for dropdown
+        function getStateOptions() {
+            const states = [
+                'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+                'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+                'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+                'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+                'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
+            ];
+            return states.map(s => `<option value="${s}">${s}</option>`).join('');
+        }
+
+        // Review actions
+        function confirmMatch() {
+            sendReviewResponse('confirm', state.currentReview.best_match.state);
+        }
+
+        function changeState(newState) {
+            if (newState === 'Other') {
+                newState = prompt('Enter state code (e.g., CA, TX):');
+                if (!newState) return;
+            }
+            sendReviewResponse('change', newState);
+        }
+
+        function selectAlternative(state) {
+            sendReviewResponse('change', state);
+        }
+
+        function skipReview() {
+            sendReviewResponse('skip');
+        }
+
+        function autoApproveAll() {
+            if (confirm('Auto-approve all remaining items with their best matches?')) {
+                state.ws.send(JSON.stringify({
+                    type: 'auto_approve_all'
+                }));
+                updateStatus('Auto-approving remaining items...');
+                document.getElementById('reviewSection').style.display = 'none';
+                document.getElementById('processingSection').style.display = 'block';
+            }
+        }
+
+        // Send review response
+        function sendReviewResponse(action, newState) {
+            const remember = document.getElementById('rememberChoice').checked;
+
+            state.ws.send(JSON.stringify({
+                type: 'review_response',
+                action: action,
+                state: state.currentReview.best_match.state,
+                new_state: newState,
+                remember: remember
+            }));
+
+            // Show processing while waiting for next
+            document.getElementById('reviewSection').style.display = 'none';
+            document.getElementById('processingSection').style.display = 'block';
+            updateStatus('Processing your response...');
+        }
+
+        // Handle completion
+        function handleComplete(data) {
+            document.getElementById('processingSection').style.display = 'none';
+            document.getElementById('reviewSection').style.display = 'none';
+            document.getElementById('completionSection').style.display = 'block';
+
+            if (data.stats) {
+                const statsHtml = Object.entries(data.stats).map(([label, value]) => `
+                    <div class="stat-box">
+                        <div class="stat-number">${value}</div>
+                        <div class="stat-label">${label.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                    </div>
+                `).join('');
+
+                document.getElementById('finalStats').innerHTML = statsHtml;
+            }
+        }
+
+        // Update UI helpers
+        function updateStatus(message) {
+            document.getElementById('statusMessage').textContent = message;
+        }
+
+        function updateProgress(percent) {
+            const bar = document.getElementById('progressBar');
+            bar.style.width = percent + '%';
+            bar.textContent = Math.round(percent) + '%';
+        }
+
+        function updateStats(stats) {
+            const html = Object.entries(stats).map(([label, value]) => `
+                <div class="stat-box">
+                    <div class="stat-number">${value}</div>
+                    <div class="stat-label">${label}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('statsGrid').innerHTML = html;
+        }
+
+        function showError(message) {
+            const errorHtml = `<div class="error-message">❌ ${message}</div>`;
+            document.getElementById('processingSection').insertAdjacentHTML('beforeend', errorHtml);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initializeUpload);
+    </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "mbh-discrepancy-analyzer",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Compare carrier and payroll data to find discrepancies",
+  "main": "src/matcher.js",
+  "dependencies": {
+    "exceljs": "^4.4.0"
+  }
+}

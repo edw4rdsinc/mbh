@@ -1,0 +1,17 @@
+{
+  "processing": {
+    "newPolicyDate": "2025-11-01",
+    "billingCycle": "Semi-Monthly",
+    "carrierName": "Allstate Benefits"
+  },
+  "formatting": {
+    "disclaimerText": "Please note: this deduction summary is being provided to you as a courtesy. It does NOT replace your invoice. To ensure accurate bookkeeping please reference, deduct, and pay according to the actual invoice from the carrier(s). If you need help accessing those, please let us know.",
+    "headerFontSize": 16
+  },
+  "productTypePreTaxMapping": {
+    "Accident": "Y",
+    "Critical Illness": "Y",
+    "Disability": "N",
+    "Group Term to 100": "N"
+  }
+}

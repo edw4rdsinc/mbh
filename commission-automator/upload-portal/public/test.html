@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .zone { border: 2px dashed #ccc; padding: 40px; margin: 20px 0; text-align: center; }
+        .zone.drag { background: #e0e0e0; }
+        .files { margin: 20px 0; padding: 10px; background: #f0f0f0; min-height: 50px; }
+        button { padding: 10px 20px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Simple Upload Test</h1>
+
+    <div class="zone" id="dropzone">
+        <p>Drop PDFs here or click button below</p>
+        <button onclick="document.getElementById('files').click()">Browse Files</button>
+        <input type="file" id="files" multiple accept=".pdf" style="display:none">
+    </div>
+
+    <div class="files" id="filelist">No files selected</div>
+
+    <button onclick="testUpload()">Test Upload</button>
+
+    <div id="status"></div>
+
+    <script>
+        const zone = document.getElementById('dropzone');
+        const input = document.getElementById('files');
+        const list = document.getElementById('filelist');
+        const status = document.getElementById('status');
+
+        // File input change
+        input.addEventListener('change', function(e) {
+            console.log('Files selected:', e.target.files.length);
+            showFiles();
+        });
+
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            document.addEventListener(eventName, preventDefaults, false);
+            zone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Highlight drop zone
+        ['dragenter', 'dragover'].forEach(eventName => {
+            zone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            zone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            zone.classList.add('drag');
+        }
+
+        function unhighlight(e) {
+            zone.classList.remove('drag');
+        }
+
+        // Handle dropped files
+        zone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            console.log('Dropped files:', files.length);
+
+            // Set files to input
+            input.files = files;
+            showFiles();
+        }
+
+        function showFiles() {
+            if (input.files.length === 0) {
+                list.textContent = 'No files selected';
+                return;
+            }
+
+            let html = '<h3>Files (' + input.files.length + '):</h3><ul>';
+            for (let i = 0; i < input.files.length; i++) {
+                const file = input.files[i];
+                html += '<li>' + file.name + ' (' + (file.size/1024/1024).toFixed(2) + ' MB)</li>';
+            }
+            html += '</ul>';
+            list.innerHTML = html;
+        }
+
+        function testUpload() {
+            if (input.files.length === 0) {
+                alert('No files selected');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('month', '2025-10');
+
+            for (let i = 0; i < input.files.length; i++) {
+                formData.append('commission_statements', input.files[i]);
+            }
+
+            // Add dummy bank statement
+            formData.append('bank_statement', new Blob(['test'], {type: 'application/pdf'}), 'test.pdf');
+
+            status.innerHTML = '<p>Uploading...</p>';
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                status.innerHTML = '<p style="color:green">Success: ' + JSON.stringify(data) + '</p>';
+            })
+            .catch(error => {
+                status.innerHTML = '<p style="color:red">Error: ' + error + '</p>';
+            });
+        }
+
+        console.log('Test page loaded successfully');
+    </script>
+</body>
+</html>

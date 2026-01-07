@@ -1,0 +1,23 @@
+{
+  "name": "mbh-tools-api",
+  "version": "2.0.0",
+  "description": "Unified MBH Tools API - Commission & Deduction Reports",
+  "main": "server-unified.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server-unified.js",
+    "start:old": "node server-interactive.js",
+    "dev": "node server-unified.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "exceljs": "^4.4.0",
+    "express": "^4.18.2",
+    "multer": "^2.0.0",
+    "papaparse": "^5.5.3",
+    "ws": "^8.18.3",
+    "xlsx": "^0.18.5"
+  }
+}

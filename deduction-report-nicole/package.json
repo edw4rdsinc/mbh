@@ -1,0 +1,13 @@
+{
+  "name": "deduction-report-nicole",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Nicole's Deduction Report Generator",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0"
+  }
+}

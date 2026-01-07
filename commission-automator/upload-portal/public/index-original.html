@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commission Upload Portal - My Benefits Help</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        input[type="month"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="month"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .upload-zone {
+            border: 3px dashed #ccc;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: #fafafa;
+            margin-bottom: 20px;
+        }
+
+        .upload-zone:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .upload-zone.dragover {
+            border-color: #667eea;
+            background: #e8eeff;
+            transform: scale(1.02);
+        }
+
+        .upload-zone.has-files {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+
+        .upload-zone h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .upload-zone p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .browse-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .browse-btn:hover {
+            background: #5568d3;
+        }
+
+        .file-list {
+            margin-top: 20px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .file-count {
+            background: #4caf50;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .file-item {
+            background: #f0f0f0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .file-item .remove {
+            color: #e74c3c;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 0 8px;
+        }
+
+        .total-size {
+            margin-top: 15px;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .status.processing {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            display: block;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Commission Upload Portal</h1>
+        <p class="subtitle">Upload commission and bank statements for automated processing</p>
+
+        <form id="uploadForm">
+            <div class="form-group">
+                <label for="month">Processing Month *</label>
+                <input type="month" id="month" name="month" required>
+            </div>
+
+            <div class="upload-zone" id="commissionZone">
+                <h3>Commission Statements</h3>
+                <p>Drop commission PDFs here or click Browse</p>
+                <p style="font-size: 12px; color: #999;">Multiple PDFs accepted (up to 50 files)</p>
+                <div class="browse-btn">Browse Files</div>
+                <input type="file" id="commissionInput" multiple accept=".pdf">
+                <div class="file-list" id="commissionList"></div>
+            </div>
+
+            <div class="upload-zone" id="bankZone">
+                <h3>Bank Statement</h3>
+                <p>Drop bank statement PDF here or click Browse</p>
+                <p style="font-size: 12px; color: #999;">Single PDF file</p>
+                <div class="browse-btn">Browse File</div>
+                <input type="file" id="bankInput" accept=".pdf">
+                <div class="file-list" id="bankList"></div>
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">Upload & Process</button>
+        </form>
+
+        <div class="status" id="status"></div>
+
+        <div class="footer">
+            My Benefits Help - Commission Processing System
+        </div>
+    </div>
+
+    <script>
+        // Get elements
+        const form = document.getElementById('uploadForm');
+        const monthInput = document.getElementById('month');
+        const commissionZone = document.getElementById('commissionZone');
+        const bankZone = document.getElementById('bankZone');
+        const commissionInput = document.getElementById('commissionInput');
+        const bankInput = document.getElementById('bankInput');
+        const commissionList = document.getElementById('commissionList');
+        const bankList = document.getElementById('bankList');
+        const submitBtn = document.getElementById('submitBtn');
+        const status = document.getElementById('status');
+
+        // Set default month
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        monthInput.value = year + '-' + month;
+
+        // Browse button click handlers
+        commissionZone.querySelector('.browse-btn').addEventListener('click', function() {
+            commissionInput.click();
+        });
+
+        bankZone.querySelector('.browse-btn').addEventListener('click', function() {
+            bankInput.click();
+        });
+
+        // File input change handlers
+        commissionInput.addEventListener('change', function() {
+            console.log('Commission files selected:', commissionInput.files.length);
+            displayFiles(commissionInput, commissionList, commissionZone);
+        });
+
+        bankInput.addEventListener('change', function() {
+            console.log('Bank file selected:', bankInput.files.length);
+            displayFiles(bankInput, bankList, bankZone);
+        });
+
+        // Display selected files
+        function displayFiles(input, listElement, zone) {
+            listElement.innerHTML = '';
+
+            if (input.files.length === 0) {
+                zone.classList.remove('has-files');
+                return;
+            }
+
+            zone.classList.add('has-files');
+
+            // Add file count
+            const countDiv = document.createElement('div');
+            countDiv.className = 'file-count';
+            countDiv.textContent = input.files.length + ' file(s) selected';
+            listElement.appendChild(countDiv);
+
+            // Show files (limit to first 10)
+            const maxShow = Math.min(input.files.length, 10);
+            for (let i = 0; i < maxShow; i++) {
+                const file = input.files[i];
+                const fileDiv = document.createElement('div');
+                fileDiv.className = 'file-item';
+                fileDiv.innerHTML = '<span>' + file.name + ' (' + (file.size/1024/1024).toFixed(2) + ' MB)</span>';
+                listElement.appendChild(fileDiv);
+            }
+
+            if (input.files.length > 10) {
+                const moreDiv = document.createElement('div');
+                moreDiv.style.fontStyle = 'italic';
+                moreDiv.style.marginTop = '10px';
+                moreDiv.textContent = '... and ' + (input.files.length - 10) + ' more files';
+                listElement.appendChild(moreDiv);
+            }
+
+            // Show total size
+            let totalSize = 0;
+            for (let i = 0; i < input.files.length; i++) {
+                totalSize += input.files[i].size;
+            }
+            const sizeDiv = document.createElement('div');
+            sizeDiv.className = 'total-size';
+            sizeDiv.textContent = 'Total: ' + (totalSize/1024/1024).toFixed(2) + ' MB';
+            listElement.appendChild(sizeDiv);
+        }
+
+        // Drag and drop handlers
+        function setupDragDrop(zone, input) {
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(function(eventName) {
+                zone.addEventListener(eventName, function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+                document.body.addEventListener(eventName, function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            });
+
+            // Highlight on drag over
+            ['dragenter', 'dragover'].forEach(function(eventName) {
+                zone.addEventListener(eventName, function() {
+                    zone.classList.add('dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(function(eventName) {
+                zone.addEventListener(eventName, function() {
+                    zone.classList.remove('dragover');
+                });
+            });
+
+            // Handle drop
+            zone.addEventListener('drop', function(e) {
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    // Filter for PDFs
+                    const pdfFiles = [];
+                    for (let i = 0; i < files.length; i++) {
+                        if (files[i].type === 'application/pdf' || files[i].name.toLowerCase().endsWith('.pdf')) {
+                            pdfFiles.push(files[i]);
+                        }
+                    }
+
+                    if (pdfFiles.length > 0) {
+                        // Create new FileList
+                        const dt = new DataTransfer();
+                        for (let i = 0; i < pdfFiles.length; i++) {
+                            dt.items.add(pdfFiles[i]);
+                        }
+                        input.files = dt.files;
+
+                        // Update display
+                        if (input === commissionInput) {
+                            displayFiles(commissionInput, commissionList, commissionZone);
+                        } else {
+                            displayFiles(bankInput, bankList, bankZone);
+                        }
+                    }
+                }
+            });
+        }
+
+        // Setup drag and drop for both zones
+        setupDragDrop(commissionZone, commissionInput);
+        setupDragDrop(bankZone, bankInput);
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Validation
+            if (commissionInput.files.length === 0) {
+                showStatus('error', 'Please select commission statement PDFs');
+                return;
+            }
+
+            if (bankInput.files.length === 0) {
+                showStatus('error', 'Please select a bank statement PDF');
+                return;
+            }
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('month', monthInput.value);
+
+            // Add commission files
+            for (let i = 0; i < commissionInput.files.length; i++) {
+                formData.append('commission_statements', commissionInput.files[i]);
+            }
+
+            // Add bank file
+            formData.append('bank_statement', bankInput.files[0]);
+
+            // Submit
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Uploading...';
+            showStatus('processing', 'Uploading files...');
+
+            // Calculate total size
+            let totalSize = 0;
+            for (let i = 0; i < commissionInput.files.length; i++) {
+                totalSize += commissionInput.files[i].size;
+            }
+            totalSize += bankInput.files[0].size;
+
+            // Use XMLHttpRequest for progress tracking
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener('progress', function(e) {
+                if (e.lengthComputable) {
+                    const percentComplete = (e.loaded / e.total) * 100;
+                    submitBtn.textContent = 'Uploading... ' + Math.round(percentComplete) + '%';
+                    showStatus('processing', 'Upload progress: ' + Math.round(percentComplete) + '%');
+                }
+            });
+
+            xhr.addEventListener('load', function() {
+                if (xhr.status === 200) {
+                    try {
+                        const result = JSON.parse(xhr.responseText);
+                        if (result.success) {
+                            showStatus('success', 'Upload successful! Processing started for ' + result.month + '. You will receive an email when complete.');
+                            form.reset();
+                            commissionList.innerHTML = '';
+                            bankList.innerHTML = '';
+                            commissionZone.classList.remove('has-files');
+                            bankZone.classList.remove('has-files');
+                            // Reset month
+                            monthInput.value = year + '-' + month;
+                        } else {
+                            showStatus('error', result.error || 'Upload failed');
+                        }
+                    } catch (e) {
+                        showStatus('error', 'Invalid response from server');
+                    }
+                } else {
+                    showStatus('error', 'Upload failed with status: ' + xhr.status);
+                }
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload & Process';
+            });
+
+            xhr.addEventListener('error', function() {
+                showStatus('error', 'Network error during upload');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload & Process';
+            });
+
+            xhr.open('POST', '/upload');
+            xhr.send(formData);
+        });
+
+        // Show status message
+        function showStatus(type, message) {
+            status.className = 'status ' + type;
+            status.textContent = message;
+            status.style.display = 'block';
+
+            if (type === 'success') {
+                setTimeout(function() {
+                    status.style.display = 'none';
+                }, 10000);
+            }
+        }
+
+        console.log('Commission Upload Portal loaded successfully');
+    </script>
+</body>
+</html>
