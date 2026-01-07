@@ -814,9 +814,9 @@
                         </div>
 
                         <div class="payor-override">
-                            <label for="payorNameOverride">Payor/Group Name</label>
-                            <input type="text" id="payorNameOverride" placeholder="e.g., ABC Company">
-                            <p class="hint">This will be used for all employees in the report (overrides CSV values)</p>
+                            <label for="groupNameInput">Group Name</label>
+                            <input type="text" id="groupNameInput" placeholder="e.g., ABC Company">
+                            <p class="hint">Optional: Override the group/account name for the report header</p>
                         </div>
                     </div>
 
@@ -996,7 +996,7 @@
         const mappingSection = document.getElementById('mappingSection');
         const mappingRows = document.getElementById('mappingRows');
         const columnList = document.getElementById('columnList');
-        const payorNameOverride = document.getElementById('payorNameOverride');
+        const groupNameInput = document.getElementById('groupNameInput');
         const settingsSection = document.getElementById('settingsSection');
         const addMoreBtn = document.getElementById('addMoreBtn');
         const processBtn = document.getElementById('processBtn');
@@ -1519,10 +1519,10 @@
                 settings.columnDefaults = defaults;
                 settings.columnSpecial = special;  // FROM_FILENAME, LEAVE_BLANK
 
-                // Add payor name override
-                const payorOverride = payorNameOverride.value.trim();
-                if (payorOverride) {
-                    settings.payorNameOverride = payorOverride;
+                // Add group name override (for report header only, not payor column)
+                const groupOverride = groupNameInput.value.trim();
+                if (groupOverride) {
+                    settings.groupNameOverride = groupOverride;
                 }
 
                 formData.append('settings', JSON.stringify(settings));
@@ -1580,8 +1580,8 @@
             mappingRows.innerHTML = '';
             columnList.innerHTML = '';
 
-            // Reset payor override
-            payorNameOverride.value = '';
+            // Reset group name
+            groupNameInput.value = '';
 
             // Reset settings
             deductionFrequency.value = 'semi-monthly';

@@ -161,7 +161,7 @@ export function parseCSV(csvData) {
  *                                  e.g., { 'Status': 'Active' }
  * @param {Object} columnSpecial - Special handling flags
  *                                 e.g., { 'Product Type': 'FROM_FILENAME', 'Number': 'LEAVE_BLANK' }
- * @param {string|null} payorNameOverride - Override payor name for all rows
+ * @param {string|null} _payorNameOverride - DEPRECATED: No longer used, payor comes from CSV only
  * @param {string|null} filenameProductType - Product type extracted from filename
  * @returns {Object} - { accountNumber, accountName, rows }
  */
@@ -265,11 +265,7 @@ export function parseCSVWithMapping(csvData, columnMapping = {}, columnDefaults 
         }
       }
 
-      // Apply payor name override if provided
-      if (payorNameOverride) {
-        mapped['Payor Name'] = payorNameOverride;
-      }
-
+      // Payor Name always comes from CSV - no override
       return mapped;
     });
 
