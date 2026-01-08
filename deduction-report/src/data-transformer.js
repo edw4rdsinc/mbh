@@ -429,11 +429,6 @@ export function groupByEmployee(rows, settings) {
     });
     excelRowNum++;
 
-    // Add blank row separator between employee groups
-    result.push({
-      isBlankRow: true,
-    });
-    excelRowNum++;
   }
 
   return result;
